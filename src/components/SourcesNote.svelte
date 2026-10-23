@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ResortData, SourceKey, SourceStatus } from '../../shared/types';
+  import { refreshCaption } from '../../shared/schedule';
   import { clockTime, timeAgo } from '../lib/display';
 
   interface Props {
@@ -33,7 +34,7 @@
 </script>
 
 <footer class="card small">
-  <p>Updated <strong>{clockTime(r.generatedAt, r.tz)}</strong> ({timeAgo(r.generatedAt)}). Data refreshes about 5am and 4pm Pacific.</p>
+  <p>Updated <strong>{clockTime(r.generatedAt, r.tz)}</strong> ({timeAgo(r.generatedAt)}). Data refreshes {refreshCaption(r.tz, new Date())}.</p>
   <ul>
     {#each rows as { k, s } (k)}
       <li>

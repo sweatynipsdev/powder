@@ -1,4 +1,4 @@
-import { mkdtempSync } from 'node:fs';
+import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -16,6 +16,7 @@ import {
   writeCalibration,
 } from '../../pipeline/history';
 import { addDays } from '../../pipeline/clock';
+import { refreshCaption, UPDATE_TIMES_UTC } from '../../shared/schedule';
 import { resortOpenStatus } from '../../shared/status';
 import type { ReportData } from '../../shared/types';
 
@@ -101,29 +102,46 @@ describe('resort open status', () => {
     liftsOpen: 0, liftsTotal: 25, trailsOpen: null, trailsTotal: null, ...over,
   });
 
+  const tz = 'America/Los_Angeles';
+
   it('shows the opening date before opening day', () => {
-    expect(resortOpenStatus(report({}), now, { openingDate: '2026-11-13' })).toEqual({ state: 'not-open', text: 'Opening Nov 13' });
-    expect(resortOpenStatus(null, now, { openingDate: '2026-11-13' }).text).toBe('Opening Nov 13');
+    expect(resortOpenStatus(report({}), now, { openingDate: '2026-11-13', tz })).toEqual({ state: 'not-open', text: 'Opening Nov 13' });
+    expect(resortOpenStatus(null, now, { openingDate: '2026-11-13', tz }).text).toBe('Opening Nov 13');
   });
 
   it("stops counting down on the morning of opening day, in the resort's time zone", () => {
     const openingMorning = new Date('2026-11-13T13:20:00Z'); // 5:20am PST
     const eveBefore = new Date('2026-11-13T07:00:00Z'); // 11pm PST on Nov 12
-    expect(resortOpenStatus(null, openingMorning, { openingDate: '2026-11-13' }).text).not.toBe('Opening Nov 13');
-    expect(resortOpenStatus(null, eveBefore, { openingDate: '2026-11-13' }).text).toBe('Opening Nov 13');
+    expect(resortOpenStatus(null, openingMorning, { openingDate: '2026-11-13', tz }).text).not.toBe('Opening Nov 13');
+    expect(resortOpenStatus(null, eveBefore, { openingDate: '2026-11-13', tz }).text).toBe('Opening Nov 13');
+    // The same moment is already opening day in Utah (12am MST).
+    expect(resortOpenStatus(null, eveBefore, { openingDate: '2026-11-13', tz: 'America/Denver' }).text).not.toBe('Opening Nov 13');
   });
 
   it('says open when lifts turn early, and ignores a past opening date', () => {
-    expect(resortOpenStatus(report({ liftsOpen: 3 }), now, { openingDate: '2026-11-13' })).toEqual({ state: 'open', text: 'Open · 3/25 lifts' });
-    expect(resortOpenStatus(report({}), now, { openingDate: '2026-10-01' })).toEqual({ state: 'not-open', text: 'Not open yet' });
+    expect(resortOpenStatus(report({ liftsOpen: 3 }), now, { openingDate: '2026-11-13', tz })).toEqual({ state: 'open', text: 'Open · 3/25 lifts' });
+    expect(resortOpenStatus(report({}), now, { openingDate: '2026-10-01', tz })).toEqual({ state: 'not-open', text: 'Not open yet' });
   });
 
   it('points to the resort when there is no snow-report feed, and says so when a feed failed', () => {
-    expect(resortOpenStatus(null, now)).toEqual({ state: 'unknown', text: 'Lift status on resort site' });
-    expect(resortOpenStatus(null, now, { hasFeed: true })).toEqual({ state: 'unknown', text: 'Lift report unavailable' });
+    expect(resortOpenStatus(null, now, { tz })).toEqual({ state: 'unknown', text: 'Lift status on resort site' });
+    expect(resortOpenStatus(null, now, { tz, hasFeed: true })).toEqual({ state: 'unknown', text: 'Lift report unavailable' });
   });
 
   it('calls an off-season report closed', () => {
-    expect(resortOpenStatus(report({ fresh: false, updatedAt: '2026-06-08T17:00:00Z' }), now).text).toBe('Closed · last report Jun 8');
+    expect(resortOpenStatus(report({ fresh: false, updatedAt: '2026-06-08T17:00:00Z' }), now, { tz }).text).toBe('Closed · last report Jun 8');
+  });
+});
+
+describe('update times', () => {
+  it("says when data refreshes in the resort's own time, through daylight saving", () => {
+    expect(refreshCaption('America/Denver', new Date('2026-12-01T12:00:00Z'))).toBe('about 6:20am and 5:20pm MST');
+    expect(refreshCaption('America/Denver', new Date('2026-07-01T12:00:00Z'))).toBe('about 7:20am and 6:20pm MDT');
+    expect(refreshCaption('America/Los_Angeles', new Date('2026-12-01T12:00:00Z'))).toBe('about 5:20am and 4:20pm PST');
+  });
+
+  it('matches the cron lines in the update workflow', () => {
+    const yml = readFileSync(new URL('../../.github/workflows/update.yml', import.meta.url), 'utf8');
+    for (const { h, m } of UPDATE_TIMES_UTC) expect(yml).toContain(`cron: '${m} ${h} * * *'`);
   });
 });

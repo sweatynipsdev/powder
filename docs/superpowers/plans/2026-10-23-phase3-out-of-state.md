@@ -227,14 +227,14 @@ export const UPDATE_TIMES_UTC: { h: number; m: number }[] = [{ h: 13, m: 20 }, {
 export function refreshCaption(tz: string, ref: Date): string; // "about 6:20am and 5:20pm MST", earliest local time first
 ```
 
-- [ ] **Tests first (risky input 10):**
+- [x] **Tests first (risky input 10):**
   - `refreshCaption('America/Denver', 2026-12-01)` → "about 6:20am and 5:20pm MST".
   - The same in July → "about 7:20am and 6:20pm MDT".
   - `America/Los_Angeles` in December → "about 5:20am and 4:20pm PST".
   - `update.yml` contains `'20 13 * * *'` and `'20 0 * * *'`, matching `UPDATE_TIMES_UTC`.
-- [ ] `SourcesNote.svelte` uses `refreshCaption(r.tz, new Date())`.
-- [ ] `status.ts`: `StatusOptions.tz` becomes required (`tz: string`), and the Pacific default goes. Both callers already pass it.
-- [ ] Run `npm test` and `npm run typecheck`, then commit "T5: refresh times and status in the resort's time zone".
+- [x] `SourcesNote.svelte` uses `refreshCaption(r.tz, new Date())`.
+- [x] `status.ts`: `StatusOptions.tz` becomes required (`tz: string`), and the Pacific default goes. Both callers already pass it.
+- [x] Run `npm test` and `npm run typecheck`, then commit "T5: refresh times and status in the resort's time zone".
 
 ## T6. Research and config for the 19 US resorts
 

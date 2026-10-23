@@ -23,16 +23,16 @@ export const beforeOpening = (openingDate: string | undefined, now: Date, tz: st
 
 export interface StatusOptions {
   openingDate?: string;
-  /** Default Pacific: every resort so far. */
-  tz?: string;
+  /** The resort's own time zone: opening day starts at its midnight. */
+  tz: string;
   /** The resort has a report feed (configured), even if this run couldn't read it. */
   hasFeed?: boolean;
 }
 
-export function resortOpenStatus(report: ReportData | null | undefined, now: Date, opts: StatusOptions = {}): ResortStatus {
+export function resortOpenStatus(report: ReportData | null | undefined, now: Date, opts: StatusOptions): ResortStatus {
   const open = report?.fresh && report.liftsOpen;
   // Before the scheduled opening day, say so (unless lifts are already turning).
-  if (!open && opts.openingDate && beforeOpening(opts.openingDate, now, opts.tz ?? 'America/Los_Angeles'))
+  if (!open && opts.openingDate && beforeOpening(opts.openingDate, now, opts.tz))
     return { state: 'not-open', text: `Opening ${shortDate(opts.openingDate)}` };
   if (!report)
     return opts.hasFeed
