@@ -75,12 +75,12 @@
     margin: 2px 0 0;
   }
   .toggle {
-    background: var(--surface-2);
+    background: var(--card-2);
     border: 1px solid var(--hairline);
     border-radius: 999px;
     padding: 3px 10px;
     cursor: pointer;
-    color: var(--text-secondary);
+    color: var(--text-2);
     flex: none;
   }
   .legend {
@@ -90,7 +90,7 @@
     list-style: none;
     margin: 10px 0 2px;
     padding: 0 4px;
-    color: var(--text-secondary);
+    color: var(--text-2);
   }
   .legend li {
     display: inline-flex;

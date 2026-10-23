@@ -10,8 +10,7 @@
   let { nws, afd }: Props = $props();
 </script>
 
-<section class="card" aria-labelledby="nws">
-  <h2 id="nws">National Weather Service</h2>
+<section class="card" aria-label="National Weather Service forecast">
   {#if nws}
     <dl>
       {#each nws.periods.slice(0, 4) as p (p.startTime)}
@@ -54,6 +53,6 @@
   }
   summary {
     cursor: pointer;
-    color: var(--text-secondary);
+    color: var(--text-2);
   }
 </style>

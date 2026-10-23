@@ -37,7 +37,7 @@
     margin: 0;
   }
   .summary {
-    color: var(--text-secondary);
+    color: var(--text-2);
   }
   ol {
     margin: 4px 0;

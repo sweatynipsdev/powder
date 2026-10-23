@@ -56,6 +56,29 @@ export function dangerText(a: AvalancheData | null | undefined): string {
   return a.overall >= 0 ? `${a.overall} · ${a.overallText}` : a.overallText;
 }
 
+const COMPASS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+export const compass = (deg: number | null | undefined) => (deg === null || deg === undefined ? '' : COMPASS[Math.round(deg / 22.5) % 16]);
+
+/** "2026-10-23T14:00" → "2p". */
+export function hourLabel(stamp: string): string {
+  const h = Number(stamp.slice(11, 13));
+  return `${h % 12 || 12}${h < 12 ? 'a' : 'p'}`;
+}
+
+const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+export function weekdayOf(ymd: string): string {
+  const [y, m, d] = ymd.slice(0, 10).split('-').map(Number);
+  return DOW[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
+}
+export const isWeekend = (ymd: string) => ['Sat', 'Sun'].includes(weekdayOf(ymd));
+export const dayNum = (ymd: string) => Number(ymd.slice(8, 10));
+
+/** OpenSnow-style emphasis: a big 24h total (or 12h period) shows in orange. */
+export const BIG_DAY_IN = 6;
+export const BIG_PERIOD_IN = 4;
+
+export const QUALITY_LABEL = { excellent: 'Excellent', good: 'Good', okay: 'Okay' } as const;
+
 /** "3.5" → "3.5", "4.0" → "4". */
 export const num = (n: number | null | undefined, digits = 1) =>
   n === null || n === undefined ? '—' : String(Math.round(n * 10 ** digits) / 10 ** digits);

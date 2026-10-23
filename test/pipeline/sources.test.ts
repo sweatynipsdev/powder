@@ -3,7 +3,9 @@ import { loadConfig } from '../../pipeline/config';
 import { parseAvalanche } from '../../pipeline/sources/avalanche';
 import { buildSegment, normalizeChainStatus, parseCc, parseRoadsText, worse } from '../../pipeline/sources/caltrans';
 import { kmlPoint, normalizeCategory, parseArcPoint, parseEnso, parseKml, pointInRing } from '../../pipeline/sources/cpc';
+import { parseDateline, parseExpertPage } from '../../pipeline/sources/expert';
 import { afdSections, filterAfd, parseAfd, parseAlerts, unwrap } from '../../pipeline/sources/nws';
+import { durationHours, gridToHourly, parseGrid } from '../../pipeline/sources/nwsGrid';
 import { parseDeterministic, parseEnsemble } from '../../pipeline/sources/openMeteo';
 import { normalizeTimestamp, num, parseMtnpowder } from '../../pipeline/sources/report';
 import { cdecDate, cocorahsStation, parseAcis, parseAwdb, parseCdec } from '../../pipeline/sources/snowpack';
@@ -13,10 +15,10 @@ const config = loadConfig();
 const resort = (id: string) => config.resorts.find((r) => r.id === id)!;
 
 describe('Open-Meteo', () => {
-  it('parses all six deterministic models at both elevations', () => {
+  it('parses every deterministic model at both elevations', () => {
     const det = parseDeterministic(fixtureJson('api.open-meteo.com/v1/forecast?latitude=39.1969'));
-    expect(det.models.map((m) => m.id)).toEqual(['gfs', 'ecmwf', 'icon', 'gem', 'hrrr', 'nbm']);
-    expect(Object.keys(det.elevs.summit)).toHaveLength(6);
+    expect(det.models.map((m) => m.id)).toEqual(['gfs', 'ecmwf', 'icon', 'gem', 'aifs', 'hrrr', 'nam', 'nbm']);
+    expect(Object.keys(det.elevs.summit)).toHaveLength(8);
     expect(det.times[0]).toMatch(/T00:00$/);
     // ICON stops around day 7; GFS runs the full 16 days.
     expect(det.models.find((m) => m.id === 'icon')!.hours).toBeLessThan(200);
@@ -242,5 +244,67 @@ describe('MtnPowder report', () => {
     const r = parseMtnpowder(resort('palisades').report!, fixtureJson('resortId=61') as never, [], new Date('2026-10-23T12:00:00Z'));
     expect(r.updatedAt).not.toBeNull();
     expect(r.fresh).toBe(false);
+  });
+});
+
+describe('NWS forecast grid', () => {
+  const det = parseDeterministic(fixtureJson('api.open-meteo.com/v1/forecast?latitude=39.1969'));
+  const tz = 'America/Los_Angeles';
+
+  it('reads ISO durations', () => {
+    expect(durationHours('PT6H')).toBe(6);
+    expect(durationHours('P1DT6H')).toBe(30);
+    expect(durationHours('P1D')).toBe(24);
+    expect(durationHours('PT30M')).toBe(1);
+  });
+
+  it('spreads totals over their hours and copies states', () => {
+    const times = ['2026-10-24T05:00', '2026-10-24T06:00', '2026-10-24T07:00', '2026-10-24T08:00'];
+    // 12:00Z is 5am PDT, so a 3-hour total covers the hours ending 6, 7 and 8am.
+    const layer = { values: [{ validTime: '2026-10-24T12:00:00+00:00/PT3H', value: 30 }] };
+    expect(gridToHourly(layer, times, tz, 'sum', (v) => v)).toEqual([null, 10, 10, 10]);
+    expect(gridToHourly(layer, times, tz, 'state', (v) => v)).toEqual([null, 30, 30, 30]);
+    expect(gridToHourly(undefined, times, tz, 'sum', (v) => v)).toEqual([null, null, null, null]);
+  });
+
+  it("puts the forecasters' grid on the model time axis in inches", () => {
+    const grid = parseGrid(fixtureJson(/gridpoints\/REV\/27,93$/) as never, det.times, tz);
+    expect(grid.elevationFt).toBeGreaterThan(5000);
+    expect(grid.snow).toHaveLength(det.times.length);
+    expect(grid.snow.some((v) => v !== null)).toBe(true);
+    expect(grid.snow.every((v) => v === null || v >= 0)).toBe(true);
+    expect(grid.pop.every((v) => v === null || (v >= 0 && v <= 100))).toBe(true);
+  });
+
+  it('rejects a grid with no snow or precipitation layers', () => {
+    expect(() => parseGrid({ properties: {} }, det.times, tz)).toThrow(/no snowfall/);
+  });
+});
+
+describe('local expert page', () => {
+  const tz = 'America/Los_Angeles';
+  const cfg = resort('mammoth').expert!;
+
+  it("reads the forecaster's dateline as local time", () => {
+    expect(parseDateline('Wednesday, October 21st, 2026 @ 2 PM', tz)).toBe('2026-10-21T21:00:00.000Z');
+    expect(parseDateline('Friday, January 8th, 2027 @ 10:30 AM', tz)).toBe('2027-01-08T18:30:00.000Z');
+    expect(parseDateline('no date here', tz)).toBeNull();
+  });
+
+  it('credits and links the forecaster without republishing their words', () => {
+    const post = parseExpertPage(cfg, fixtureJson('mammothsnowman') as never, tz);
+    expect(post.title).not.toMatch(/\d{5}$/);
+    expect(post.url).toBe(cfg.url);
+    expect(post.publishedAt).not.toBeNull();
+    expect(post.excerpt).toMatch(new RegExp(`^${cfg.author}'s local forecast, updated .*Read the full discussion on ${cfg.source}\\.$`));
+    expect(post.text.length).toBeGreaterThan(200);
+    expect(post.text.length).toBeLessThanOrEqual(4000);
+    expect(post.text).not.toContain(cfg.cutAt!);
+  });
+
+  it('falls back to the edit time without a dateline, and needs content', () => {
+    const post = parseExpertPage(cfg, { modified_gmt: '2026-10-22T17:36:03', content: { rendered: '<p>Snow likely.</p>' } }, tz);
+    expect(post.publishedAt).toBe('2026-10-22T17:36:03Z');
+    expect(() => parseExpertPage(cfg, {}, tz)).toThrow(/no content/);
   });
 });

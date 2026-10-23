@@ -1,139 +1,247 @@
 <script lang="ts">
-  import type { ResortData } from '../../shared/types';
+  import { last24 as last24Of, resortOpenStatus, stationDailySnow } from '../../shared/status';
+  import type { ResortData, ResortSummary } from '../../shared/types';
   import AlertsBanner from '../components/AlertsBanner.svelte';
-  import AnalysisPanel from '../components/AnalysisPanel.svelte';
   import AvalanchePanel from '../components/AvalanchePanel.svelte';
-  import CamsPanel from '../components/CamsPanel.svelte';
+  import CamsCarousel from '../components/CamsCarousel.svelte';
   import ModelPlume from '../components/charts/ModelPlume.svelte';
-  import SnowChart from '../components/charts/SnowChart.svelte';
   import WeatherCharts from '../components/charts/WeatherCharts.svelte';
   import CpcStrip from '../components/CpcStrip.svelte';
+  import DailyTable from '../components/DailyTable.svelte';
   import ElevationToggle from '../components/ElevationToggle.svelte';
-  import FiveDay from '../components/FiveDay.svelte';
+  import ExpertCard from '../components/ExpertCard.svelte';
+  import ForecastPost from '../components/ForecastPost.svelte';
+  import HourlyTable from '../components/HourlyTable.svelte';
+  import LocalNotes from '../components/LocalNotes.svelte';
   import NwsPanel from '../components/NwsPanel.svelte';
-  import ReportPanel from '../components/ReportPanel.svelte';
+  import RecentSnow from '../components/RecentSnow.svelte';
+  import RightNow from '../components/RightNow.svelte';
   import RoadsPanel from '../components/RoadsPanel.svelte';
-  import SnowpackPanel from '../components/SnowpackPanel.svelte';
+  import SnowTimeline from '../components/SnowTimeline.svelte';
   import SourcesNote from '../components/SourcesNote.svelte';
   import StaleChip from '../components/StaleChip.svelte';
-  import Totals from '../components/Totals.svelte';
-  import { fmtFt } from '../lib/display';
+  import StationCard from '../components/StationCard.svelte';
   import { prefs } from '../lib/prefs.svelte';
+  import { resortHref, type ResortTab } from '../lib/router.svelte';
 
   interface Props {
     resort: ResortData;
+    tab: ResortTab;
+    summary: ResortSummary | null;
   }
 
-  let { resort: r }: Props = $props();
+  let { resort: r, tab, summary }: Props = $props();
   let f = $derived(r.forecast.data);
+  let e = $derived(prefs.elevation);
+  let status = $derived(summary?.status ?? resortOpenStatus(r.report?.data, new Date(), r.openingDate));
+  let last24 = $derived(summary?.last24 ?? last24Of(r.report?.data, r.snowpack?.data));
+  // Days before today; today's partial day is "Last 24 Hours".
+  let observed = $derived(stationDailySnow(r.snowpack?.data).slice(0, -1));
+  let expert = $derived(r.expert?.data ?? null);
+  let expertInitials = $derived(
+    expert
+      ? (expert.author ?? expert.source)
+          .replace(/^the /i, '')
+          .split(/\s+/)
+          .map((w) => w[0])
+          .slice(0, 2)
+          .join('')
+          .toUpperCase()
+      : '',
+  );
 
-  const SECTIONS = [
-    ['analysis', 'Analysis'],
-    ['forecast', 'Forecast'],
-    ['outlook', 'Outlook'],
-    ['observed', 'Snowpack'],
-    ['drive', 'Roads'],
-    ['more', 'More'],
-  ] as const;
+  const TABS: { id: ResortTab; label: string }[] = [
+    { id: 'weather', label: 'Weather' },
+    { id: 'summary', label: 'Snow Summary' },
+    { id: 'report', label: 'Snow Report' },
+    { id: 'forecast', label: 'Forecast' },
+  ];
 </script>
 
-<div class="stack">
-  <header>
-    <h1>{r.name}</h1>
-    <p class="small muted">{r.region} · base {fmtFt(r.baseFt)} ft · summit {fmtFt(r.summitFt)} ft</p>
-  </header>
+{#snippet expertCard()}
+  {#if expert}
+    <ExpertCard
+      author={expert.author ?? expert.source}
+      role={`Local forecaster · ${expert.source}`}
+      avatar={{ initials: expertInitials }}
+      at={expert.publishedAt}
+      title={expert.title}
+      text={expert.excerpt}
+      href={expert.url}
+      external
+    />
+  {/if}
+{/snippet}
 
-  <nav class="jump" aria-label="Sections">
-    <ElevationToggle />
-    {#each SECTIONS as [id, label] (id)}
-      <a class="chip small" href={`#/r/${r.id}`} onclick={(e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }}>{label}</a>
-    {/each}
-  </nav>
+<div class="stack">
+  <header class="rhead">
+    <div class="status {status.state}"><span class="dot"></span>{status.text}</div>
+    <h1>{r.name}</h1>
+    <div class="point">
+      <span class="small muted">Forecast Point</span>
+      <ElevationToggle summitFt={r.summitFt} baseFt={r.baseFt} />
+    </div>
+    <nav class="tabs hscroll" aria-label="Resort sections">
+      {#each TABS as t (t.id)}
+        <a href={resortHref(r.id, t.id)} class:on={tab === t.id} aria-current={tab === t.id ? 'page' : undefined}>{t.label}</a>
+      {/each}
+    </nav>
+  </header>
 
   <AlertsBanner alerts={r.alerts.data ?? []} detailed={r.alerts.data ?? []} />
 
-  <div id="analysis"><AnalysisPanel analysis={r.analysis} /></div>
-
-  <div id="forecast" class="stack">
+  {#if tab === 'summary'}
+    <div class="row">
+      <h2 class="section-title">Snow Summary</h2>
+      {#if f}<span class="small muted">{f.models.length} models + {f.ensembles.reduce((s, x) => s + x.members, 0)} ensemble runs</span>{/if}
+    </div>
     {#if f}
-      <div class="row">
-        <h2>Forecast · {prefs.elevation === 'summit' ? `summit ${fmtFt(r.summitFt)} ft` : `base ${fmtFt(r.baseFt)} ft`}</h2>
-        <StaleChip status={r.forecast.status} hasData={!!f} />
-      </div>
-      <Totals forecast={f} elevation={prefs.elevation} />
-      <FiveDay forecast={f} elevation={prefs.elevation} />
-      <SnowChart days={f.days} periods={f.periods} elevation={prefs.elevation} />
-      <!-- Older cached data (from before running totals were added) has no `cumulative`. -->
-      {#if f.cumulative?.length}<ModelPlume forecast={f} elevation={prefs.elevation} />{/if}
+      <SnowTimeline forecast={f} elevation={e} {observed} {last24} tz={r.tz} />
+    {:else}
+      <div class="card"><StaleChip status={r.forecast.status} hasData={false} /> Model data is unavailable right now.</div>
+    {/if}
+
+    <CamsCarousel cams={[...r.links.cams, ...r.links.roadCams]} more={r.links.webcams} />
+
+    <h2 class="section-title">Local Expert</h2>
+    {#if r.analysis}
+      <ExpertCard
+        author="Powder Forecast"
+        role={`AI forecaster · ${r.analysis.model}`}
+        avatar={{ src: './favicon.svg' }}
+        at={r.analysis.generatedAt}
+        title={r.analysis.headline}
+        text={r.analysis.summary ?? r.analysis.next5Days}
+        href={resortHref(r.id, 'forecast')}
+      />
+    {/if}
+    {@render expertCard()}
+
+    {#if f?.cumulative?.length}
+      <h2 class="section-title">Model Comparison</h2>
+      <ModelPlume forecast={f} elevation={e} />
+    {/if}
+
+    <h2 class="section-title">Long-Range Outlook</h2>
+    <CpcStrip cpc={r.cpc.data} status={r.cpc.status} />
+  {:else if tab === 'weather'}
+    {#if f}
+      <h2 class="section-title">Right Now</h2>
+      <RightNow forecast={f} elevation={e} station={r.snowpack?.data ?? null} />
+      <h2 class="section-title">Hourly Forecast</h2>
+      <HourlyTable hourly={f.hourly} elevation={e} />
+      <h2 class="section-title">Daily Forecast</h2>
+      <DailyTable forecast={f} elevation={e} />
       <WeatherCharts periods={f.periods} baseFt={r.baseFt} summitFt={r.summitFt} />
     {:else}
-      <div class="card"><h2>Forecast</h2><p class="muted">Model data is unavailable right now.</p></div>
+      <div class="card">Model data is unavailable right now.</div>
     {/if}
-  </div>
-
-  <div id="outlook"><CpcStrip cpc={r.cpc.data} status={r.cpc.status} /></div>
-
-  <div id="observed" class="stack">
-    {#if r.snowpack}<SnowpackPanel snowpack={r.snowpack.data} status={r.snowpack.status} />{/if}
-    {#if r.report}<ReportPanel report={r.report.data} status={r.report.status} website={r.links.website} />{/if}
-    {#if r.avalanche}<AvalanchePanel avalanche={r.avalanche.data} status={r.avalanche.status} />{/if}
-  </div>
-
-  <div id="drive">
-    {#if r.roads}<RoadsPanel roads={r.roads.data} status={r.roads.status} cams={r.links.roadCams} />{/if}
-  </div>
-
-  <div id="more" class="stack">
-    <CamsPanel links={r.links} />
+    <h2 class="section-title">National Weather Service</h2>
     <NwsPanel nws={r.nws.data} afd={r.afd.data} />
+  {:else if tab === 'report'}
+    {#if r.links.website}
+      <a class="card sitelink" href={r.links.website} target="_blank" rel="noopener">View the report on the resort website →</a>
+    {/if}
+    <h2 class="section-title">Recent Snow</h2>
+    <p class="section-sub">Resort-reported when current, otherwise estimated from the nearest snow station.</p>
+    <RecentSnow report={r.report?.data ?? null} {last24} {status} tz={r.tz} />
+    {#if r.snowpack}
+      <h2 class="section-title">Live Snow</h2>
+      <p class="section-sub">The nearest snow station, usually updated hourly.</p>
+      <StationCard snowpack={r.snowpack.data} status={r.snowpack.status} />
+    {/if}
+    {#if r.avalanche}
+      <h2 class="section-title">Avalanche Forecast</h2>
+      <AvalanchePanel avalanche={r.avalanche.data} status={r.avalanche.status} />
+    {/if}
+    {#if r.roads}
+      <h2 class="section-title">Getting There</h2>
+      <RoadsPanel roads={r.roads.data} status={r.roads.status} cams={[]} />
+    {/if}
+    <LocalNotes notes={r.localNotes ?? []} />
     <SourcesNote resort={r} />
-  </div>
+  {:else}
+    <ForecastPost resort={r} />
+    {@render expertCard()}
+  {/if}
 </div>
 
 <style>
   .stack {
     display: grid;
-    /* minmax(0, 1fr): sideways-scrolling children scroll inside their card instead of widening the page. */
     grid-template-columns: minmax(0, 1fr);
     gap: var(--gap);
   }
-  header h1 {
-    font-size: 26px;
+  .rhead {
+    display: grid;
+    gap: 8px;
   }
-  header p {
-    margin: 2px 0 0;
-  }
-  .jump {
-    position: sticky;
-    top: calc(env(safe-area-inset-top) + 52px);
-    z-index: 5;
+  .status {
     display: flex;
-    gap: 6px;
     align-items: center;
-    overflow-x: auto;
-    padding: 8px 0;
-    margin: 0 -16px;
-    padding-inline: 16px;
-    background: color-mix(in srgb, var(--page) 92%, transparent);
-    backdrop-filter: blur(8px);
-    scrollbar-width: none;
+    gap: 9px;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--muted);
   }
-  .chip {
+  .status .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 22%, transparent);
+  }
+  .status.closed,
+  .status.not-open {
+    color: var(--closed);
+  }
+  .status.open {
+    color: var(--open);
+  }
+  h1 {
+    font-size: 34px;
+  }
+  .point {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin: 4px -16px 0;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .tabs a {
     flex: none;
-    text-decoration: none;
-    padding: 4px 11px;
-    border-radius: 999px;
-    background: var(--surface-1);
-    border: 1px solid var(--hairline);
-    color: var(--text-secondary);
+    padding: 10px 12px 9px;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+  }
+  .tabs a.on {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
   }
   .row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
     gap: 8px;
+    flex-wrap: wrap;
   }
-  [id] {
-    scroll-margin-top: 110px;
+  .row .section-title {
+    margin-bottom: 0;
+  }
+  .stack > :global(.section-title) {
+    margin-bottom: -4px;
+  }
+  .sitelink {
+    text-align: center;
+    font-weight: 700;
+    font-size: 17px;
   }
 </style>

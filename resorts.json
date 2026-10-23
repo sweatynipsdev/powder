@@ -9,7 +9,29 @@
       "lon": -120.2357,
       "baseFt": 6200,
       "summitFt": 9050,
+      "summit": { "lat": 39.199, "lon": -120.295 },
       "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-11-25",
+        "notes": [
+          "Base 6,200 ft, peak 9,050 ft (Granite Chief 9,006 ft); KT-22 tops out at 8,070 ft. Average snowfall is about 400 inches a year.",
+          "Warm atmospheric-river storms can bring rain near and below about 7,000 ft, heavy wet snow from 7,000 to 8,000 ft, and drier snow only above that (as in the December 2025 storm).",
+          "Southerly flow keeps the heaviest precipitation from pushing over the Sierra crest into the Tahoe basin and is less favorable for orographic enhancement.",
+          "Wind on the mid and upper mountain often runs three to six times what the base feels. The Aerial Tram and upper chairs such as Siberia are the first to go on wind hold, and rime ice can delay upper lifts after storms.",
+          "The Funitel runs in higher winds than a gondola or the Tram, and the new Red Dog chair is built for wind, so on storm days the lower mountain often keeps spinning.",
+          "Lake-level snow (Tahoe City, about 6,200 ft) is now only 30-40% of yearly precipitation, so base-area rain is common in warmer storms."
+        ],
+        "sources": [
+          "https://www.palisadestahoe.com/footer/mountain-statistics",
+          "https://blog.palisadestahoe.com/weather/rain-wet-snow-then-drier-snow/",
+          "https://blog.palisadestahoe.com/operations/winds-lift-operations-squaw/",
+          "https://blog.palisadestahoe.com/operations/operations-update-some-lifts-still-frozen-winds-surprised-us-today/",
+          "https://blog.palisadestahoe.com/experiences/tram-funitel-gondola-whats-the-difference/",
+          "https://www.palisadestahoe.com/gondola/projects/red-dog",
+          "https://www.ucdavis.edu/news/tahoe-state-lake-report-released-2024",
+          "https://blog.palisadestahoe.com/general/whats-new-for-the-2026-27-season/"
+        ]
+      },
       "nws": {
         "afdOffice": "REV",
         "area": "Lake Tahoe and the Sierra crest near I-80",
@@ -51,7 +73,21 @@
       "lon": -120.2385,
       "baseFt": 6835,
       "summitFt": 8637,
+      "summit": { "lat": 39.1774, "lon": -120.271 },
       "tz": "America/Los_Angeles",
+      "local": {
+        "notes": [
+          "Base 6,835 ft, peak 8,637 ft (Ward Peak); Scott tops out at 8,289 ft. Average snowfall is about 400 inches a year, and 9 of 13 lifts have snowmaking.",
+          "Scott, Summit and Roundhouse are the most wind-exposed lifts and are the usual first wind holds; ice has to be cleared before upper lifts run after storms.",
+          "In big wind events Alpine can lose almost everything: in April 2022 gusts reached about 150 mph and by noon only the carpet was running.",
+          "Same Sierra crest storm patterns as Palisades next door: southerly flow favors the crest less, and warm storms can rain at the base."
+        ],
+        "sources": [
+          "https://www.palisadestahoe.com/footer/mountain-statistics",
+          "https://blog.palisadestahoe.com/operations/operations-update-some-lifts-still-frozen-winds-surprised-us-today/",
+          "https://blog.palisadestahoe.com/operations/operations-update-deep-dive-on-wind-hold-other-storm-updates/"
+        ]
+      },
       "nws": {
         "afdOffice": "REV",
         "area": "Lake Tahoe and the Sierra crest near I-80",
@@ -93,7 +129,32 @@
       "lon": -119.037,
       "baseFt": 7953,
       "summitFt": 11053,
+      "summit": { "lat": 37.6251, "lon": -119.0305 },
       "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-11-13",
+        "notes": [
+          "Base 7,953 ft, summit 11,053 ft. Average snowfall is 350 inches at Main Lodge, and the summit can get roughly double what the lower runs see; the 2022/23 record was over 700 inches at Main Lodge.",
+          "The biggest storms come on southwest flow with a strong jet: atmospheric rivers from that angle slam the Sierra crest. Northwest flow and passing troughs funnel strong wind.",
+          "Atmospheric-river storms often bring dense 'Sierra cement', and high winds pack the snow denser still.",
+          "Lifts usually close when sustained winds reach about 45-55 mph or gusts top 65 mph. In storms the Main Lodge lifts can close while Canyon and Eagle Lodge lifts keep running.",
+          "Opening days since 2005/06 have fallen between November 3 and November 15 (plus October 29, 2021)."
+        ],
+        "sources": [
+          "https://www.mammothmountain.com/on-the-mountain/snowfall-history",
+          "https://www.mammothsnowman.com/mammoth-weather-faq/",
+          "https://www.mammothsnowman.com/mammoth-mountain-ski-area-information/history-of-mammoth-mountain-opening-and-closing-dates/",
+          "https://www.mammothmountain.com/things-to-do/events/opening-day"
+        ]
+      },
+      "expert": {
+        "adapter": "wordpress-page",
+        "source": "The Mammoth Snowman",
+        "author": "Steve Taylor",
+        "api": "https://www.mammothsnowman.com/wp-json/wp/v2/pages/18153?_fields=modified_gmt,link,title,content",
+        "url": "https://www.mammothsnowman.com/mammoth-mountain-weather-forecast/",
+        "cutAt": "Top Mammoth Weather Questions"
+      },
       "nws": {
         "afdOffice": "REV",
         "area": "Mono County and the Eastern Sierra around Mammoth Lakes",
@@ -130,7 +191,24 @@
       "lon": -116.8605,
       "baseFt": 7140,
       "summitFt": 8805,
+      "summit": { "lat": 34.208, "lon": -116.8345 },
       "tz": "America/Los_Angeles",
+      "local": {
+        "notes": [
+          "Bear Mountain runs 7,140-8,805 ft and Snow Summit 7,000-8,200 ft. Each averages only about 100 inches of natural snow a season (season totals have ranged from 39 to 243 inches), so the resort relies on extensive snowmaking.",
+          "Snowmaking starts when overnight temperatures dip into the low 20s with low humidity and light wind, usually early to mid November; crews want 48-72 hours of those conditions, and dry Santa Ana air helps.",
+          "Warm storms, including atmospheric rivers, often bring high snow levels and rain on the mountain or only a few inches. Cold storms from the north can produce a foot or more even with limited moisture.",
+          "Openings from 2015/16 to 2023/24 fell between November 12 and December 8."
+        ],
+        "sources": [
+          "https://www.bigbearmountainresort.com/our-mountains",
+          "https://www.bigbearmountainresort.com/faq",
+          "https://www.bigbearmountainresort.com/mountain-information/historical-snowfall",
+          "https://www.bigbearmountainresort.com/blog/snowmaking",
+          "https://www.weather.gov/media/sgx/climate/Yearly/2024.pdf",
+          "https://www.weather.gov/media/sgx/climate/Yearly/2023.pdf"
+        ]
+      },
       "nws": {
         "afdOffice": "SGX",
         "area": "the San Bernardino Mountains",

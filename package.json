@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit && svelte-check --tsconfig ./tsconfig.json --threshold warning",
     "analyze": "tsx analysis/run.ts",
     "analyze:sample": "tsx analysis/run.ts --sample",
+    "calibrate": "tsx scripts/calibrate.ts",
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host",

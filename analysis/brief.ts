@@ -3,9 +3,19 @@
 
 import { confidenceOf } from '../pipeline/process/blend';
 import { fmtDay, fmtFt, fmtSnow, fmtSnowAmount } from '../shared/format';
-import type { CpcCat, DaySummary, ModelId, Period, ResortData, SnowAmount, SourceKey } from '../shared/types';
+import type { CpcCat, DaySummary, ModelId, Period, ReportData, ResortData, SnowAmount, SourceKey } from '../shared/types';
 
-const MODEL_LABEL: Record<ModelId, string> = { gfs: 'GFS', ecmwf: 'ECMWF', icon: 'ICON', gem: 'GEM', hrrr: 'HRRR', nbm: 'NBM' };
+const MODEL_LABEL: Record<ModelId, string> = {
+  gfs: 'GFS',
+  ecmwf: 'ECMWF',
+  icon: 'ICON',
+  gem: 'GEM',
+  aifs: 'ECMWF AI',
+  hrrr: 'HRRR',
+  nam: 'NAM 3km',
+  nbm: 'NBM',
+  nws: 'NWS forecasters',
+};
 
 const CAT_TEXT = { above: 'above normal', below: 'below normal', normal: 'near normal', ec: 'equal chances' } as const;
 
@@ -70,9 +80,27 @@ const confidenceLabel = (a: SnowAmount) => confidenceOf(a) ?? 'n/a';
 /** Days since an ISO timestamp, rounded down. */
 const daysSince = (iso: string, now: Date) => Math.floor((now.getTime() - Date.parse(iso)) / 86_400_000);
 
+/** A recent local forecaster's discussion, credited, for the writer to compare against. */
+function localExpert(r: ResortData, now: Date): { localExpert?: object } {
+  const x = r.expert?.data;
+  if (!x?.publishedAt || (now.getTime() - Date.parse(x.publishedAt)) / 86_400_000 > EXPERT_MAX_AGE_DAYS) return {};
+  return {
+    localExpert: {
+      who: `${x.author}, ${x.source} (local forecaster)`,
+      updated: ago(x.publishedAt, now),
+      discussion: x.text,
+    },
+  };
+}
+
 /** Whether the resort is open, stated outright so the write-up doesn't assume. */
 export function resortStatus(r: ResortData, now: Date): string {
   const rep = r.report?.data;
+  const opening = r.openingDate && Date.parse(`${r.openingDate}T23:59:59Z`) > now.getTime() ? `; scheduled to open ${fmtDay(r.openingDate)}` : '';
+  return statusText(rep, now) + (rep?.fresh && rep.liftsOpen ? '' : opening);
+}
+
+function statusText(rep: ReportData | null | undefined, now: Date): string {
   if (!rep) return 'unknown (no resort report)';
   if (!rep.fresh) {
     if (!rep.updatedAt) return 'unknown (no current report)';
@@ -107,7 +135,11 @@ const SOURCE_TEXT: Record<SourceKey, string> = {
   avalanche: 'avalanche forecast',
   roads: 'road conditions',
   report: 'resort snow report',
+  expert: 'local forecaster',
 };
+
+/** A local forecaster's discussion older than this isn't about the current forecast. */
+const EXPERT_MAX_AGE_DAYS = 4;
 
 export interface Brief {
   resort: string;
@@ -130,8 +162,10 @@ export function buildBrief(r: ResortData, now: Date): Brief {
     resort: { name: r.name, region: r.region, baseFt: fmtFt(r.baseFt), summitFt: fmtFt(r.summitFt) },
     writtenFor: `${fmtDay(now.toLocaleDateString('en-CA', { timeZone: r.tz }))}, ${now.toLocaleTimeString('en-US', { timeZone: r.tz, hour: 'numeric', minute: '2-digit' })} Pacific`,
     howToRead:
-      'Snow in inches. "X (A-B)" means best estimate X, likely range A to B (middle half of ensemble members, or the spread of models when ensembles are missing). "<1" means a dusting under an inch. Daytime is 5am-5pm, overnight is 5pm-5am the next morning. "models" are single runs of each deterministic model (GFS, ECMWF, ICON, GEM, HRRR, NBM); the ensembles are separate and only feed the ranges. Gusts and temperatures are forecasts, not measurements.',
+      'Snow in inches. "X (A-B)" means best estimate X, likely range A to B (middle half of ensemble members, or the spread of models when ensembles are missing). "<1" means a dusting under an inch. Daytime is 5am-5pm, overnight is 5pm-5am the next morning. "models" are single runs of each forecast model (GFS, ECMWF, ICON, GEM, ECMWF AI, and the short-range HRRR, NAM 3km and NBM); "NWS forecasters" is the hand-edited forecast from the local National Weather Service office. The ensembles are separate and only feed the ranges. Gusts and temperatures are forecasts, not measurements.',
     resortStatus: resortStatus(r, now),
+    ...(r.localNotes?.length ? { localKnowledge: r.localNotes } : {}),
+    ...localExpert(r, now),
     snowOnGround: snowOnGround(r),
     next5Days: f ? f.days.slice(0, 5).map((d, i) => nearDay(d, f.periods[2 * i], f.periods[2 * i + 1], r)) : 'unavailable',
     days6to16: f ? f.days.slice(5).map((d) => farDay(d, r)) : 'unavailable',

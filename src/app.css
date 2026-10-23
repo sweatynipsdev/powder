@@ -1,58 +1,49 @@
-/* Tokens. Dark is the default; light follows the OS. Chart colors are the validated
-   palette from the dataviz method (5 categorical slots pass every check in both modes). */
+/* Dark theme modeled on OpenSnow's layout language: navy top bar, card-on-plane, a blue
+   accent, orange for big snow, purple for the 6-10 day outlook, yellow "estimated" badges.
+   Chart series colors are the validated dataviz palette (dark steps). */
 :root {
   color-scheme: dark;
-  --page: #0d0d0d;
-  --surface-1: #1a1a19;
-  --surface-2: #232322;
-  --text-primary: #f0efec;
-  --text-secondary: #c3c2b7;
-  --text-muted: #898781;
-  --grid: #2c2c2a;
-  --axis: #383835;
-  --hairline: rgba(255, 255, 255, 0.1);
+  --page: #0d1015;
+  --bar: #18222e;
+  --card: #161a21;
+  --card-2: #1e232c;
+  --card-3: #262c37;
+  --hairline: rgba(255, 255, 255, 0.08);
+  --grid: #2a2f38;
+  --axis: #3a404b;
 
-  --series-1: #3987e5; /* blend / our forecast */
+  --text: #eef1f5;
+  --text-2: #b2bac6;
+  --muted: #7e8796;
+
+  --accent: #3d9be9;
+  --snow: #3d9be9;
+  --snow-big: #f39a3a;
+  --outlook: #a48ff0;
+  --estimated: #d8b44c;
+  --closed: #ef6b5f;
+  --open: #3ccf7c;
+
+  /* Validated categorical slots (dataviz palette, dark). */
+  --series-1: #3987e5;
   --series-2: #d95926;
   --series-3: #199e70;
   --series-4: #c98500;
   --series-5: #d55181;
-  --wash-1: rgba(57, 135, 229, 0.16);
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --wash-1: rgba(57, 135, 229, 0.18);
   --band-neutral: rgba(255, 255, 255, 0.06);
 
   --good: #0ca30c;
   --warning: #fab219;
   --serious: #ec835a;
   --critical: #d03b3b;
-  --on-warning: #0b0b0b;
-  --on-status: #ffffff;
 
-  --radius: 14px;
-  --gap: 12px;
+  --radius: 16px;
+  --gap: 14px;
   --font: system-ui, -apple-system, 'Segoe UI', sans-serif;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color-scheme: light;
-    --page: #f9f9f7;
-    --surface-1: #fcfcfb;
-    --surface-2: #f0efec;
-    --text-primary: #0b0b0b;
-    --text-secondary: #52514e;
-    --text-muted: #898781;
-    --grid: #e1e0d9;
-    --axis: #c3c2b7;
-    --hairline: rgba(11, 11, 11, 0.1);
-    --series-1: #2a78d6;
-    --series-2: #eb6834;
-    --series-3: #1baf7a;
-    --series-4: #eda100;
-    --series-5: #e87ba4;
-    --wash-1: rgba(42, 120, 214, 0.12);
-    --band-neutral: rgba(11, 11, 11, 0.05);
-    --on-warning: #0b0b0b;
-  }
+  --tabbar-h: 58px;
 }
 
 *,
@@ -68,7 +59,7 @@ html {
 body {
   margin: 0;
   background: var(--page);
-  color: var(--text-primary);
+  color: var(--text);
   font-family: var(--font);
   font-size: 16px;
   line-height: 1.45;
@@ -77,7 +68,8 @@ body {
 }
 
 a {
-  color: inherit;
+  color: var(--accent);
+  text-decoration: none;
 }
 
 button {
@@ -89,27 +81,41 @@ h1,
 h2,
 h3 {
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
 }
 
-h2 {
-  font-size: 17px;
-  font-weight: 650;
+h1 {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+/* Section titles sit on the page plane above their card, like OpenSnow. */
+.section-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 10px 2px 10px;
+}
+
+.section-sub {
+  margin: -6px 2px 10px;
+  color: var(--muted);
+  font-size: 14px;
 }
 
 .card {
-  background: var(--surface-1);
+  background: var(--card);
   border: 1px solid var(--hairline);
   border-radius: var(--radius);
   padding: 16px;
 }
 
 .muted {
-  color: var(--text-muted);
+  color: var(--muted);
 }
 
 .secondary {
-  color: var(--text-secondary);
+  color: var(--text-2);
 }
 
 .small {
@@ -130,8 +136,21 @@ h2 {
 }
 
 :focus-visible {
-  outline: 2px solid var(--series-1);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* "Estimated" / "Not current" style outlined badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 6px;
+  border: 1.5px solid currentColor;
+  color: var(--estimated);
+  white-space: nowrap;
 }
 
 /* Status pill: always icon + label, never color alone. */
@@ -158,8 +177,8 @@ h2 {
   background: color-mix(in srgb, var(--critical) 30%, transparent);
 }
 .status.neutral {
-  background: var(--surface-2);
-  color: var(--text-secondary);
+  background: var(--card-2);
+  color: var(--text-2);
 }
 .status .dot {
   width: 8px;
@@ -180,7 +199,33 @@ h2 {
   background: var(--critical);
 }
 .status.neutral .dot {
-  background: var(--text-muted);
+  background: var(--muted);
+}
+
+/* Pill buttons (Current / History style) */
+.pill {
+  border: 1px solid var(--hairline);
+  background: var(--card);
+  color: var(--text-2);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pill.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Wide tables scroll sideways inside their card, with a sticky label column. */
+.hscroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.hscroll::-webkit-scrollbar {
+  display: none;
 }
 
 table.data {
@@ -192,7 +237,7 @@ table.data {
 table.data th,
 table.data td {
   text-align: right;
-  padding: 5px 6px;
+  padding: 6px 6px;
   border-bottom: 1px solid var(--grid);
 }
 table.data th:first-child,
@@ -200,6 +245,6 @@ table.data td:first-child {
   text-align: left;
 }
 table.data th {
-  color: var(--text-muted);
+  color: var(--muted);
   font-weight: 600;
 }

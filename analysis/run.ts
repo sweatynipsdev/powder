@@ -17,7 +17,7 @@ import { DEFAULT_OUT_DIR } from '../pipeline/run';
 import type { DataIndex, Ranking, ResortAnalysis, ResortData, UsageRun } from '../shared/types';
 import { buildBrief, buildRankingBrief } from './brief';
 import { fingerprint } from './fingerprint';
-import { findUngrounded, metaReferences } from './grounding';
+import { findUngrounded, metaReferences, tidyAmounts } from './grounding';
 import { RANKING_SYSTEM, rankingUserMessage, RESORT_SYSTEM, resortUserMessage, retryNote } from './prompt';
 import { rankingSchema, resortAnalysisSchema, type ResortAnalysisOutput } from './schema';
 import { addUsage, appendUsageCsv, type CallUsage, costUsd, monthToDate, ZERO_USAGE } from './usage';
@@ -45,7 +45,7 @@ export function needsRewrite(r: ResortData, mode: Mode, at: Date): { rewrite: bo
   return { rewrite: false, reason: 'unchanged' };
 }
 
-const analysisTexts = (a: ResortAnalysisOutput) => [a.headline, a.next5Days, a.extended6to16, a.modelAgreement.summary, a.whatToWatch];
+const analysisTexts = (a: ResortAnalysisOutput) => [a.headline, a.summary, a.next5Days, a.extended6to16, a.modelAgreement.summary, a.whatToWatch];
 
 export interface CallLog {
   label: string;
@@ -60,6 +60,14 @@ export interface AnalyzeResult {
   skipped: { id: string; reason: string }[];
   failed: { id: string; error: string }[];
   calls: CallLog[];
+}
+
+/** Applies `f` to every string in a parsed output, keeping its shape. */
+function mapStrings<T>(v: T, f: (s: string) => string): T {
+  if (typeof v === 'string') return f(v) as T;
+  if (Array.isArray(v)) return v.map((x) => mapStrings(x, f)) as T;
+  if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, mapStrings(x, f)])) as T;
+  return v;
 }
 
 /**
@@ -77,10 +85,11 @@ async function checkedCall<S extends z.ZodType>(
     calls.push({ label: `${req.label}#${attempt}`, usage: res.usage, stopReason: res.stopReason });
     if (res.stopReason === 'refusal') throw new Error('model declined the request');
     if (!res.parsed) throw new Error(`no parsable output (stop_reason ${res.stopReason})`);
-    const texts = req.texts(res.parsed);
+    const parsed = mapStrings(res.parsed, tidyAmounts);
+    const texts = req.texts(parsed);
     const ungrounded = findUngrounded(texts, req.brief);
     const meta = metaReferences(texts);
-    if ((ungrounded.length === 0 && meta.length === 0) || attempt === 2) return { parsed: res.parsed, ungrounded };
+    if ((ungrounded.length === 0 && meta.length === 0) || attempt === 2) return { parsed, ungrounded };
     user = req.user + retryNote(ungrounded, meta);
   }
 }
@@ -206,6 +215,7 @@ function sampleMarkdown(result: AnalyzeResult, run: UsageRun, effort: Effort): s
     lines.push(
       `### ${a.headline}`,
       '',
+      ...(a.summary ? [`_${a.summary}_`, ''] : []),
       '**Next 5 days**',
       '',
       a.next5Days,

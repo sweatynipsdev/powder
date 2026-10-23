@@ -43,11 +43,17 @@ jobs:
 
       - run: npm ci
 
+      # The local model: learn each mountain's per-model bias from the forecasts and
+      # observations logged in history/ (a no-op until enough snow events pile up).
+      - name: Learn local model corrections
+        run: npm run calibrate
+
       - name: Fetch and process forecast data
         run: npm run pipeline
         env:
           # The live site is the previous run's state: stale fallbacks and change detection.
           PREVIOUS_DATA_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/data/
+          POWDER_RECORD_HISTORY: '1'
 
       - name: Write the daily analysis
         run: npm run analyze -- ${{ inputs.force_analysis && '--force' || '' }}
@@ -64,14 +70,15 @@ jobs:
       - id: deploy
         uses: actions/deploy-pages@v5
 
-      # One line per run: a cost history, and the commit keeps GitHub from switching off
-      # this schedule (it does that after 60 days without repository activity).
-      - name: Commit the usage log
+      # One line per run: a cost history plus the forecast/observation log the local model
+      # learns from. The commit also keeps GitHub from switching off this schedule (it does
+      # that after 60 days without repository activity).
+      - name: Commit the usage log and forecast history
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add logs/usage.csv
+          git add logs/usage.csv history/
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Usage log $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
+          git commit -m "Usage log and history $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
           git pull --rebase
           git push

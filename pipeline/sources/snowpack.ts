@@ -245,7 +245,7 @@ export function parseAcis(cfg: SnowpackConfig, json: AcisResponse, today: string
       d7: { depthIn: depthChange(7), sweIn: null },
     },
     newSnow: { h24: sumSnow(1), h48: sumSnow(2), d7: sumSnow(7) },
-    series: days.map((d) => ({ date: d.date, depthIn: d.depth, sweIn: null })),
+    series: days.map((d) => ({ date: d.date, depthIn: d.depth, sweIn: null, newIn: d.snow })),
     note: `Volunteer observer in town (${cfg.elevFt.toLocaleString('en-US')} ft), reported each morning${lagDays > 1 ? `; latest report is ${lagDays} days old` : ''}.`,
   };
 }

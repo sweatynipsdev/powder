@@ -32,7 +32,8 @@ describe('pipeline replay', () => {
 
   it('gets every configured source for every resort', () => {
     for (const r of result.resorts) {
-      for (const key of ['forecast', 'cpc', 'snowpack', 'nws', 'alerts', 'afd', 'avalanche', 'roads', 'report'] as const) {
+      for (const key of ['forecast', 'cpc', 'snowpack', 'nws', 'alerts', 'afd', 'avalanche', 'roads', 'report', 'expert'] as const) {
+        if (!r[key]) continue; // not configured (only Mammoth has a local expert)
         const s = r[key];
         if (s === null) continue; // not configured (Big Bear has no avalanche center)
         expect(s.status.ok, `${r.id}/${key}: ${s.status.error}`).toBe(true);
@@ -79,6 +80,27 @@ describe('pipeline replay', () => {
     }
   });
 
+  it("adds the NWS forecasters' grid as its own model", () => {
+    for (const r of result.resorts) {
+      const f = r.forecast.data!;
+      expect(f.models.find((m) => m.id === 'nws')?.label).toBe('NWS forecasters');
+      expect(f.nwsGridFt!.summit).toBeGreaterThan(f.nwsGridFt!.base! - 1);
+      expect(f.days[0].snow.summit.models.nws).toBeDefined();
+    }
+    expect(result.resorts.find((r) => r.id === 'mammoth')!.expert!.status.ok).toBe(true);
+  });
+
+  it("scales a model by the mountain's learned bias", async () => {
+    const calibrated = await runPipeline(config, EMPTY_PREVIOUS, recordedAt, { palisades: { gfs: { factor: 1.5, events: 8 } } });
+    const total = (rs: PipelineResult['resorts'], id: string) => rs.find((r) => r.id === id)!.forecast.data!.cumulative[6].summit.models;
+    const raw = total(result.resorts, 'palisades').gfs!;
+    expect(raw).toBeGreaterThan(0);
+    expect(total(calibrated.resorts, 'palisades').gfs!).toBeCloseTo(raw * 1.5, 0);
+    expect(total(calibrated.resorts, 'palisades').ecmwf).toBe(total(result.resorts, 'palisades').ecmwf);
+    expect(total(calibrated.resorts, 'alpine').gfs).toBe(total(result.resorts, 'alpine').gfs);
+    expect(calibrated.resorts.find((r) => r.id === 'palisades')!.forecast.data!.calibration).toEqual({ gfs: { factor: 1.5, events: 8 } });
+  });
+
   it('keeps the summit at least as snowy as the base', () => {
     for (const r of result.resorts) {
       const w = r.forecast.data!.windows.next7d;
@@ -89,7 +111,8 @@ describe('pipeline replay', () => {
   it('writes a home-screen summary for each resort', () => {
     expect(result.index.resorts.map((r) => r.id)).toEqual(config.resorts.map((r) => r.id));
     for (const s of result.index.resorts) {
-      expect(s.strip).toHaveLength(20);
+      expect(s.days).toHaveLength(10);
+      expect(s.status.text).toBeTruthy();
       expect(s.windows).not.toBeNull();
       expect(s.staleSources).toEqual([]);
     }

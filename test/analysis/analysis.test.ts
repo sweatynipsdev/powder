@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { buildBrief, buildRankingBrief, resortStatus, snowLevelMeaning } from '../../analysis/brief';
 import { fingerprint } from '../../analysis/fingerprint';
-import { allowedNumbers, extractClaims, findUngrounded, metaReferences } from '../../analysis/grounding';
+import { allowedNumbers, extractClaims, findUngrounded, metaReferences, tidyAmounts } from '../../analysis/grounding';
 import { RESORT_SYSTEM } from '../../analysis/prompt';
 import { analyze, needsRewrite, usageRun } from '../../analysis/run';
 import { appendUsageCsv, costUsd, monthToDate } from '../../analysis/usage';
@@ -68,7 +68,7 @@ describe('brief', () => {
   it('states whether the resort is open', () => {
     expect(resortStatus(palisades, recordedAt)).toMatch(/^not open: the last resort report is from Mon Jun 8/);
     const mammoth = resorts.find((r) => r.id === 'mammoth')!;
-    expect(resortStatus(mammoth, recordedAt)).toBe('not open yet: 0 of 25 lifts running');
+    expect(resortStatus(mammoth, recordedAt)).toMatch(/^not open yet: 0 of 25 lifts running; scheduled to open \w+ Nov 13$/);
     const open = structuredClone(mammoth);
     open.report!.data!.liftsOpen = 12;
     expect(resortStatus(open, recordedAt)).toBe('open: 12 of 25 lifts running');
@@ -78,6 +78,18 @@ describe('brief', () => {
     const b = JSON.parse(buildBrief(palisades, recordedAt).json);
     expect(b.nwsDiscussion.appliesTo).toMatch(/Lake Tahoe and the Sierra crest near I-80/);
     expect(b.snowOnGround).toMatch(/none at the Palisades Tahoe SNOTEL station/);
+  });
+
+  it("hands the writer local knowledge and a recent local forecaster's discussion", () => {
+    const mammoth = resorts.find((r) => r.id === 'mammoth')!;
+    const b = JSON.parse(buildBrief(mammoth, recordedAt).json);
+    expect(b.localKnowledge.length).toBeGreaterThan(0);
+    expect(b.localExpert.who).toBe('Steve Taylor, The Mammoth Snowman (local forecaster)');
+    expect(b.localExpert.discussion).toBe(mammoth.expert!.data!.text);
+    // A forecaster's week-old call is no longer a fair comparison.
+    const later = new Date(recordedAt.getTime() + 7 * 86_400_000);
+    expect(JSON.parse(buildBrief(mammoth, later).json).localExpert).toBeUndefined();
+    expect(JSON.parse(buildBrief(palisades, recordedAt).json).localExpert).toBeUndefined();
   });
 
   it('builds a ranking brief for every resort', () => {
@@ -127,6 +139,15 @@ describe('grounding', () => {
     expect(metaReferences(['The brief shows 1 inch.', 'Per the JSON, dry.'])).toEqual(['the brief', 'json']);
     expect(metaReferences(['A brief shower Friday.'])).toEqual([]);
     expect(metaReferences(['A wetScenario of 36, and days6to10Summit shows 8.'])).toEqual(['wetScenario', 'days6to10Summit']);
+  });
+
+  it('rewrites the brief shorthand "6 (0-10)" as a plain range', () => {
+    expect(tidyAmounts('A storm brings 6 (0-10) inches; Friday <1 (0-1). Range 2-5 (wide).')).toBe('A storm brings 0-10 inches; Friday 0-1. Range 2-5 (wide).');
+  });
+
+  it("lets the write-up quote a local forecaster's numbers", () => {
+    const local = JSON.stringify({ localExpert: { discussion: 'Totals of 12 to 18 on the upper mountain by Sunday.' } });
+    expect(findUngrounded(['Their call is 12-18 inches up top.'], local)).toEqual([]);
   });
 
   it('catches a planted number against a real brief', () => {
@@ -181,6 +202,7 @@ function fakeCaller(outputs: (Record<string, unknown> | 'refusal')[]): Caller & 
 
 const good = {
   headline: 'Dry weekend, watching next week',
+  summary: 'A dry weekend, then a possible storm early next month.',
   next5Days: 'Mostly dry with less than an inch up top Friday.',
   extended6to16: 'A pattern change is possible early November but confidence is low.',
   modelAgreement: { summary: 'Models agree on a dry stretch.', confidence: 'high' },

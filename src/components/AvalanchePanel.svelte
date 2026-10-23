@@ -20,9 +20,8 @@
   );
 </script>
 
-<section class="card" aria-labelledby="avy">
+<section class="card" aria-label="Avalanche forecast">
   <div class="head">
-    <h2 id="avy">Avalanche</h2>
     <StaleChip {status} hasData={!!a} />
   </div>
   {#if a}

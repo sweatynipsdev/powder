@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const resortAnalysisSchema = z.object({
   headline: z.string(),
+  summary: z.string(),
   next5Days: z.string(),
   extended6to16: z.string(),
   modelAgreement: z.object({

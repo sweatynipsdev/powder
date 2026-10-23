@@ -49,7 +49,7 @@ export function numbersIn(text: string): number[] {
 export type Allowed = Record<Unit | 'any', number[]>;
 
 /** Fields written by people (NWS, avalanche center, Caltrans): their numbers count for any unit. */
-const FREE_TEXT = /^(nwsDiscussion|nwsForecast|avalanche|alerts|notes|enso)$/;
+const FREE_TEXT = /^(nwsDiscussion|nwsForecast|avalanche|alerts|notes|enso|localKnowledge|localExpert)$/;
 
 /** Unit implied by a field name, for values the brief stores without a unit. */
 function unitOfKey(key: string, parent: string | undefined): Unit | null {
@@ -100,6 +100,11 @@ export function metaReferences(texts: string[]): string[] {
     for (const m of t.matchAll(/\b[a-z][a-z0-9]*[A-Z][A-Za-z0-9]*\b/g)) found.add(m[0]);
   }
   return [...found];
+}
+
+/** "6 (0-10) inches" → "0-10 inches": the brief's best-then-range shorthand reads badly in prose. */
+export function tidyAmounts(text: string): string {
+  return text.replace(/(?<![\w.])(?:<1|\d+) \((\d+-\d+)\)/g, '$1');
 }
 
 export function findUngrounded(texts: string[], briefJson: string): string[] {

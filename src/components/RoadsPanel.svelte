@@ -12,9 +12,8 @@
   let { roads, status, cams }: Props = $props();
 </script>
 
-<section class="card" aria-labelledby="roads">
+<section class="card" aria-label="Roads">
   <div class="head">
-    <h2 id="roads">Roads</h2>
     <StaleChip {status} hasData={!!roads} />
   </div>
   {#if roads}
@@ -89,6 +88,6 @@
     aspect-ratio: 16 / 10;
     object-fit: cover;
     border-radius: 8px;
-    background: var(--surface-2);
+    background: var(--card-2);
   }
 </style>

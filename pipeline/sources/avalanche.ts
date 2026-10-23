@@ -13,6 +13,8 @@ interface ProductResponse {
   published_time?: string | null;
   expires_time?: string | null;
   bottom_line?: string | null;
+  hazard_discussion?: string | null;
+  weather_discussion?: string | null;
   danger?: { lower: number | null; middle: number | null; upper: number | null; valid_day: string }[];
   forecast_avalanche_problems?: { name: string }[] | null;
   forecast_zone?: { id: number; name: string; url: string | null }[];
@@ -27,6 +29,15 @@ function danger(d: ProductResponse['danger'], day: string): AvalancheDanger | nu
   if (!row) return null;
   const n = (v: number | null) => (typeof v === 'number' ? v : -1);
   return { upper: n(row.upper), middle: n(row.middle), lower: n(row.lower) };
+}
+
+/** The forecasters' weather and hazard write-ups: local observations the models don't have. */
+function discussionText(json: ProductResponse): string | null {
+  const parts = [json.weather_discussion, json.hazard_discussion]
+    .filter((p): p is string => !!p && p.trim().length > 0)
+    .map(htmlToText)
+    .filter(Boolean);
+  return parts.length ? truncate(parts.join('\n\n'), 1500) : null;
 }
 
 export function parseAvalanche(center: string, zoneId: number, json: ProductResponse): AvalancheData {
@@ -46,6 +57,7 @@ export function parseAvalanche(center: string, zoneId: number, json: ProductResp
     overall,
     overallText: overall >= 0 ? DANGER_TEXT[overall] : 'No rating yet',
     bottomLine: json.bottom_line ? truncate(htmlToText(json.bottom_line), 900) : null,
+    discussion: discussionText(json),
     problems: (json.forecast_avalanche_problems ?? []).map((p) => p.name),
   };
 }

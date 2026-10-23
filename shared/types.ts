@@ -4,7 +4,13 @@
 export type Elev = 'summit' | 'base';
 export const ELEVS: Elev[] = ['summit', 'base'];
 
-export type ModelId = 'gfs' | 'ecmwf' | 'icon' | 'gem' | 'hrrr' | 'nbm';
+/** `aifs` is ECMWF's AI model; `nws` is the NWS forecasters' own (hand-edited) gridded forecast. */
+export type ModelId = 'gfs' | 'ecmwf' | 'icon' | 'gem' | 'aifs' | 'hrrr' | 'nam' | 'nbm' | 'nws';
+
+export type WeatherIcon = 'clear' | 'partly' | 'cloudy' | 'snow' | 'rain' | 'mix';
+
+/** Snow quality from the snow-to-liquid ratio: higher ratio = lighter, drier snow. */
+export type SnowQuality = 'excellent' | 'good' | 'okay';
 
 export interface SourceStatus {
   /** Fetched successfully on this run. */
@@ -60,8 +66,41 @@ export interface Period {
   snowLevelFt: number | null;
   windMph: number | null;
   gustMph: number | null;
+  /** Prevailing wind direction, degrees (meteorological: where it blows from). */
+  windDir: number | null;
+  /** Highest hourly chance of precipitation in the period, percent. */
+  popPct: number | null;
+  cloudPct: number | null;
+  icon: WeatherIcon;
+  /** Snow-to-liquid ratio (e.g. 12 for 12:1) when there's enough snow to say. */
+  slr: Record<Elev, number | null>;
+  quality: Record<Elev, SnowQuality | null>;
   /** Precipitation expected with the snow level above the base. */
   rainAtBase: boolean;
+}
+
+/** The next 72 hours, hour by hour (blend), for the hourly table. Stamps are hour-ending. */
+export interface HourlyData {
+  time: string[];
+  tempF: Record<Elev, (number | null)[]>;
+  snowIn: Record<Elev, (number | null)[]>;
+  precipIn: (number | null)[];
+  slr: (number | null)[];
+  popPct: (number | null)[];
+  snowLevelFt: (number | null)[];
+  windMph: (number | null)[];
+  gustMph: (number | null)[];
+  windDir: (number | null)[];
+  cloudPct: (number | null)[];
+  icon: WeatherIcon[];
+}
+
+/** A per-resort correction learned from forecast-vs-observed history. */
+export interface ModelCalibration {
+  /** Multiplier applied to the model's snow (1 = unchanged). */
+  factor: number;
+  /** Snow events it was learned from. */
+  events: number;
 }
 
 export interface DaySummary {
@@ -97,6 +136,11 @@ export interface ForecastData {
   ensembles: EnsembleInfo[];
   periods: Period[];
   days: DaySummary[];
+  hourly: HourlyData;
+  /** Elevations of the NWS forecasters' grid cells, when that forecast is included. */
+  nwsGridFt: Record<Elev, number | null> | null;
+  /** Local-model corrections applied to this resort's blend, by model. */
+  calibration: Partial<Record<ModelId, ModelCalibration>>;
   /** Running total from the first period through the end of each day (the model "plume"). */
   cumulative: ({ date: string } & Record<Elev, SnowAmount>)[];
   windows: {
@@ -161,8 +205,8 @@ export interface SnowpackData {
   change: { h24: SnowpackChange; h48: SnowpackChange; d7: SnowpackChange };
   /** Observer-reported new snow (CoCoRaHS only). */
   newSnow: { h24: number | null; h48: number | null; d7: number | null } | null;
-  /** Daily values, oldest first, ~30 days. */
-  series: { date: string; depthIn: number | null; sweIn: number | null }[];
+  /** Daily values, oldest first, ~30 days. `newIn` is observer-measured new snow (CoCoRaHS only). */
+  series: { date: string; depthIn: number | null; sweIn: number | null; newIn?: number | null }[];
   note: string | null;
 }
 
@@ -222,6 +266,8 @@ export interface AvalancheData {
   overall: number;
   overallText: string;
   bottomLine: string | null;
+  /** The avalanche forecasters' weather/hazard discussion (local experts), trimmed. */
+  discussion: string | null;
   problems: string[];
 }
 
@@ -279,10 +325,24 @@ export interface Link {
   url: string;
 }
 
+/** The latest post from a local human forecaster (e.g. the Mammoth Snowman). */
+export interface ExpertPost {
+  source: string;
+  author: string | null;
+  title: string;
+  url: string;
+  publishedAt: string | null;
+  /** A short excerpt for the card; the full text only goes to the writer. */
+  excerpt: string;
+  text: string;
+}
+
 export interface ResortAnalysis {
   generatedAt: string;
   model: string;
   headline: string;
+  /** 2–3 sentence overview (older analyses may not have it). */
+  summary?: string;
   next5Days: string;
   extended6to16: string;
   modelAgreement: { summary: string; confidence: Confidence };
@@ -314,11 +374,31 @@ export interface ResortData {
   avalanche: Sourced<AvalancheData> | null;
   roads: Sourced<RoadsData> | null;
   report: Sourced<ReportData> | null;
+  /** A local human forecaster's latest post, for resorts that have one configured. */
+  expert?: Sourced<ExpertPost> | null;
+  /** Hand-written local knowledge for this mountain (from resorts.json). */
+  localNotes?: string[];
+  /** Scheduled opening day, YYYY-MM-DD. */
+  openingDate?: string;
   links: { website: string | null; webcams: string | null; cams: Link[]; radar: string | null; roadCams: Link[] };
   analysis: ResortAnalysis | null;
 }
 
-export type SourceKey = 'forecast' | 'cpc' | 'snowpack' | 'nws' | 'alerts' | 'afd' | 'avalanche' | 'roads' | 'report';
+export type SourceKey = 'forecast' | 'cpc' | 'snowpack' | 'nws' | 'alerts' | 'afd' | 'avalanche' | 'roads' | 'report' | 'expert';
+
+export type OpenState = 'open' | 'not-open' | 'closed' | 'unknown';
+
+export interface ResortStatus {
+  state: OpenState;
+  text: string;
+}
+
+/** Snow in the last 24h: the resort's report when current, otherwise a station estimate. */
+export interface Last24 {
+  inches: number | null;
+  source: 'reported' | 'estimated' | null;
+  at: string | null;
+}
 
 export interface ResortSummary {
   id: string;
@@ -327,9 +407,12 @@ export interface ResortSummary {
   region: string;
   baseFt: number;
   summitFt: number;
+  status: ResortStatus;
+  last24: Last24;
   windows: ForecastData['windows'] | null;
-  /** Summit blend per day/night period for the first 10 days. */
-  strip: { date: string; kind: 'day' | 'night'; label: string; snowIn: number | null }[];
+  buckets: Pick<ForecastData['buckets'], 'd1_5' | 'd6_10'> | null;
+  /** Daily (5am-5am) blend for the first 10 days, both elevations. */
+  days: { date: string; summit: number | null; base: number | null }[];
   reported: { h24: number | null; updatedAt: string | null; fresh: boolean } | null;
   alerts: { event: string; headline: string; winter: boolean }[];
   avalanche: { overall: number; text: string } | null;

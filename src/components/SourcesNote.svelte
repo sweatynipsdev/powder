@@ -18,6 +18,7 @@
     avalanche: 'avalanche.org',
     roads: 'Caltrans',
     report: 'Resort report',
+    expert: 'Local expert',
   };
 
   let rows = $derived(

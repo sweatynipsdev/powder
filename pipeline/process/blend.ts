@@ -17,6 +17,11 @@ export interface ModelSeries {
   freezingFt: Hourly;
   wind: Hourly;
   gust: Hourly;
+  windDir: Hourly;
+  cloud: Hourly;
+  pop: Hourly;
+  /** Snow already forecast by the source (NWS forecasters); skips our temperature-based conversion. */
+  snow?: Hourly;
 }
 
 export interface MemberSeries {
@@ -24,8 +29,8 @@ export interface MemberSeries {
   temp: Hourly;
 }
 
-/** HRRR and NBM only count toward the blend in the first 48 hours. */
-export const SHORT_RANGE_MODELS: ReadonlySet<ModelId> = new Set(['hrrr', 'nbm']);
+/** HRRR, NAM and NBM only count toward the blend in the first 48 hours. */
+export const SHORT_RANGE_MODELS: ReadonlySet<ModelId> = new Set(['hrrr', 'nam', 'nbm']);
 export const SHORT_RANGE_HOURS = 48;
 /** A window needs this share of its hours covered to report a total. */
 export const MIN_COVERAGE = 0.75;
@@ -76,7 +81,8 @@ export function weightWithEnsemble(det: Hourly, ensMean: Hourly, nowIdx: number)
 
 export const round1 = (n: number) => Math.round(n * 10) / 10;
 
-export function hourlySnow(s: { precip: Hourly; temp: Hourly }): Hourly {
+export function hourlySnow(s: { precip: Hourly; temp: Hourly; snow?: Hourly }): Hourly {
+  if (s.snow) return s.snow;
   return s.precip.map((p, i) => {
     const t = s.temp[i];
     return p === null || t === null || p === undefined || t === undefined ? null : snowFromPrecip(p, t);

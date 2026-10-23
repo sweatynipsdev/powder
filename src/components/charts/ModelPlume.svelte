@@ -202,7 +202,7 @@
     stroke: var(--axis);
   }
   .tick {
-    fill: var(--text-muted);
+    fill: var(--muted);
     font-size: 11px;
     font-variant-numeric: tabular-nums;
   }
@@ -219,7 +219,7 @@
     stroke-width: 2.5;
   }
   .dot {
-    stroke: var(--surface-1);
+    stroke: var(--card);
     stroke-width: 2;
   }
   .leader {
@@ -227,12 +227,12 @@
     stroke-width: 1;
   }
   .end {
-    fill: var(--text-secondary);
+    fill: var(--text-2);
     font-size: 11px;
     font-variant-numeric: tabular-nums;
   }
   .crosshair {
-    stroke: var(--text-muted);
+    stroke: var(--muted);
     stroke-width: 1;
   }
 </style>

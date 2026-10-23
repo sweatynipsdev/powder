@@ -179,7 +179,7 @@
     overflow: visible;
   }
   .panel {
-    fill: var(--text-secondary);
+    fill: var(--text-2);
     font-size: 11px;
     font-weight: 600;
   }
@@ -190,14 +190,14 @@
     stroke: var(--axis);
   }
   .ref {
-    stroke: var(--text-muted);
+    stroke: var(--muted);
   }
   .sub {
-    fill: var(--text-muted);
+    fill: var(--muted);
     font-weight: 400;
   }
   .tick {
-    fill: var(--text-muted);
+    fill: var(--muted);
     font-size: 10.5px;
     font-variant-numeric: tabular-nums;
   }
@@ -214,11 +214,11 @@
     fill: var(--series-1);
   }
   .dot {
-    stroke: var(--surface-1);
+    stroke: var(--card);
     stroke-width: 2;
   }
   .crosshair {
-    stroke: var(--text-muted);
+    stroke: var(--muted);
     stroke-width: 1;
   }
 </style>

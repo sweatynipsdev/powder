@@ -38,7 +38,7 @@
     top: 4px;
     z-index: 2;
     pointer-events: none;
-    background: var(--surface-2);
+    background: var(--card-2);
     border: 1px solid var(--hairline);
     border-radius: 10px;
     padding: 8px 10px;
@@ -48,7 +48,7 @@
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
   }
   .title {
-    color: var(--text-muted);
+    color: var(--muted);
     margin-bottom: 4px;
   }
   .row {
@@ -64,9 +64,9 @@
     flex: none;
   }
   strong {
-    color: var(--text-primary);
+    color: var(--text);
   }
   .label {
-    color: var(--text-secondary);
+    color: var(--text-2);
   }
 </style>

@@ -20,9 +20,10 @@
   }
 </script>
 
-<section class="card" aria-labelledby="cpc">
+<!-- The page's section title names this card, so its own header is just the time span. -->
+<section class="card" aria-label="Long-range outlook">
   <div class="head">
-    <h2 id="cpc">Long-range outlook</h2>
+    <span class="small muted">Weeks to months ahead</span>
     <StaleChip {status} hasData={!!cpc} />
   </div>
   {#if cpc}
@@ -60,6 +61,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 8px;
+    margin-bottom: 8px;
   }
   .strip {
     display: flex;
@@ -74,7 +76,7 @@
     display: grid;
     gap: 2px;
     align-content: start;
-    background: var(--surface-2);
+    background: var(--card-2);
     border-radius: 10px;
     padding: 8px 10px;
     scroll-snap-align: start;
@@ -93,7 +95,7 @@
     height: 8px;
     border-radius: 50%;
     flex: none;
-    background: var(--text-muted);
+    background: var(--muted);
   }
   /* Diverging pairs from the palette: warm/cool for temperature, wet/dry for precipitation. */
   .dot.temp.above {

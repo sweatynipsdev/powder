@@ -41,6 +41,13 @@ export function localDate(date: Date, tz: string, days = 0): string {
   return days === 0 ? d : addDays(d, days);
 }
 
+/** A wall-clock time in `tz` → the actual instant. */
+export function zonedTime(y: number, mo: number, d: number, h: number, mi: number, tz: string): Date {
+  const guess = Date.UTC(y, mo - 1, d, h, mi);
+  const shown = Date.parse(`${localIso(new Date(guess), tz)}:00Z`);
+  return new Date(guess - (shown - guess));
+}
+
 /** Calendar arithmetic on "YYYY-MM-DD" strings. */
 export function addDays(ymd: string, days: number): string {
   const [y, m, d] = ymd.split('-').map(Number);

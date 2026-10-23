@@ -12,10 +12,14 @@ const FT_TO_M = 0.3048;
 
 export const MODELS: { id: ModelId; om: string; label: string }[] = [
   { id: 'gfs', om: 'gfs_seamless', label: 'GFS' },
-  { id: 'ecmwf', om: 'ecmwf_ifs025', label: 'ECMWF' },
+  // ECMWF's full-resolution 9 km run (open data since 2025), not the 0.25° version.
+  { id: 'ecmwf', om: 'ecmwf_ifs', label: 'ECMWF' },
   { id: 'icon', om: 'icon_seamless', label: 'ICON' },
   { id: 'gem', om: 'gem_seamless', label: 'GEM' },
+  { id: 'aifs', om: 'ecmwf_aifs025_single', label: 'ECMWF AI' },
+  // Short-range, high-resolution: these resolve terrain best but only count for 48h.
   { id: 'hrrr', om: 'ncep_hrrr_conus', label: 'HRRR' },
+  { id: 'nam', om: 'ncep_nam_conus', label: 'NAM 3km' },
   { id: 'nbm', om: 'ncep_nbm_conus', label: 'NBM' },
 ];
 
@@ -24,7 +28,17 @@ export const ENSEMBLES: { id: string; om: string; suffix: string; label: string 
   { id: 'ecmwf-ens', om: 'ecmwf_ifs025', suffix: 'ecmwf_ifs025_ensemble', label: 'ECMWF ENS' },
 ];
 
-const DET_VARS = ['precipitation', 'snowfall', 'temperature_2m', 'freezing_level_height', 'wind_speed_10m', 'wind_gusts_10m'];
+const DET_VARS = [
+  'precipitation',
+  'snowfall',
+  'temperature_2m',
+  'freezing_level_height',
+  'wind_speed_10m',
+  'wind_gusts_10m',
+  'wind_direction_10m',
+  'cloud_cover',
+  'precipitation_probability',
+];
 
 interface OmLocation {
   elevation: number;
@@ -82,6 +96,9 @@ export function parseDeterministic(json: unknown): DeterministicResult {
         freezingFt: h[`freezing_level_height_${m.om}`] ?? [],
         wind: h[`wind_speed_10m_${m.om}`] ?? [],
         gust: h[`wind_gusts_10m_${m.om}`] ?? [],
+        windDir: h[`wind_direction_10m_${m.om}`] ?? [],
+        cloud: h[`cloud_cover_${m.om}`] ?? [],
+        pop: h[`precipitation_probability_${m.om}`] ?? [],
       };
       hours.set(m.id, Math.max(hours.get(m.id) ?? 0, precip.filter((v) => v !== null).length));
     }

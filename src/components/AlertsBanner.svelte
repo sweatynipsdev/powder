@@ -34,7 +34,7 @@
     gap: 6px;
   }
   .alert {
-    background: var(--surface-1);
+    background: var(--card);
     border: 1px solid var(--hairline);
     border-radius: 12px;
     padding: 8px 12px;

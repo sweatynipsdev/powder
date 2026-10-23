@@ -45,13 +45,13 @@
   }
   .line {
     fill: none;
-    stroke: var(--text-muted);
+    stroke: var(--muted);
     stroke-width: 2;
     stroke-linejoin: round;
   }
   .dot {
     fill: var(--series-1);
-    stroke: var(--surface-1);
+    stroke: var(--card);
     stroke-width: 2;
   }
 </style>

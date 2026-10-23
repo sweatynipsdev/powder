@@ -28,6 +28,8 @@ const resort = z.object({
   lon: z.number().min(-180).max(180),
   baseFt: z.number().positive(),
   summitFt: z.number().positive(),
+  /** An upper-mountain point, so the NWS forecasters' grid can be read near the summit too. */
+  summit: z.object({ lat: z.number(), lon: z.number() }).optional(),
   tz: z.string(),
   nws: z.object({
     afdOffice: z.string().length(3),
@@ -55,6 +57,33 @@ const resort = z.object({
       areas: z.array(z.string()).optional(),
       /** Additional feeds whose lifts/trails are summed in (Snow Summit into Big Bear). */
       extraResortIds: z.array(z.number().int()).default([]),
+    })
+    .optional(),
+  /** Local knowledge for the forecast writer, with the sources it came from. */
+  local: z
+    .object({
+      notes: z.array(z.string()).default([]),
+      sources: z.array(z.url()).default([]),
+      /** Scheduled opening day (YYYY-MM-DD), shown as "Opening Nov 25" until lifts run. */
+      openingDate: z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/)
+        .optional(),
+    })
+    .optional(),
+  /**
+   * A local human forecaster whose page is read for the writer (WordPress REST API). Their
+   * text is private input: the app shows only who, when and a link, never their words.
+   */
+  expert: z
+    .object({
+      adapter: z.literal('wordpress-page'),
+      source: z.string(),
+      author: z.string(),
+      api: z.url(),
+      url: z.url(),
+      /** Everything from this phrase on is boilerplate (FAQ, bio) and is dropped. */
+      cutAt: z.string().optional(),
     })
     .optional(),
   roads: z.array(roadSegment).default([]),
