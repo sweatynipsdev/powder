@@ -177,16 +177,16 @@
 
 **Produces:** `reuseData(ids: string[], source: { url?: string; dir?: string }, outDir: string): Promise<void>`. It builds on `loadPrevious`, throws `Error('live data incomplete: missing <ids>')` when the index or any resort is missing, and otherwise calls `writeOutput`.
 
-- [ ] Tests, with a temp dir as the source:
+- [x] Tests, with a temp dir as the source:
   - A complete set is written.
   - A missing resort throws, naming it.
-- [ ] Workflow:
+- [x] Workflow:
   - `actions/checkout` with `fetch-depth: 0`.
   - A `mode` step. A push sets `full` when `git diff --name-only ${{ github.event.before }} ${{ github.sha }}` touches a full-run path, or when `before` is all zeros; otherwise `reuse`. Schedule and dispatch are always `full`.
   - In `reuse` mode: run `npm run reuse-data`, and on failure set mode to `full`.
   - Calibrate, pipeline, analysis and the history commit run only when mode is `full`.
   - `timeout-minutes: 30`.
-- [ ] Commit.
+- [x] Commit.
 
 ### T9 — e2e and docs
 
@@ -239,3 +239,8 @@
 - [ ] Commit.
 
 ## Rulings
+
+- Ruling: the ranking card on Forecasts and the best-bet card both use the ranking's per-entry `day` and `reason`, and drop `bestDay`/`bestResort`/`summary` entirely. Why: those name the overall winner, which may not be a favorite. Cost if wrong: the AI's one-sentence overview is no longer shown anywhere; it's easy to bring back for phones whose favorites include the winner.
+- Ruling: when a write-up fails, `analyze` keeps the input resort object (with the previous analysis) at its original index, rather than pushing it after the successful ones. Why: the output order must match the input order. Cost if wrong: none; the behavior matches the old sequential loop.
+- Ruling: `package.json`/lockfile changes take the reuse path, not a full run. Why: dependency bumps are mostly app-side, and the next scheduled run (≤ 12h) picks up pipeline-side effects. Cost if wrong: a pipeline-affecting dependency bump isn't exercised until the next scheduled run, so run it manually from Actions when that matters.
+- Ruling: the background prefetch loads every favorite's file on each app open (about 60 KB each). Why: offline should cover all favorites, not just visited ones. Cost if wrong: with 10+ favorites on a slow connection, the first open does extra downloads; it can be limited to the first N if that ever shows up.

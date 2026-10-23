@@ -17,6 +17,7 @@
     "analyze": "tsx analysis/run.ts",
     "analyze:sample": "tsx analysis/run.ts --sample",
     "calibrate": "tsx scripts/calibrate.ts",
+    "reuse-data": "tsx scripts/reuse-data.ts",
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host",

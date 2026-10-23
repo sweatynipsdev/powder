@@ -29,12 +29,18 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
+    env:
+      # The live site is the previous run's state: stale fallbacks, change detection, and
+      # the data an app-only push reuses.
+      PREVIOUS_DATA_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/data/
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the push diff decides between a full update and reusing live data
 
       - uses: actions/setup-node@v7
         with:
@@ -43,19 +49,46 @@ jobs:
 
       - run: npm ci
 
+      # A push that changes only the app rebuilds it against the live data: no source fetches
+      # and no AI calls, so code pushes don't spend Open-Meteo's daily budget. Scheduled and
+      # manual runs, and pushes touching the data side, always do a full update.
+      - name: Choose a full update or reuse
+        id: mode
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          mode=full
+          if [ "$GITHUB_EVENT_NAME" = "push" ] && [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
+            if changed=$(git diff --name-only "$BEFORE" "$GITHUB_SHA"); then
+              if ! echo "$changed" | grep -qE '^(pipeline/|analysis/|shared/|resorts\.json$|scripts/calibrate\.ts$|\.github/workflows/update\.yml$)'; then
+                mode=reuse
+              fi
+            fi
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "Update mode: $mode"
+
+      # Falls back to a full update if the live data is missing anything.
+      - name: Reuse the live data
+        id: reuse
+        if: steps.mode.outputs.mode == 'reuse'
+        continue-on-error: true
+        run: npm run reuse-data
+
       # The local model: learn each mountain's per-model bias from the forecasts and
       # observations logged in history/ (a no-op until enough snow events pile up).
       - name: Learn local model corrections
+        if: steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure'
         run: npm run calibrate
 
       - name: Fetch and process forecast data
+        if: steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure'
         run: npm run pipeline
         env:
-          # The live site is the previous run's state: stale fallbacks and change detection.
-          PREVIOUS_DATA_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/data/
           POWDER_RECORD_HISTORY: '1'
 
       - name: Write the daily analysis
+        if: steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure'
         run: npm run analyze -- ${{ inputs.force_analysis && '--force' || '' }}
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -74,6 +107,7 @@ jobs:
       # learns from. The commit also keeps GitHub from switching off this schedule (it does
       # that after 60 days without repository activity).
       - name: Commit the usage log and forecast history
+        if: steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
