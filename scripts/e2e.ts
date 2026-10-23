@@ -144,6 +144,30 @@ try {
   const listed = await page.locator('li .name').allTextContents();
   check(listed.some((n) => /Mammoth/.test(n)) && !listed.some((n) => /Palisades/.test(n)), `resort search filters the list (${listed.join(', ')})`);
 
+  // Out-of-state regions: listed, with 511 links where no agency is read, a CAIC link for
+  // Colorado, and WSDOT pass reports for Washington.
+  await page.goto(URL + '#/resorts');
+  await page.waitForSelector('.search');
+  const regions = await page.locator('section h2.section-title').allTextContents();
+  check(['Utah', 'Colorado', 'Pacific Northwest'].every((r) => regions.includes(r)), `the Resorts tab lists the new regions (${regions.join(', ')})`);
+
+  await shoot(page, 'alta-report', '#/r/alta/report', '.section-title');
+  check((await page.locator('section[aria-label="Roads"]').count()) === 0 && (await page.locator('a[href*="udot.utah.gov"]').count()) === 1, 'Alta links to UDOT instead of a roads panel');
+
+  await shoot(page, 'vail-report', '#/r/vail/report', '.section-title');
+  check((await page.locator('a[href^="https://avalanche.state.co.us"]', { hasText: 'Avalanche forecast at avalanche.state.co.us' }).count()) === 1, 'Vail links to the CAIC forecast');
+
+  await page.goto(URL + '#/resorts');
+  await page.waitForSelector('.search');
+  await page.locator('li:has(a[href="#/r/crystal"]) button.star').tap();
+  await shoot(page, 'roads-crystal', '#/roads', 'section[aria-label="Roads"]');
+  const crystalRoads = page.locator('section[aria-label="Roads"]', { hasText: 'Crystal to Greenwater SR 410' });
+  check((await crystalRoads.count()) === 1 && (await crystalRoads.getByText('WSDOT mountain pass reports').count()) === 1, 'a starred Washington resort shows its WSDOT pass report');
+  check((await crystalRoads.locator('p', { hasText: 'Traditionally weather and road conditions' }).count()) === 1, "WSDOT's road report is shown once, not repeated as a note");
+  await page.goto(URL + '#/resorts');
+  await page.waitForSelector('.search');
+  await page.locator('li:has(a[href="#/r/crystal"]) button.star').tap();
+
   check(errors.length === 0, `no page errors${errors.length ? `: ${errors.join('; ')}` : ''}`);
   await ctx.close();
 

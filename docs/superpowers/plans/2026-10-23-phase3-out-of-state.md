@@ -293,12 +293,12 @@ Research starts **before T1**, in background agents, so it runs while T1–T5 ar
 
 **Files:** `scripts/e2e.ts`
 
-- [ ] Add checks:
+- [x] Add checks:
   - The Resorts tab has section headings Utah, Colorado and Pacific Northwest.
   - `#/resort/alta` renders the summary with no roads panel and a link to `udottraffic.utah.gov`.
   - `#/resort/vail` shows the "Avalanche forecast" card linking to `avalanche.state.co.us`.
   - Star Crystal, open Roads: a segment labeled from WSDOT is listed and the caption says "WSDOT mountain pass reports". Then unstar it so later checks see the default favorites.
-- [ ] Run `npm run build && npm run e2e`, look at the new screenshots, and commit "T8: e2e for the new regions, WSDOT and the CAIC link".
+- [x] Run `npm run build && npm run e2e`, look at the new screenshots, and commit "T8: e2e for the new regions, WSDOT and the CAIC link".
 
 **Batch A is complete here.** Run the whole-suite check (test, typecheck, build, e2e) and offer Mikey a push of Batch A before Batch B.
 
