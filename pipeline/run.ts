@@ -24,7 +24,7 @@ import { fetchCpc } from './sources/cpc';
 import { fetchAfd, fetchAlerts, fetchNwsForecast, fetchOffice, filterAfd } from './sources/nws';
 import { fetchNwsGrid } from './sources/nwsGrid';
 import { FORECAST_DAYS, fetchDeterministic, fetchEnsemble } from './sources/openMeteo';
-import { omPacer } from './sources/omBudget';
+import { appendOmLog, omPacer } from './sources/omBudget';
 import { fetchExpert } from './sources/expert';
 import { fetchReport } from './sources/report';
 import { fetchSnowpack } from './sources/snowpack';
@@ -168,6 +168,8 @@ async function main(): Promise<void> {
   result.index.builtFrom = process.env.GITHUB_SHA ?? null;
   writeOutput(outDir, result);
   if (live && process.env.POWDER_RECORD_HISTORY === '1') appendHistory(historyDir, result.resorts, at);
+  // CI full runs only (the workflow sets it), so the budget guard sees the runner's usage.
+  if (live && process.env.POWDER_OM_LOG) appendOmLog(process.env.POWDER_OM_LOG, at, process.env.GITHUB_EVENT_NAME ?? 'local', omPacer.total);
   if (httpMode() === 'record') writeRecordingMeta(at);
 
   const table = statusTable(result.resorts);

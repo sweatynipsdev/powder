@@ -193,25 +193,25 @@ export function appendOmLog(path: string, at: Date, trigger: string, weight: num
 export function budgetCheck(rows: OmLogRow[], now: Date, resorts: number): { day: number; hour: number; estimate: number; defer: boolean };
 ```
 
-- [ ] **Tests first:**
+- [x] **Tests first:**
   - `parseOmLog` on header-only, empty and malformed lines.
   - The windows: a row exactly 24 h old is excluded (risky input 9), a row 59 min old is in the hour.
   - Each threshold: day only, hour only, neither.
   - Missing log → `[]` → no defer (risky input 8).
   - `appendOmLog` writes the header once.
-- [ ] `run.ts`: after a live run, `if (live && process.env.POWDER_OM_LOG) appendOmLog(process.env.POWDER_OM_LOG, at, process.env.GITHUB_EVENT_NAME ?? 'local', omPacer.total)`.
-- [ ] `scripts/omBudget.ts`:
+- [x] `run.ts`: after a live run, `if (live && process.env.POWDER_OM_LOG) appendOmLog(process.env.POWDER_OM_LOG, at, process.env.GITHUB_EVENT_NAME ?? 'local', omPacer.total)`.
+- [x] `scripts/omBudget.ts`:
   - Loads the config for the resort count and reads `logs/openmeteo.csv` (missing → empty), then runs `budgetCheck(now)`.
   - Prints `Open-Meteo budget: <day> in 24 h, <hour> in 60 min, this run ≈ <estimate> → ok|defer`.
   - Writes `defer=true|false` to `$GITHUB_OUTPUT` when set.
   - On defer, appends to `$GITHUB_STEP_SUMMARY`: "Deferred: Open-Meteo used N calls in the last 24 h. This push deploys with the next scheduled run."
-- [ ] `update.yml`:
+- [x] `update.yml`:
   - New step "Check the Open-Meteo budget", `id: budget`, after "Choose a full update or reuse", with `if: github.event_name == 'push' && steps.mode.outputs.mode == 'full'`. It runs `npm run om-budget`.
   - Every later step's `if` also requires `steps.budget.outputs.defer != 'true'`. That includes Build, configure-pages, upload and deploy, which have no `if` today.
   - The pipeline step gets `POWDER_OM_LOG: logs/openmeteo.csv`.
   - The commit step adds `logs/openmeteo.csv`.
-- [ ] Create `logs/openmeteo.csv` with the header line only.
-- [ ] Run `npm test`, and check `update.yml` with `node -e` YAML parse via the `yaml` package if present, otherwise by careful read. Commit "T4: Open-Meteo budget guard for push runs".
+- [x] Create `logs/openmeteo.csv` with the header line only.
+- [x] Run `npm test`, and check `update.yml` with `node -e` YAML parse via the `yaml` package if present, otherwise by careful read. Commit "T4: Open-Meteo budget guard for push runs".
 
 ## T5. Time zones
 

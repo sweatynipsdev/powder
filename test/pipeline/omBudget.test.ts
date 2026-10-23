@@ -1,5 +1,8 @@
+import { mkdtempSync, readFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { OmPacer, omWeight } from '../../pipeline/sources/omBudget';
+import { appendOmLog, budgetCheck, OM_LOG_HEADER, type OmLogRow, OmPacer, omWeight, parseOmLog } from '../../pipeline/sources/omBudget';
 import { DET_WEIGHT, ENS_WEIGHT } from '../../pipeline/sources/openMeteo';
 
 describe('Open-Meteo request weight', () => {
@@ -85,5 +88,43 @@ describe('pacing', () => {
     for (let i = 0; i < 5; i++) await pacer.take(10);
     expect(clock.at()).toBe(0);
     expect(pacer.total).toBe(50);
+  });
+});
+
+describe('daily budget across runs', () => {
+  const now = new Date('2026-10-24T12:00:00Z');
+  const ago = (min: number) => new Date(now.getTime() - min * 60_000);
+  const row = (min: number, weight: number): OmLogRow => ({ at: ago(min), trigger: 'schedule', weight });
+
+  it('reads the log, skipping the header and anything malformed', () => {
+    expect(parseOmLog('')).toEqual([]);
+    expect(parseOmLog(`${OM_LOG_HEADER}\n`)).toEqual([]);
+    const rows = parseOmLog(`${OM_LOG_HEADER}\n2026-10-24T00:20:31.000Z,schedule,2311\nnot,a,row\n\n2026-10-24T03:00:00.000Z,push\n`);
+    expect(rows).toEqual([{ at: new Date('2026-10-24T00:20:31.000Z'), trigger: 'schedule', weight: 2311 }]);
+  });
+
+  it('counts only the last 24 hours and the last hour', () => {
+    const c = budgetCheck([row(24 * 60, 5000), row(23 * 60, 1000), row(59, 200)], now, 41);
+    expect(c.day).toBe(1200);
+    expect(c.hour).toBe(200);
+    expect(c.estimate).toBe(2546);
+  });
+
+  it('defers when the day or the hour would go over', () => {
+    expect(budgetCheck([row(600, 6900)], now, 41).defer).toBe(false);
+    expect(budgetCheck([row(600, 7000)], now, 41).defer).toBe(true);
+    expect(budgetCheck([row(30, 2400)], now, 41).defer).toBe(true);
+    expect(budgetCheck([row(90, 2400)], now, 41).defer).toBe(false);
+  });
+
+  it('never defers on an empty log (the first run after this ships)', () => {
+    expect(budgetCheck([], now, 41)).toEqual({ day: 0, hour: 0, estimate: 2546, defer: false });
+  });
+
+  it('writes the header once, then one line per run', () => {
+    const path = join(mkdtempSync(join(tmpdir(), 'om-')), 'openmeteo.csv');
+    appendOmLog(path, ago(60), 'schedule', 2310.6);
+    appendOmLog(path, now, 'push', 2290);
+    expect(readFileSync(path, 'utf8')).toBe(`${OM_LOG_HEADER}\n2026-10-24T11:00:00.000Z,schedule,2311\n2026-10-24T12:00:00.000Z,push,2290\n`);
   });
 });

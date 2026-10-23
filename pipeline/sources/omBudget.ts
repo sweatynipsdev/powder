@@ -3,7 +3,11 @@
 // would blow the per-minute limit. Every Open-Meteo request waits here for room first.
 // It also waits for one of a few slots: bursts of ~17 big requests at once saw dropped
 // connections on 2026-10-23, and a handful in flight still clears the minute's budget.
+//
+// The daily limit is guarded across runs: CI full runs log their weight to
+// logs/openmeteo.csv, and a push that would push the day over budget is deferred.
 
+import { appendFileSync, existsSync } from 'node:fs';
 import { httpMode } from '../http';
 
 /**
@@ -84,3 +88,45 @@ export class OmPacer {
 
 /** Below the 600/minute limit, with room for retries. */
 export const omPacer = new OmPacer({ perMinute: 450, maxInFlight: 4, enabled: () => httpMode() !== 'replay' });
+
+// --- Daily budget across runs -----------------------------------------------------
+
+export const OM_LOG_HEADER = 'timestamp,trigger,weighted_calls';
+/** One resort's deterministic plus ensemble request. */
+export const PER_RESORT_WEIGHT = 54;
+/** Retries added 15% on the 2026-10-23 21:49 run (178 of 1,311). */
+export const RETRY_MARGIN = 1.15;
+/** Under the free 10,000/day and 5,000/hour, with room for a run that retries more than usual. */
+export const DAY_LIMIT = 9_500;
+export const HOUR_LIMIT = 4_900;
+
+export interface OmLogRow {
+  at: Date;
+  trigger: string;
+  weight: number;
+}
+
+export function parseOmLog(csv: string): OmLogRow[] {
+  return csv
+    .split('\n')
+    .map((line) => line.trim().split(','))
+    .filter((f) => f.length === 3)
+    .map(([ts, trigger, w]) => ({ at: new Date(ts), trigger, weight: Number(w) }))
+    .filter((r) => !Number.isNaN(r.at.getTime()) && Number.isFinite(r.weight));
+}
+
+export const omLogLine = (at: Date, trigger: string, weight: number): string => `${at.toISOString()},${trigger},${Math.round(weight)}`;
+
+export function appendOmLog(path: string, at: Date, trigger: string, weight: number): void {
+  if (!existsSync(path)) appendFileSync(path, `${OM_LOG_HEADER}\n`);
+  appendFileSync(path, `${omLogLine(at, trigger, weight)}\n`);
+}
+
+/** Whether a full run now would push the last 24 hours or 60 minutes over budget. */
+export function budgetCheck(rows: OmLogRow[], now: Date, resorts: number): { day: number; hour: number; estimate: number; defer: boolean } {
+  const since = (ms: number) => rows.filter((r) => now.getTime() - r.at.getTime() < ms).reduce((s, r) => s + r.weight, 0);
+  const day = since(86_400_000);
+  const hour = since(3_600_000);
+  const estimate = Math.round(resorts * PER_RESORT_WEIGHT * RETRY_MARGIN);
+  return { day, hour, estimate, defer: day + estimate > DAY_LIMIT || hour + estimate > HOUR_LIMIT };
+}

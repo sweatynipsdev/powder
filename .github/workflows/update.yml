@@ -67,6 +67,15 @@ jobs:
           echo "mode=$mode" >> "$GITHUB_OUTPUT"
           echo "Update mode: $mode (live data built from ${built:-unknown})"
 
+      # Open-Meteo's free tier is 10,000 weighted calls a day; the two scheduled runs use about
+      # half. A push whose full update would take the last 24 hours (or hour) over budget is
+      # deferred: nothing below runs, and the next scheduled run deploys it. Scheduled and
+      # manual runs never defer.
+      - name: Check the Open-Meteo budget
+        id: budget
+        if: github.event_name == 'push' && steps.mode.outputs.mode == 'full'
+        run: npm run --silent om-budget
+
       # Falls back to a full update if the live data is missing anything.
       - name: Reuse the live data
         id: reuse
@@ -77,40 +86,45 @@ jobs:
       # The local model: learn each mountain's per-model bias from the forecasts and
       # observations logged in history/ (a no-op until enough snow events pile up).
       - name: Learn local model corrections
-        if: steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure'
+        if: (steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure') && steps.budget.outputs.defer != 'true'
         run: npm run calibrate
 
       - name: Fetch and process forecast data
-        if: steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure'
+        if: (steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure') && steps.budget.outputs.defer != 'true'
         run: npm run pipeline
         env:
           POWDER_RECORD_HISTORY: '1'
+          POWDER_OM_LOG: logs/openmeteo.csv
 
       - name: Write the daily analysis
-        if: steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure'
+        if: (steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure') && steps.budget.outputs.defer != 'true'
         run: npm run analyze -- ${{ inputs.force_analysis && '--force' || '' }}
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       - name: Build the app
+        if: steps.budget.outputs.defer != 'true'
         run: npm run build
 
-      - uses: actions/configure-pages@v6
-      - uses: actions/upload-pages-artifact@v5
+      - if: steps.budget.outputs.defer != 'true'
+        uses: actions/configure-pages@v6
+      - if: steps.budget.outputs.defer != 'true'
+        uses: actions/upload-pages-artifact@v5
         with:
           path: dist
       - id: deploy
+        if: steps.budget.outputs.defer != 'true'
         uses: actions/deploy-pages@v5
 
       # One line per run: a cost history plus the forecast/observation log the local model
       # learns from. The commit also keeps GitHub from switching off this schedule (it does
       # that after 60 days without repository activity).
       - name: Commit the usage log and forecast history
-        if: steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure'
+        if: (steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure') && steps.budget.outputs.defer != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add logs/usage.csv history/
+          git add logs/usage.csv logs/openmeteo.csv history/
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Usage log and history $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
           git pull --rebase
