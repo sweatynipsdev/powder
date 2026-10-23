@@ -269,7 +269,7 @@ describe('NWS office', () => {
   it('comes from the points lookup when the config leaves it out', async () => {
     configureHttp({ mode: 'replay', dir: FIXTURE_DIR, failPattern: null, retryDelaysMs: [] });
     const r = structuredClone(resort('palisades'));
-    delete r.nws.afdOffice;
+    delete r.nws!.afdOffice;
     expect(await fetchOffice(r)).toBe('REV');
   });
 });

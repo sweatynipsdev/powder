@@ -94,6 +94,17 @@ describe('brief', () => {
     expect(roadStatusText(seg('R-1', 'Traction tires required'))).toBe('Traction tires required');
   });
 
+  it('leaves the NWS and CPC outlooks out of a brief for a resort outside the US, but keeps ENSO', () => {
+    const cpc = { ...palisades.cpc, data: { outlooks: [], enso: palisades.cpc.data!.enso } };
+    const brief = JSON.parse(buildBrief({ ...palisades, nws: null, afd: null, cpc }, recordedAt).json);
+    expect(brief).not.toHaveProperty('nwsDiscussion');
+    expect(brief).not.toHaveProperty('nwsForecast');
+    expect(brief).not.toHaveProperty('cpcOutlooks');
+    expect(brief.enso).toMatch(/El Ni/);
+    expect(JSON.parse(buildBrief(palisades, recordedAt).json)).toHaveProperty('nwsDiscussion');
+    expect(RESORT_SYSTEM).toContain("outside NWS coverage and have no forecast discussion or forecasters' grid");
+  });
+
   it("dates the brief in the resort's own time zone", () => {
     const vail = resorts.find((r) => r.id === 'vail')!;
     expect(JSON.parse(buildBrief(vail, recordedAt).json).writtenFor).toMatch(/ M[DS]T$/);

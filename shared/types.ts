@@ -236,6 +236,8 @@ export interface Alert {
   url: string;
   /** Winter/wind products that matter for skiing. */
   winter: boolean;
+  /** Who issued it; absent in data from before Canadian alerts (it was always the NWS). */
+  source?: 'NWS' | 'ECCC';
 }
 
 export interface AfdData {
@@ -269,6 +271,12 @@ export interface AvalancheData {
   /** The avalanche forecasters' weather/hazard discussion (local experts), trimmed. */
   discussion: string | null;
   problems: string[];
+  /**
+   * Whether the app may show bottomLine and discussion. False for Avalanche Canada, whose
+   * terms say its content may not be reproduced: its text goes to the writer only. Absent
+   * in older data (always avalanche.org, shown).
+   */
+  publicText?: boolean;
 }
 
 /** Caltrans's chain-control levels, plus "advisory" for states that advise traction tires before requiring them. */
@@ -369,15 +377,19 @@ export interface ResortData {
   lon: number;
   baseFt: number;
   summitFt: number;
-  /** The part of the NWS office's region this resort is in. */
+  /** The part of the NWS office's region this resort is in (its region, outside the US). */
   nwsArea: string;
   generatedAt: string;
   forecast: Sourced<ForecastData>;
+  /** Outside the US: no outlooks, ENSO only. */
   cpc: Sourced<CpcData>;
   snowpack: Sourced<SnowpackData> | null;
-  nws: Sourced<NwsData>;
+  /** Null outside the US (no NWS). */
+  nws: Sourced<NwsData> | null;
+  /** NWS alerts, or Environment and Climate Change Canada's outside the US. */
   alerts: Sourced<Alert[]>;
-  afd: Sourced<AfdData>;
+  /** Null outside the US (no NWS forecast discussion). */
+  afd: Sourced<AfdData> | null;
   avalanche: Sourced<AvalancheData> | null;
   roads: Sourced<RoadsData> | null;
   report: Sourced<ReportData> | null;

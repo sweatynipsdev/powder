@@ -22,9 +22,14 @@
     expert: 'Local expert',
   };
 
-  // Road data cached before WSDOT was added has no agencies: it was all Caltrans.
-  const label = (k: SourceKey) =>
-    k === 'roads' && r.roads?.data ? (r.roads.data.agencies ?? ['Caltrans']).join(' + ') : LABELS[k];
+  // Road data cached before WSDOT was added has no agencies: it was all Caltrans. Outside the
+  // US, alerts come from Environment and Climate Change Canada, and avalanche data may too.
+  const label = (k: SourceKey) => {
+    if (k === 'roads' && r.roads?.data) return (r.roads.data.agencies ?? ['Caltrans']).join(' + ');
+    if (k === 'alerts' && r.nws === null) return 'ECCC alerts';
+    if (k === 'avalanche' && r.avalanche?.data) return r.avalanche.data.center === 'Avalanche Canada' ? 'Avalanche Canada' : 'avalanche.org';
+    return LABELS[k];
+  };
 
   let rows = $derived(
     (Object.keys(LABELS) as SourceKey[])

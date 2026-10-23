@@ -59,11 +59,12 @@ export function parseAvalanche(center: string, zoneId: number, json: ProductResp
     bottomLine: json.bottom_line ? truncate(htmlToText(json.bottom_line), 900) : null,
     discussion: discussionText(json),
     problems: (json.forecast_avalanche_problems ?? []).map((p) => p.name),
+    publicText: true,
   };
 }
 
 export async function fetchAvalanche(r: ResortConfig): Promise<AvalancheData> {
   const a = r.avalanche;
-  if (!a) throw new Error('no avalanche center configured');
+  if (!a || !('center' in a)) throw new Error('no avalanche.org center configured');
   return parseAvalanche(a.center, a.zoneId, await fetchJson<ProductResponse>(avalancheUrl(a.center, a.zoneId)));
 }

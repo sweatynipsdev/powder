@@ -103,6 +103,7 @@ export function parseAlerts(json: AlertsResponse): Alert[] {
       description: truncate((p.description ?? '').replace(/\s*\n\s*/g, ' ').trim(), 700),
       url: f.id,
       winter: WINTER_EVENT.test(p.event),
+      source: 'NWS',
     };
   });
 }

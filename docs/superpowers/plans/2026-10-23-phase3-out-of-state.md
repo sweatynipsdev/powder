@@ -324,25 +324,25 @@ interface Alert { /* existing */ source?: 'NWS' | 'ECCC' }
 interface AvalancheData { /* existing */ publicText?: boolean }   // absent = true (old cached data)
 ```
 
-- [ ] **Tests first:**
+- [x] **Tests first:**
   - A `'CA'` resort without `nws` and with `eccc` validates.
   - `'CA'` with `nws` is rejected, and `'US'` without `nws` is rejected.
   - `buildResort` for a `'CA'` resort (with T10 and T11 stubbed via fail patterns) gives `nws`, `afd` and `cpc` of `null`, and no grid model.
   - The brief for that resort has no NWS discussion, NWS forecast or CPC keys.
   - `RESORT_SYSTEM` contains the spec's outside-NWS line.
-- [ ] `run.ts`:
+- [x] `run.ts`:
   - `'CA'` skips `fetchCpc`, `fetchNwsForecast`, the discussion and `fetchNwsGrid` (all `null`). Alerts come from `fetchEcccAlerts` (T10; until then, `[]`).
   - `nwsArea` is `r.nws?.area ?? r.region`. *Ruling:* it stays required and isn't made optional as the spec said, to avoid churn. Same effect.
-- [ ] `summary.ts`: stale sources and the status table skip `null` sources (`–`).
-- [ ] App:
+- [x] `summary.ts`: stale sources and the status table skip `null` sources (`–`).
+- [x] App:
   - `Resort.svelte` renders `CpcStrip` only when `r.cpc`, and `NwsPanel` only when `r.nws || r.afd`.
   - `ForecastPost.svelte` uses `r.afd?.data`.
   - `SourcesNote.svelte` labels:
     - alerts: "ECCC alerts" when any alert has `source === 'ECCC'` or `r.nws === null`, else "NWS alerts";
     - avalanche: `r.avalanche?.data?.center ?? 'avalanche.org'`.
   - `AvalanchePanel.svelte` hides `bottomLine` when `publicText === false` (risky inputs 7 and 13).
-- [ ] `brief.ts`: leave out the NWS and CPC fields when `null`. `prompt.ts`: add the spec's static line to `RESORT_SYSTEM`.
-- [ ] Run `npm test` and `npm run typecheck`, then commit "T9: resorts outside NWS and CPC coverage".
+- [x] `brief.ts`: leave out the NWS and CPC fields when `null`. `prompt.ts`: add the spec's static line to `RESORT_SYSTEM`.
+- [x] Run `npm test` and `npm run typecheck`, then commit "T9: resorts outside NWS and CPC coverage".
 
 ## T10. ECCC alerts (`pipeline/sources/eccc.ts`)
 
@@ -427,3 +427,4 @@ It confirmed all eight rulings above.
 
 - Ruling: in WSDOT segments only, `unknown` outranks `clear`; Caltrans keeps `unknown` lowest — for Caltrans, unknown means "no stations matched the segment", while for WSDOT it means wording we couldn't read, which must not hide behind "No restrictions" the other way — cost if wrong: a pass shows "unknown" where "clear" was right, until its wording is added.
 - Ruling: station times without an offset (SNOTEL, CDEC, CoCoRaHS) take the zone's standard offset all year — the old `-08:00` was that rule hard-coded to Pacific, and SNOTEL and CDEC keep standard time — cost if wrong: CoCoRaHS's 7am readings show an hour off in summer, as they did before.
+- Ruling: outside the US, `cpc` stays a source carrying ENSO only (`outlooks: []`) instead of becoming `null` as the spec says — the spec also says ENSO is global and stays, and ENSO arrives inside the CPC record, so `null` would drop it from the writer's brief and the app; keeping the type non-null also avoids churn — cost if wrong: none visible; the CPC strip says NOAA's outlooks cover the US only and shows the ENSO line.

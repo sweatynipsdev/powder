@@ -26,7 +26,9 @@
     <span class="small muted">Weeks to months ahead</span>
     <StaleChip {status} hasData={!!cpc} />
   </div>
-  {#if cpc}
+  {#if cpc && !cpc.outlooks.length}
+    <p class="small muted">NOAA's outlooks cover the US only.</p>
+  {:else if cpc}
     <div class="strip">
       {#each cpc.outlooks as o (o.key)}
         <div class="tile" class:low={o.lowConfidence}>
@@ -49,9 +51,9 @@
       {/each}
     </div>
     <p class="small muted">NOAA Climate Prediction Center odds of above or below normal, not amounts.</p>
-    {#if cpc.enso}
-      <p class="small secondary"><strong>{cpc.enso.status}.</strong> {cpc.enso.synopsis}</p>
-    {/if}
+  {/if}
+  {#if cpc?.enso}
+    <p class="small secondary"><strong>{cpc.enso.status}.</strong> {cpc.enso.synopsis}</p>
   {/if}
 </section>
 

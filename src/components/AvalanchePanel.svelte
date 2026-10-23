@@ -39,7 +39,8 @@
       <p><span class="status neutral"><span class="dot"></span>{a.overallText}</span></p>
     {/if}
     {#if a.problems.length}<p class="small secondary">Problems: {a.problems.join(', ')}</p>{/if}
-    {#if a.bottomLine}<p class="small secondary">{a.bottomLine}</p>{/if}
+    <!-- Avalanche Canada's text goes to the writer only (its terms say it may not be reproduced). -->
+    {#if a.bottomLine && a.publicText !== false}<p class="small secondary">{a.bottomLine}</p>{/if}
     <p class="small"><a href={a.url} target="_blank" rel="noopener">Full forecast ↗</a></p>
   {/if}
 </section>

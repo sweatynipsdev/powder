@@ -149,8 +149,11 @@
     {:else}
       <div class="card">Model data is unavailable right now.</div>
     {/if}
-    <h2 class="section-title">National Weather Service</h2>
-    <NwsPanel nws={r.nws.data} afd={r.afd.data} />
+    {#if r.nws || r.afd}
+      <!-- Outside the US there's no NWS forecast or discussion. -->
+      <h2 class="section-title">National Weather Service</h2>
+      <NwsPanel nws={r.nws?.data ?? null} afd={r.afd?.data ?? null} />
+    {/if}
   {:else if tab === 'report'}
     {#if r.links.report ?? r.links.website}
       <a class="card sitelink" href={r.links.report ?? r.links.website} target="_blank" rel="noopener">View the report on the resort website →</a>

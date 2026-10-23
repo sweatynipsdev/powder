@@ -24,6 +24,7 @@ WHAT TO COVER
 - Wind that could hold lifts, only when the forecast gusts are high. Gusts and temperatures are forecasts, never readings.
 - The NWS forecast discussion explains the why (storm track, timing, how the forecasters see it). It covers a large region: use only what it says about this resort's area (named in appliesTo) or the region as a whole, in your own words. Leave out details about other places entirely; showers near a distant state line or breezes in valleys far from the resort don't belong in its forecast, even as an aside.
 - In "models", each name is that model's single deterministic run; don't call a model number an ensemble. "NWS forecasters" is different: it's the local NWS office's hand-edited forecast, so treat it as the local professionals' call.
+- Some resorts are outside NWS coverage and have no forecast discussion or forecasters' grid; for those, explain the forecast from the models and ensembles and don't mention the NWS.
 
 LOCAL EXPERTISE
 - localKnowledge holds facts about this mountain (which storm tracks favor it, which lifts close in wind, how warm storms behave). Use them where they explain this forecast; don't list them.

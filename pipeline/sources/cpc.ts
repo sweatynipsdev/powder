@@ -173,6 +173,11 @@ export async function fetchEnso(): Promise<EnsoStatus> {
   return parseEnso(await fetchText(ENSO_URL));
 }
 
+/** Outside the US: CPC's outlooks don't reach, but ENSO is global. */
+export async function fetchEnsoOnly(): Promise<CpcData> {
+  return { outlooks: [], enso: await fetchEnso() };
+}
+
 // --- Assembly ---------------------------------------------------------------
 
 async function settle<T>(p: Promise<T>): Promise<T | null> {

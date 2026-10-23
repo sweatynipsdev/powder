@@ -212,6 +212,30 @@ describe('resorts.json validation', () => {
     expect(parsed.resorts[0].links.cams).toEqual([]);
   });
 
+  const whistler = {
+    id: 'whistler', name: 'Whistler Blackcomb', shortName: 'Whistler', region: 'British Columbia', lat: 50.115, lon: -122.95,
+    baseFt: 2214, summitFt: 7494, tz: 'America/Vancouver', country: 'CA', eccc: { bbox: [50.05, -123.0, 50.15, -122.9] }, avalanche: { provider: 'avcan' },
+  };
+
+  it('takes a Canadian resort with ECCC alerts and no NWS block, and only then', () => {
+    expect(parseConfig({ resorts: [whistler] }).resorts[0]).toMatchObject({ country: 'CA', avalanche: { provider: 'avcan' } });
+    expect(() => parseConfig({ resorts: [{ ...whistler, nws: {} }] })).toThrow(/nws/);
+    expect(() => parseConfig({ resorts: [{ ...whistler, eccc: undefined }] })).toThrow(/eccc/);
+    const { nws: _, ...usWithoutNws } = base.resorts[0];
+    expect(() => parseConfig({ resorts: [usWithoutNws] })).toThrow(/nws/);
+  });
+
+  it('builds a Canadian resort with no NWS forecast, discussion or CPC outlooks', async () => {
+    const [cfg] = parseConfig({ resorts: [whistler] }).resorts;
+    configureHttp({ mode: 'replay', dir: FIXTURE_DIR, failPattern: /./, retryDelaysMs: [] });
+    const r = await buildResort(cfg, recordedAt, undefined);
+    expect(r.nws).toBeNull();
+    expect(r.afd).toBeNull();
+    expect(r.nwsArea).toBe('British Columbia');
+    // CPC is ENSO only outside the US; here every request fails, so it's just unavailable.
+    expect(r.cpc.status.ok).toBe(false);
+  });
+
   it('links to an avalanche center that has no feed we may read', async () => {
     const vail = { id: 'vail', name: 'Vail', shortName: 'Vail', region: 'Colorado', lat: 39.64, lon: -106.37, baseFt: 8120, summitFt: 11570, tz: 'America/Denver', nws: {}, links: { avalanche: 'https://avalanche.state.co.us/' } };
     const [cfg] = parseConfig({ resorts: [vail] }).resorts;

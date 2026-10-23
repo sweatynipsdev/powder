@@ -46,14 +46,20 @@ const resort = z.object({
   tz: z.string(),
   /** Starred on a phone that hasn't picked its own favorites yet. */
   defaultFavorite: z.boolean().default(false),
-  nws: z.object({
-    /** Office whose forecast discussion is read; defaults to the office covering the base point. */
-    afdOffice: z.string().length(3).optional(),
-    /** The part of the office's region this resort sits in, so the write-up ignores the rest. */
-    area: z.string().optional(),
-    /** Forecast-discussion sentences mentioning any of these (other parts of the region) are dropped. */
-    ignore: z.array(z.string()).default([]),
-  }),
+  /** Outside the US there's no NWS or CPC: a Canadian resort gets ECCC alerts instead. */
+  country: z.enum(['US', 'CA']).default('US'),
+  nws: z
+    .object({
+      /** Office whose forecast discussion is read; defaults to the office covering the base point. */
+      afdOffice: z.string().length(3).optional(),
+      /** The part of the office's region this resort sits in, so the write-up ignores the rest. */
+      area: z.string().optional(),
+      /** Forecast-discussion sentences mentioning any of these (other parts of the region) are dropped. */
+      ignore: z.array(z.string()).default([]),
+    })
+    .optional(),
+  /** Environment and Climate Change Canada weather alerts within this [south, west, north, east] box. */
+  eccc: z.object({ bbox: z.tuple([z.number(), z.number(), z.number(), z.number()]) }).optional(),
   snowpack: z
     .object({
       type: z.enum(['awdb', 'cdec', 'acis']),
@@ -62,7 +68,8 @@ const resort = z.object({
       elevFt: z.number(),
     })
     .optional(),
-  avalanche: z.object({ center: z.string(), zoneId: z.number().int() }).optional(),
+  /** An avalanche.org center and zone, or Avalanche Canada (looked up by the summit point). */
+  avalanche: z.union([z.object({ provider: z.literal('avcan') }), z.object({ center: z.string(), zoneId: z.number().int() })]).optional(),
   report: z
     .object({
       adapter: z.literal('mtnpowder'),
@@ -123,7 +130,9 @@ const resort = z.object({
 const config = z
   .object({ resorts: z.array(resort).min(1) })
   .refine((c) => new Set(c.resorts.map((r) => r.id)).size === c.resorts.length, 'resort ids must be unique')
-  .refine((c) => c.resorts.every((r) => r.summitFt > r.baseFt), 'summitFt must be above baseFt');
+  .refine((c) => c.resorts.every((r) => r.summitFt > r.baseFt), 'summitFt must be above baseFt')
+  .refine((c) => c.resorts.every((r) => (r.country === 'US') === !!r.nws), 'a US resort needs an nws block, and a Canadian one must not have one')
+  .refine((c) => c.resorts.every((r) => (r.country === 'CA') === !!r.eccc), 'a Canadian resort needs an eccc block, and a US one must not have one');
 
 export type ResortConfig = z.infer<typeof resort>;
 export type RoadSegmentConfig = z.infer<typeof roadSegment>;

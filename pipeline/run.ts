@@ -20,7 +20,7 @@ import { buildForecast } from './process/forecast';
 import { attempt, carryForward, errorMessage } from './process/stale';
 import { fetchAvalanche } from './sources/avalanche';
 import { fetchRoads } from './sources/roads';
-import { fetchCpc } from './sources/cpc';
+import { fetchCpc, fetchEnsoOnly } from './sources/cpc';
 import { fetchAfd, fetchAlerts, fetchNwsForecast, fetchOffice, filterAfd } from './sources/nws';
 import { fetchNwsGrid } from './sources/nwsGrid';
 import { FORECAST_DAYS, fetchDeterministic, fetchEnsemble } from './sources/openMeteo';
@@ -41,17 +41,19 @@ async function buildForecastSource(
   const [det, ens] = await Promise.all([attempt(() => fetchDeterministic(r), at), attempt(() => fetchEnsemble(r), at)]);
   if (!det.data) return { status: det.status, data: null };
   // The NWS forecasters' grids are a bonus: if they fail, the models still make a forecast.
+  // Outside the US there are none.
   const times = det.data.times;
+  const us = r.country === 'US';
   const [nwsBase, nwsSummit] = await Promise.all([
-    attempt(() => fetchNwsGrid(r.lat, r.lon, times, r.tz), at),
-    r.summit ? attempt(() => fetchNwsGrid(r.summit!.lat, r.summit!.lon, times, r.tz), at) : null,
+    us ? attempt(() => fetchNwsGrid(r.lat, r.lon, times, r.tz), at) : null,
+    us && r.summit ? attempt(() => fetchNwsGrid(r.summit!.lat, r.summit!.lon, times, r.tz), at) : null,
   ]);
-  const nws = nwsBase.data || nwsSummit?.data ? { base: nwsBase.data, summit: nwsSummit?.data ?? null } : null;
+  const nws = nwsBase?.data || nwsSummit?.data ? { base: nwsBase?.data ?? null, summit: nwsSummit?.data ?? null } : null;
   try {
     const data = buildForecast({ det: det.data, ens: ens.data, nws, calibration, nowLocal: localIso(at, r.tz), days: FORECAST_DAYS });
     const notes = [
       ens.status.ok ? null : `ensembles unavailable (ranges from models): ${ens.status.error}`,
-      nwsBase.status.ok ? null : `NWS forecaster grid unavailable: ${nwsBase.status.error}`,
+      !nwsBase || nwsBase.status.ok ? null : `NWS forecaster grid unavailable: ${nwsBase.status.error}`,
     ].filter(Boolean);
     return { status: notes.length ? { ...det.status, error: notes.join('; ') } : det.status, data };
   } catch (e) {
@@ -70,14 +72,18 @@ export async function buildResort(
   prev: ResortData | undefined,
   calibration?: Partial<Record<ModelId, ModelCalibration>>,
 ): Promise<ResortData> {
+  // Outside the US: no NWS forecast, discussion or CPC outlooks (ENSO is global and stays),
+  // and alerts come from Environment and Climate Change Canada.
+  const nwsCfg = r.nws;
+  const av = r.avalanche;
   const [forecast, cpc, snowpack, nws, alerts, afd, avalanche, roads, report, expert] = await Promise.all([
     buildForecastSource(r, at, calibration),
-    attempt(() => fetchCpc(r), at),
+    attempt(() => (nwsCfg ? fetchCpc(r) : fetchEnsoOnly()), at),
     optional(!!r.snowpack, () => fetchSnowpack(r), at),
-    attempt(() => fetchNwsForecast(r), at),
-    attempt(() => fetchAlerts(r), at),
-    attempt(async () => filterAfd(await fetchAfd(r.nws.afdOffice ?? (await fetchOffice(r))), r.nws.ignore), at),
-    optional(!!r.avalanche, () => fetchAvalanche(r), at),
+    optional(!!nwsCfg, () => fetchNwsForecast(r), at),
+    attempt(() => (nwsCfg ? fetchAlerts(r) : Promise.resolve([])), at),
+    optional(!!nwsCfg, async () => filterAfd(await fetchAfd(nwsCfg!.afdOffice ?? (await fetchOffice(r))), nwsCfg!.ignore), at),
+    optional(!!av && 'center' in av, () => fetchAvalanche(r), at),
     optional(r.roads.length > 0, () => fetchRoads(r), at),
     optional(!!r.report, () => fetchReport(r), at),
     optional(!!r.expert, () => fetchExpert(r), at),
@@ -94,15 +100,15 @@ export async function buildResort(
     lon: r.lon,
     baseFt: r.baseFt,
     summitFt: r.summitFt,
-    nwsArea: r.nws.area ?? r.region,
+    nwsArea: r.nws?.area ?? r.region,
     generatedAt: at.toISOString(),
     forecast: carryForward(forecast, prev?.forecast),
     cpc: carryForward(cpc, prev?.cpc),
     snowpack: snowpack && carryForward(snowpack, prev?.snowpack),
-    nws: carryForward(nws, prev?.nws),
+    nws: nws && carryForward(nws, prev?.nws),
     // Alerts expire; carrying old ones forward would show warnings that no longer exist.
     alerts,
-    afd: carryForward(afd, prev?.afd),
+    afd: afd && carryForward(afd, prev?.afd),
     avalanche: avalanche && carryForward(avalanche, prev?.avalanche),
     roads: roads && carryForward(roads, prev?.roads),
     report: report && carryForward(report, prev?.report),

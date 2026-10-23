@@ -179,6 +179,8 @@ export function buildBrief(r: ResortData, now: Date): Brief {
   const sp = r.snowpack?.data;
   const rep = r.report?.data;
   const av = r.avalanche?.data;
+  const afd = r.afd?.data;
+  const us = r.nws !== null;
 
   const unavailable = (Object.keys(SOURCE_TEXT) as SourceKey[]).flatMap((k) => {
     const s = r[k];
@@ -219,13 +221,16 @@ export function buildBrief(r: ResortData, now: Date): Brief {
     ensembles: f?.ensembles.length
       ? f.ensembles.map((e) => `${e.label}: ${e.members} members, out to day ${Math.floor(e.hours / 24)}`)
       : 'ensembles unavailable; ranges are model spread',
-    cpcOutlooks: r.cpc.data
-      ? r.cpc.data.outlooks.map((o) => ({
-          period: `${o.label}${o.valid ? ` (${o.valid})` : ''}`,
-          temperature: cpcText(o.temp),
-          precipitation: cpcText(o.precip),
-        }))
-      : 'unavailable',
+    // Outside the US there are no CPC outlooks (ENSO below is global) and no NWS products.
+    ...(us && {
+      cpcOutlooks: r.cpc.data
+        ? r.cpc.data.outlooks.map((o) => ({
+            period: `${o.label}${o.valid ? ` (${o.valid})` : ''}`,
+            temperature: cpcText(o.temp),
+            precipitation: cpcText(o.precip),
+          }))
+        : 'unavailable',
+    }),
     enso: r.cpc.data?.enso ? `${r.cpc.data.enso.status}. ${r.cpc.data.enso.synopsis}` : 'n/a',
     observed: {
       snowStation: sp
@@ -262,16 +267,18 @@ export function buildBrief(r: ResortData, now: Date): Brief {
           ...(s.notes.length ? { notes: s.notes } : {}),
         }))
       : 'n/a',
-    nwsDiscussion: r.afd.data
-      ? {
-          appliesTo: `Written for the whole ${r.afd.data.office} forecast region. Only use what it says about ${r.nwsArea} or the region as a whole; ignore other areas it mentions.`,
-          office: r.afd.data.office,
-          issued: r.afd.data.issuedAt,
-          keyMessages: r.afd.data.keyMessages,
-          discussion: r.afd.data.discussion,
-        }
-      : 'unavailable',
-    nwsForecast: r.nws.data ? r.nws.data.periods.slice(0, 4).map((p) => `${p.name}: ${p.detailedForecast}`) : 'unavailable',
+    ...(us && {
+      nwsDiscussion: afd
+        ? {
+            appliesTo: `Written for the whole ${afd.office} forecast region. Only use what it says about ${r.nwsArea} or the region as a whole; ignore other areas it mentions.`,
+            office: afd.office,
+            issued: afd.issuedAt,
+            keyMessages: afd.keyMessages,
+            discussion: afd.discussion,
+          }
+        : 'unavailable',
+      nwsForecast: r.nws?.data ? r.nws.data.periods.slice(0, 4).map((p) => `${p.name}: ${p.detailedForecast}`) : 'unavailable',
+    }),
     unavailable,
   };
 

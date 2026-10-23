@@ -13,7 +13,7 @@
   let sources = $derived(
     [
       r.forecast.data ? `${r.forecast.data.models.length} forecast models and ${r.forecast.data.ensembles.reduce((s, e) => s + e.members, 0)} ensemble runs` : null,
-      r.afd.data ? `NWS ${r.afd.data.office} forecast discussion` : null,
+      r.afd?.data ? `NWS ${r.afd.data.office} forecast discussion` : null,
       r.expert?.data ? `${r.expert.data.author ?? r.expert.data.source}'s local forecast` : null,
       r.avalanche?.data ? `${r.avalanche.data.center} avalanche forecast` : null,
       r.snowpack?.data ? `${r.snowpack.data.station.name} observations` : null,
