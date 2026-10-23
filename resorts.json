@@ -1,0 +1,139 @@
+{
+  "resorts": [
+    {
+      "id": "palisades",
+      "name": "Palisades Tahoe",
+      "shortName": "Palisades",
+      "region": "Tahoe",
+      "lat": 39.1969,
+      "lon": -120.2357,
+      "baseFt": 6200,
+      "summitFt": 9050,
+      "tz": "America/Los_Angeles",
+      "nws": { "afdOffice": "REV" },
+      "snowpack": { "type": "awdb", "id": "784:CA:SNTL", "name": "Palisades Tahoe SNOTEL", "elevFt": 8010 },
+      "avalanche": { "center": "SAC", "zoneId": 2458 },
+      "report": {
+        "adapter": "mtnpowder",
+        "resortId": 61,
+        "stations": ["BaseArea", "MidMountainArea", "SummitArea"],
+        "areas": ["Palisades Peak", "Emigrant Peak", "High Camp", "Granite Peak", "Snow King Peak", "KT Peak", "Terrain Parks"]
+      },
+      "roads": [
+        { "label": "I-80 Colfax → Truckee (Donner Summit)", "route": "I-80", "aliases": ["I-40"], "district": 3, "bbox": [39.05, -120.96, 39.40, -120.17], "textRoute": "I 80", "textMatch": ["Placer", "Nevada Co", "Truckee", "Donner", "Colfax", "Kingvale", "Nyack", "Applegate"] },
+        { "label": "I-80 Truckee → Reno", "route": "I-80", "district": 3, "bbox": [39.33, -120.17, 39.53, -119.90], "textRoute": "I 80", "textMatch": ["Truckee", "Nevada State Line", "Stateline", "Floriston", "Boca"] },
+        { "label": "SR-89 Truckee → Tahoe City", "route": "SR-89", "district": 3, "bbox": [39.15, -120.22, 39.33, -120.13], "textRoute": "SR 89", "textMatch": ["Truckee", "Tahoe City", "Olympic", "Squaw", "Palisades", "Alpine Meadows", "Placer"] }
+      ],
+      "roadCams": [
+        { "label": "Hwy 89 at Olympic Valley", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy89atolympicvalley/hwy89atolympicvalley.jpg" },
+        { "label": "I-80 at Donner Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atdonnersummit/hwy80atdonnersummit.jpg" }
+      ],
+      "links": {
+        "website": "https://www.palisadestahoe.com/",
+        "webcams": "https://www.palisadestahoe.com/mountain-information/webcams",
+        "cams": [
+          { "label": "Palisades Base", "url": "https://relay.ozolio.com/pub.api?cmd=poster&oid=EMB_ZIGI00000147" },
+          { "label": "High Camp", "url": "https://relay.ozolio.com/pub.api?cmd=poster&oid=EMB_EIFC0000015B" }
+        ],
+        "radar": "https://radar.weather.gov/station/KRGX/standard"
+      }
+    },
+    {
+      "id": "alpine",
+      "name": "Alpine (Palisades Tahoe)",
+      "shortName": "Alpine",
+      "region": "Tahoe",
+      "lat": 39.1644,
+      "lon": -120.2385,
+      "baseFt": 6835,
+      "summitFt": 8637,
+      "tz": "America/Los_Angeles",
+      "nws": { "afdOffice": "REV" },
+      "snowpack": { "type": "awdb", "id": "784:CA:SNTL", "name": "Palisades Tahoe SNOTEL", "elevFt": 8010 },
+      "avalanche": { "center": "SAC", "zoneId": 2458 },
+      "report": {
+        "adapter": "mtnpowder",
+        "resortId": 61,
+        "stations": ["Station4", "Station5", "Station6"],
+        "areas": ["Summit Peak", "Scott/Lakeview Peak", "Sherwood Bowl"]
+      },
+      "roads": [
+        { "label": "I-80 Colfax → Truckee (Donner Summit)", "route": "I-80", "aliases": ["I-40"], "district": 3, "bbox": [39.05, -120.96, 39.40, -120.17], "textRoute": "I 80", "textMatch": ["Placer", "Nevada Co", "Truckee", "Donner", "Colfax", "Kingvale", "Nyack", "Applegate"] },
+        { "label": "I-80 Truckee → Reno", "route": "I-80", "district": 3, "bbox": [39.33, -120.17, 39.53, -119.90], "textRoute": "I 80", "textMatch": ["Truckee", "Nevada State Line", "Stateline", "Floriston", "Boca"] },
+        { "label": "SR-89 Truckee → Tahoe City", "route": "SR-89", "district": 3, "bbox": [39.15, -120.22, 39.33, -120.13], "textRoute": "SR 89", "textMatch": ["Truckee", "Tahoe City", "Olympic", "Squaw", "Palisades", "Alpine Meadows", "Placer"] }
+      ],
+      "roadCams": [
+        { "label": "Hwy 89 at Alpine Meadows", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy89atalpinemeadows/hwy89atalpinemeadows.jpg" },
+        { "label": "I-80 at Donner Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atdonnersummit/hwy80atdonnersummit.jpg" }
+      ],
+      "links": {
+        "website": "https://www.palisadestahoe.com/",
+        "webcams": "https://www.palisadestahoe.com/mountain-information/webcams",
+        "cams": [
+          { "label": "Alpine Lodge Base", "url": "https://relay.ozolio.com/pub.api?cmd=poster&oid=EMB_VPAY0000014C" },
+          { "label": "Alpine Chalet", "url": "https://relay.ozolio.com/pub.api?cmd=poster&oid=EMB_FPOI000010AB" }
+        ],
+        "radar": "https://radar.weather.gov/station/KRGX/standard"
+      }
+    },
+    {
+      "id": "mammoth",
+      "name": "Mammoth Mountain",
+      "shortName": "Mammoth",
+      "region": "Eastern Sierra",
+      "lat": 37.6511,
+      "lon": -119.037,
+      "baseFt": 7953,
+      "summitFt": 11053,
+      "tz": "America/Los_Angeles",
+      "nws": { "afdOffice": "REV" },
+      "snowpack": { "type": "cdec", "id": "MHP", "name": "Mammoth Pass", "elevFt": 9400 },
+      "avalanche": { "center": "ESAC", "zoneId": 128 },
+      "report": { "adapter": "mtnpowder", "resortId": 60, "stations": ["BaseArea", "MidMountainArea", "SummitArea"] },
+      "roads": [
+        { "label": "US-395 Inyokern → Bishop", "route": "US-395", "district": 9, "bbox": [35.35, -118.45, 37.40, -117.60], "textRoute": "US 395", "textMatch": ["Inyo", "Kern", "Bishop", "Olancha", "Lone Pine", "Independence", "Big Pine", "Pearsonville", "Inyokern"] },
+        { "label": "US-395 Bishop → Mammoth (Sherwin Grade)", "route": "US-395", "district": 9, "bbox": [37.40, -118.95, 37.645, -118.40], "textRoute": "US 395", "textMatch": ["Bishop", "Sherwin", "Toms Place", "Crowley", "Mammoth", "Jct of SR 203"] },
+        { "label": "SR-203 Mammoth Lakes", "route": "SR-203", "district": 9, "bbox": [37.60, -119.10, 37.70, -118.90], "textRoute": "SR 203", "textMatch": ["Mammoth", "Mono", "Minaret", "Main Lodge"] }
+      ],
+      "roadCams": [
+        { "label": "SR-203 at Mammoth Mountain", "url": "https://cwwp2.dot.ca.gov/data/d9/cctv/image/sr203mammothmountain/sr203mammothmountain.jpg" },
+        { "label": "US-395 at Crowley Lake", "url": "https://cwwp2.dot.ca.gov/data/d9/cctv/image/us395crowleylake/us395crowleylake.jpg" }
+      ],
+      "links": {
+        "website": "https://www.mammothmountain.com/",
+        "webcams": "https://www.mammothmountain.com/on-the-mountain/mammoth-webcam/the-summit",
+        "cams": [
+          { "label": "Top of the Sierra", "url": "https://media.mammothresorts.com/mmsa/mammoth/cams/Top_Of_Sierra_1_1280x720.jpg" },
+          { "label": "Main Lodge", "url": "https://media.mammothresorts.com/mmsa/mammoth/cams/Main_Broadway_1280x720.jpg" }
+        ],
+        "radar": "https://radar.weather.gov/station/KHNX/standard"
+      }
+    },
+    {
+      "id": "bigbear",
+      "name": "Big Bear Mountain Resort",
+      "shortName": "Big Bear",
+      "region": "SoCal",
+      "lat": 34.2275,
+      "lon": -116.8605,
+      "baseFt": 7140,
+      "summitFt": 8805,
+      "tz": "America/Los_Angeles",
+      "nws": { "afdOffice": "SGX" },
+      "snowpack": { "type": "acis", "id": "US1CASR0098", "name": "Big Bear City 0.4 W (CoCoRaHS)", "elevFt": 6777 },
+      "report": { "adapter": "mtnpowder", "resortId": 57, "stations": ["BaseArea", "MidMountainArea", "SummitArea"], "extraResortIds": [58] },
+      "roads": [
+        { "label": "SR-330 Highland → Running Springs", "route": "SR-330", "district": 8, "bbox": [34.10, -117.25, 34.22, -117.09], "textRoute": "SR 330", "textMatch": ["San Bernardino", "Running Springs", "Highland", "Big Bear"] },
+        { "label": "SR-18 Running Springs → Big Bear Lake", "route": "SR-18", "district": 8, "bbox": [34.19, -117.115, 34.25, -116.86], "textRoute": "SR 18", "textMatch": ["Running Springs", "Big Bear", "Snow Valley", "Arrowhead", "San Bernardino"] },
+        { "label": "SR-38 Mentone → Big Bear City", "route": "SR-38", "district": 8, "bbox": [34.05, -117.06, 34.28, -116.70], "textRoute": "SR 38", "textMatch": ["Big Bear", "Mentone", "Angelus Oaks", "Onyx", "San Bernardino"] }
+      ],
+      "roadCams": [],
+      "links": {
+        "website": "https://www.bigbearmountainresort.com/",
+        "webcams": "https://www.bigbearmountainresort.com/webcams/bear-mountain",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KSOX/standard"
+      }
+    }
+  ]
+}
