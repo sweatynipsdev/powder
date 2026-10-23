@@ -124,9 +124,9 @@
 
 **Files:** modify `analysis/prompt.ts` (`RANKING_SYSTEM`); test in `test/analysis/analysis.test.ts`.
 
-- [ ] Add to the Output section: "Each reason must stand on its own: never name or compare with another resort, because readers may see only some of the list."
-- [ ] Test: `RANKING_SYSTEM` contains "never name or compare with another resort".
-- [ ] Commit.
+- [x] Add to the Output section: "Each reason must stand on its own: never name or compare with another resort, because readers may see only some of the list."
+- [x] Test: `RANKING_SYSTEM` contains "never name or compare with another resort".
+- [x] Commit.
 
 ### T6 — Open-Meteo pacer
 

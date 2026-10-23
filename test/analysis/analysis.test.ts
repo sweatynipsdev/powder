@@ -5,7 +5,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { buildBrief, buildRankingBrief, resortStatus, snowLevelMeaning } from '../../analysis/brief';
 import { fingerprint } from '../../analysis/fingerprint';
 import { allowedNumbers, extractClaims, findUngrounded, metaReferences, tidyAmounts } from '../../analysis/grounding';
-import { RESORT_SYSTEM } from '../../analysis/prompt';
+import { RANKING_SYSTEM, RESORT_SYSTEM } from '../../analysis/prompt';
 import { analyze, needsRewrite, usageRun } from '../../analysis/run';
 import { appendUsageCsv, costUsd, monthToDate } from '../../analysis/usage';
 import type { Caller, CallResult } from '../../analysis/writer';
@@ -56,6 +56,10 @@ describe('brief', () => {
   it('keeps the system prompt above the 512-token cache minimum and free of per-run data', () => {
     expect(RESORT_SYSTEM.length / 4).toBeGreaterThan(512);
     expect(RESORT_SYSTEM).not.toMatch(/2026|Palisades|Mammoth/);
+  });
+
+  it('asks for ranking reasons that make sense when only favorites are shown', () => {
+    expect(RANKING_SYSTEM).toContain('never name or compare with another resort');
   });
 
   it('spells out what the snow level means on the mountain', () => {

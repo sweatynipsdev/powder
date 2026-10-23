@@ -63,7 +63,7 @@ Output:
 - bestResort: the id of the best resort this week.
 - bestDay: the date (YYYY-MM-DD) of the single best ski day at that resort.
 - summary: one or two plain-text sentences making the call.
-- ranking: every resort exactly once, best first, each with its best day (YYYY-MM-DD) and a one-sentence reason.`;
+- ranking: every resort exactly once, best first, each with its best day (YYYY-MM-DD) and a one-sentence reason. Each reason must stand on its own: never name or compare with another resort, because readers may see only some of the list.`;
 
 export function resortUserMessage(briefJson: string): string {
   return `Write today's forecast from this brief.\n\n${briefJson}`;
