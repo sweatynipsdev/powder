@@ -19,6 +19,7 @@
   import RoadsPanel from '../components/RoadsPanel.svelte';
   import SnowTimeline from '../components/SnowTimeline.svelte';
   import SourcesNote from '../components/SourcesNote.svelte';
+  import StarButton from '../components/StarButton.svelte';
   import StaleChip from '../components/StaleChip.svelte';
   import StationCard from '../components/StationCard.svelte';
   import { prefs } from '../lib/prefs.svelte';
@@ -76,7 +77,10 @@
 <div class="stack">
   <header class="rhead">
     <div class="status {status.state}"><span class="dot"></span>{status.text}</div>
-    <h1>{r.name}</h1>
+    <div class="title">
+      <h1>{r.name}</h1>
+      <StarButton id={r.id} name={r.name} />
+    </div>
     <div class="point">
       <span class="small muted">Forecast Point</span>
       <ElevationToggle summitFt={r.summitFt} baseFt={r.baseFt} />
@@ -197,6 +201,12 @@
   }
   .status.open {
     color: var(--open);
+  }
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
   }
   h1 {
     font-size: 34px;

@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { untrack } from 'svelte';
   import { clockTime, timeAgo } from './lib/display';
   import { router } from './lib/router.svelte';
+  import { initFavorites } from './lib/favorites.svelte';
   import { ensureIndex, ensureResort, store } from './lib/store.svelte';
   import Favorites from './routes/Favorites.svelte';
   import Forecasts from './routes/Forecasts.svelte';
   import Resort from './routes/Resort.svelte';
+  import Resorts from './routes/Resorts.svelte';
   import Roads from './routes/Roads.svelte';
 
   /** Data older than this means scheduled updates have stopped. */
@@ -21,6 +24,19 @@
     const r = router.route;
     if (r.name === 'resort') ensureResort(r.id);
   });
+  $effect(() => {
+    const index = store.index;
+    // Untracked: initFavorites reads the favorites it writes.
+    if (index) untrack(() => initFavorites(index));
+  });
+
+  // Back returns to wherever you came from in the app (Favorites, Resorts, Forecasts…);
+  // opened straight from a link or the home screen, it goes to Favorites.
+  function back(e: MouseEvent) {
+    if (!router.navigated) return;
+    e.preventDefault();
+    history.back();
+  }
 
   let generatedAt = $derived(store.index?.generatedAt ?? null);
   let ageHours = $derived(generatedAt ? (Date.now() - Date.parse(generatedAt)) / 3_600_000 : 0);
@@ -28,6 +44,7 @@
 
   const TABS = [
     { id: 'favorites', label: 'Favorites', href: '#/' },
+    { id: 'resorts', label: 'Resorts', href: '#/resorts' },
     { id: 'forecasts', label: 'Forecasts', href: '#/forecasts' },
     { id: 'roads', label: 'Roads', href: '#/roads' },
   ] as const;
@@ -35,7 +52,7 @@
 
 <header class="topbar">
   {#if router.route.name === 'resort'}
-    <a class="back" href="#/" aria-label="Back to favorites">
+    <a class="back" href="#/" aria-label="Back" onclick={back}>
       <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
     </a>
   {/if}
@@ -64,6 +81,8 @@
   {:else if store.index}
     {#if router.route.name === 'favorites'}
       <Favorites index={store.index} />
+    {:else if router.route.name === 'resorts'}
+      <Resorts index={store.index} />
     {:else if router.route.name === 'forecasts'}
       <Forecasts index={store.index} />
     {:else}
@@ -83,6 +102,8 @@
         <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
           {#if t.id === 'favorites'}
             <path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" />
+          {:else if t.id === 'resorts'}
+            <circle cx="10.5" cy="10.5" r="6" /><path d="M15 15l5 5" />
           {:else if t.id === 'forecasts'}
             <path d="M6 3.5h9l3 3v14H6z" /><path d="M9 10h6M9 13.5h6M9 17h4" />
           {:else}
@@ -153,7 +174,7 @@
     bottom: 0;
     z-index: 20;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
     background: color-mix(in srgb, var(--bar) 94%, transparent);

@@ -81,20 +81,20 @@
 
 **Consumes:** T2 `favorites`, `toggle`, `isFavorite`, `initFavorites`, `matchesQuery`.
 
-- [ ] Router: `{ name: 'resorts' }` for `#/resorts`. `router.navigated` becomes `true` after the first in-app `hashchange`.
-- [ ] `StarButton`: props `{ id: string; name: string }`.
+- [x] Router: `{ name: 'resorts' }` for `#/resorts`. `router.navigated` becomes `true` after the first in-app `hashchange`.
+- [x] `StarButton`: props `{ id: string; name: string }`.
   - `aria-pressed` set, with label "Add {name} to favorites" or "Remove {name} from favorites".
   - It stops the event from reaching the surrounding link.
   - A filled `--snow-big` star when on, an outline when off.
-- [ ] `Resorts.svelte`:
+- [x] `Resorts.svelte`:
   - A search `<input type="search">`, then regions in config order.
   - Rows: name, status, next 1–5 days at `prefs.elevation`, and a StarButton.
   - "No resorts match" when the search filters out everything.
-- [ ] App:
+- [x] App:
   - Tabbar `repeat(4, 1fr)` with tabs Favorites, Resorts (magnifier icon), Forecasts, Roads.
   - `initFavorites(store.index)` once the index loads.
   - The back link calls `history.back()` when `router.navigated` is set, otherwise goes to `#/`.
-- [ ] `npm run typecheck`, then commit.
+- [x] `npm run typecheck`, then commit.
 
 ### T4 — filter Favorites, Forecasts and Roads; best bet; offline prefetch
 
