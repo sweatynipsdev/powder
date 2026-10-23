@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { buildBrief, buildRankingBrief, resortStatus, snowLevelMeaning } from '../../analysis/brief';
 import { fingerprint } from '../../analysis/fingerprint';
-import { allowedNumbers, extractClaims, findUngrounded, metaReferences, tidyAmounts } from '../../analysis/grounding';
+import { allowedNumbers, extractClaims, findUngrounded, isGrounded, metaReferences, tidyAmounts } from '../../analysis/grounding';
 import { RANKING_SYSTEM, RESORT_SYSTEM } from '../../analysis/prompt';
 import { analyze, needsRewrite, usageRun } from '../../analysis/run';
 import { appendUsageCsv, costUsd, monthToDate } from '../../analysis/usage';
@@ -20,12 +20,18 @@ import { FIXTURE_DIR, recordedAt } from '../helpers';
 
 let resorts: ResortData[];
 let palisades: ResortData;
+/** A snow total that appears nowhere in Palisades' brief, so writing it is an invention. */
+let planted: string;
 
 beforeAll(async () => {
   configureHttp({ mode: 'replay', dir: FIXTURE_DIR, failPattern: null, retryDelaysMs: [] });
   setNow(recordedAt);
   resorts = (await runPipeline(loadConfig(), EMPTY_PREVIOUS, recordedAt)).resorts;
   palisades = resorts.find((r) => r.id === 'palisades')!;
+  const a = allowedNumbers(buildBrief(palisades, recordedAt).json);
+  const n = [47, 61, 89, 137, 173, 211, 293].find((x) => !isGrounded(x, [...a.in, ...a.any]));
+  if (!n) throw new Error('every candidate number is in the brief; add more candidates');
+  planted = `${n} inches`;
 });
 
 describe('display formatting', () => {
@@ -70,7 +76,13 @@ describe('brief', () => {
   });
 
   it('states whether the resort is open', () => {
-    expect(resortStatus(palisades, recordedAt)).toMatch(/^not open: the last resort report is from Mon Jun 8/);
+    // An old report plus an announced opening date: the date settles it.
+    expect(resortStatus(palisades, recordedAt)).toMatch(/^not open yet: scheduled to open \w+ Nov 25$/);
+    expect(resortStatus({ ...palisades, openingDate: undefined }, recordedAt)).toMatch(/^not open: the last resort report is from Mon Jun 8/);
+    // No report feed at all: the opening date if there is one, otherwise not confirmed open.
+    const heavenly = resorts.find((r) => r.id === 'heavenly')!;
+    expect(resortStatus(heavenly, recordedAt)).toMatch(/^not open yet: scheduled to open \w+ Nov 20$/);
+    expect(resortStatus(resorts.find((r) => r.id === 'homewood')!, recordedAt)).toMatch(/^unknown: .*not confirmed open$/);
     const mammoth = resorts.find((r) => r.id === 'mammoth')!;
     expect(resortStatus(mammoth, recordedAt)).toMatch(/^not open yet: 0 of 25 lifts running; scheduled to open \w+ Nov 13$/);
     const open = structuredClone(mammoth);
@@ -98,7 +110,7 @@ describe('brief', () => {
 
   it('builds a ranking brief for every resort', () => {
     const parsed = JSON.parse(buildRankingBrief(resorts, recordedAt));
-    expect(parsed.resorts.map((r: { id: string }) => r.id)).toEqual(['palisades', 'alpine', 'mammoth', 'bigbear']);
+    expect(parsed.resorts.map((r: { id: string }) => r.id)).toEqual(loadConfig().resorts.map((r) => r.id));
     expect(parsed.resorts[0].next7Days).toHaveLength(7);
   });
 });
@@ -156,7 +168,7 @@ describe('grounding', () => {
 
   it('catches a planted number against a real brief', () => {
     const b = buildBrief(palisades, recordedAt);
-    expect(findUngrounded(['A huge storm drops 47 inches Thursday.'], b.json)).toEqual(['47 inches']);
+    expect(findUngrounded([`A huge storm drops ${planted} Thursday.`], b.json)).toEqual([planted]);
   });
 });
 
@@ -216,8 +228,9 @@ const ranking = { bestResort: 'mammoth', bestDay: '2026-10-23', summary: 'Nothin
 
 describe('analyze', () => {
   it('writes every resort plus the ranking on a forced run', async () => {
+    const four = ['palisades', 'alpine', 'mammoth', 'bigbear'].map((id) => resorts.find((r) => r.id === id)!);
     const caller = fakeCaller([good, good, good, good, ranking]);
-    const res = await analyze(resorts, null, { caller, model: 'claude-haiku-5-5', at: recordedAt, mode: 'force' });
+    const res = await analyze(four, null, { caller, model: 'claude-haiku-5-5', at: recordedAt, mode: 'force' });
     expect(res.regenerated).toEqual(['palisades', 'alpine', 'mammoth', 'bigbear']);
     expect(res.resorts.every((r) => r.analysis?.headline === good.headline)).toBe(true);
     expect(res.ranking?.bestResort).toBe('mammoth');
@@ -250,10 +263,10 @@ describe('analyze', () => {
   });
 
   it('retries once when the draft invents a number, naming it', async () => {
-    const invented = { ...good, next5Days: 'Look for 47 inches Friday.' };
+    const invented = { ...good, next5Days: `Look for ${planted} Friday.` };
     const caller = fakeCaller([invented, good, good, good, good, ranking]);
     const res = await analyze(resorts.slice(0, 1), null, { caller, model: 'm', at: recordedAt, mode: 'force' });
-    expect(caller.users[1]).toMatch(/47 inches/);
+    expect(caller.users[1]).toContain(planted);
     expect(res.resorts[0].analysis!.ungrounded).toEqual([]);
     expect(res.calls.map((c) => c.label)).toEqual(['palisades#1', 'palisades#2', 'ranking#1']);
   });
@@ -266,9 +279,9 @@ describe('analyze', () => {
   });
 
   it('publishes with a flag if the retry still invents numbers', async () => {
-    const invented = { ...good, next5Days: 'Look for 47 inches Friday.' };
+    const invented = { ...good, next5Days: `Look for ${planted} Friday.` };
     const res = await analyze(resorts.slice(0, 1), null, { caller: fakeCaller([invented, invented, ranking]), model: 'm', at: recordedAt, mode: 'force' });
-    expect(res.resorts[0].analysis!.ungrounded).toEqual(['47 inches']);
+    expect(res.resorts[0].analysis!.ungrounded).toEqual([planted]);
   });
 
   it('keeps the previous analysis when the model declines', async () => {

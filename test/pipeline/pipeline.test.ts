@@ -137,8 +137,10 @@ describe('a source outage', () => {
     const second = await runPipeline(config, previous, later);
 
     for (const r of second.resorts) {
-      expect(r.report!.status).toMatchObject({ ok: false, stale: true, fetchedAt: recordedAt.toISOString() });
-      expect(r.report!.data).toEqual(first.resorts.find((x) => x.id === r.id)!.report!.data);
+      if (r.report) {
+        expect(r.report.status).toMatchObject({ ok: false, stale: true, fetchedAt: recordedAt.toISOString() });
+        expect(r.report.data).toEqual(first.resorts.find((x) => x.id === r.id)!.report!.data);
+      }
       expect(r.alerts.status.ok).toBe(false);
       expect(r.alerts.data).toBeNull();
       expect(r.forecast.status.ok).toBe(true);

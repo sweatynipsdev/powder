@@ -80,7 +80,7 @@ describe('CPC', () => {
 
 describe('snowpack', () => {
   it('parses SNOTEL hourly data', () => {
-    const sp = parseAwdb(resort('palisades').snowpack!, fixtureJson('awdbRestApi'));
+    const sp = parseAwdb(resort('palisades').snowpack!, fixtureJson('stationTriplets=784%3ACA%3ASNTL'));
     expect(sp.station.network).toBe('SNOTEL');
     expect(sp.observedAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
     expect(sp.series.length).toBeGreaterThan(25);

@@ -232,11 +232,11 @@
 
 ### T12 — fixtures, tests, sample
 
-- [ ] `npm run record-fixtures`, then fix the tests that assume 4 resorts (ranking brief ids, summary counts).
-- [ ] `npm test` and `npm run typecheck`.
-- [ ] `npm run analyze:sample`: read three new resorts (one Tahoe, one Central, one SoCal) and record the cost.
-- [ ] `npm run build && npm run e2e`.
-- [ ] Commit.
+- [x] `npm run record-fixtures`, then fix the tests that assume 4 resorts (ranking brief ids, summary counts).
+- [x] `npm test` and `npm run typecheck`.
+- [x] `npm run analyze:sample`: read three new resorts (one Tahoe, one Central, one SoCal) and record the cost.
+- [x] `npm run build && npm run e2e`.
+- [x] Commit.
 
 ## Rulings
 
@@ -244,4 +244,7 @@
 - Ruling: when a write-up fails, `analyze` keeps the input resort object (with the previous analysis) at its original index, rather than pushing it after the successful ones. Why: the output order must match the input order. Cost if wrong: none; the behavior matches the old sequential loop.
 - Ruling: `package.json`/lockfile changes take the reuse path, not a full run. Why: dependency bumps are mostly app-side, and the next scheduled run (≤ 12h) picks up pipeline-side effects. Cost if wrong: a pipeline-affecting dependency bump isn't exercised until the next scheduled run, so run it manually from Actions when that matters.
 - Ruling: when no resort in the index has `defaultFavorite` (data written before the flag existed: an old cached `data.json`, or live data reused right after deploy), a new phone starts with every resort. Why: e2e against live data showed an empty Favorites tab otherwise. Cost if wrong: once there are 21+ resorts, a phone holding old cached data briefly shows them all, until the next data load.
+- Ruling: with no current report, an announced opening date decides the AI's status line ("not open yet: scheduled to open …"). A resort with no report feed and no date is "unknown … not confirmed open", and the ranking never puts unknown above confirmed-open. Why: the first 21-resort ranking put no-feed resorts (Heavenly) first as "status unknown" despite a Nov 20 opening. Cost if wrong: a no-feed resort that opens early stays "not open yet" in the write-up until its opening date passes; the same applies in the app's status line.
+- Ruling: "No resort report" became "Lift status on resort site" in the app. Why: 13 resorts have no feed, and the old text read as broken data. Cost if wrong: wording only.
+- Ruling: the planted-number tests pick the first candidate that isn't in the brief. Why: new fixture data put 47 into Palisades' brief and broke three tests. Cost if wrong: none; the test throws if every candidate collides.
 - Ruling: the background prefetch loads every favorite's file on each app open (about 60 KB each). Why: offline should cover all favorites, not just visited ones. Cost if wrong: with 10+ favorites on a slow connection, the first open does extra downloads; it can be limited to the first N if that ever shows up.

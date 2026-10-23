@@ -96,12 +96,14 @@ function localExpert(r: ResortData, now: Date): { localExpert?: object } {
 /** Whether the resort is open, stated outright so the write-up doesn't assume. */
 export function resortStatus(r: ResortData, now: Date): string {
   const rep = r.report?.data;
-  const opening = r.openingDate && Date.parse(`${r.openingDate}T23:59:59Z`) > now.getTime() ? `; scheduled to open ${fmtDay(r.openingDate)}` : '';
-  return statusText(rep, now) + (rep?.fresh && rep.liftsOpen ? '' : opening);
+  const upcoming = r.openingDate && Date.parse(`${r.openingDate}T23:59:59Z`) > now.getTime() ? fmtDay(r.openingDate) : null;
+  // With no current report (none, or an old one), the announced opening date settles it.
+  if (upcoming && !rep?.fresh) return `not open yet: scheduled to open ${upcoming}`;
+  return statusText(rep, now) + (upcoming && !rep?.liftsOpen ? `; scheduled to open ${upcoming}` : '');
 }
 
 function statusText(rep: ReportData | null | undefined, now: Date): string {
-  if (!rep) return 'unknown (no resort report)';
+  if (!rep) return 'unknown: this resort publishes no lift report we can read, so it is not confirmed open';
   if (!rep.fresh) {
     if (!rep.updatedAt) return 'unknown (no current report)';
     const age = daysSince(rep.updatedAt, now);
