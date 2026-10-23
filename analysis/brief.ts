@@ -45,11 +45,14 @@ function nearDay(d: DaySummary, day: Period, night: Period, r: ResortData) {
     snowLevelFt: span(d.snowLevelFt.min, d.snowLevelFt.max, fmtFt),
     snowLevelMeaning: snowLevelMeaning(d.snowLevelFt.min, d.snowLevelFt.max, r.baseFt, r.summitFt),
     rainAtBase: day.rainAtBase || night.rainAtBase ? 'yes' : 'no',
-    summitTempF: span(d.tempF.summit.min, d.tempF.summit.max),
-    baseTempF: span(d.tempF.base.min, d.tempF.base.max),
+    summitTempF: lowHigh(d.tempF.summit.min, d.tempF.summit.max),
+    baseTempF: lowHigh(d.tempF.base.min, d.tempF.base.max),
     forecastMaxGustMph: d.gustMph ?? 'n/a',
   };
 }
+
+/** "low 18, high 29": a bare "18 to 29" got written up as a range of highs. */
+const lowHigh = (min: number | null, max: number | null) => (min === null || max === null ? 'n/a' : `low ${min}, high ${max}`);
 
 function farDay(d: DaySummary, r: ResortData) {
   return {

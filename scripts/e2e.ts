@@ -4,6 +4,7 @@
 //      with the network off and says it's showing cached data.
 //
 //   npm run e2e [-- <screenshot dir>]     (default: screens/, gitignored)
+//   E2E_URL=https://you.github.io/powder/ npm run e2e    check the deployed site instead
 
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
@@ -11,7 +12,7 @@ import { chromium, devices, type Page, webkit } from 'playwright';
 import { preview } from 'vite';
 
 const PORT = 4174;
-const URL = `http://localhost:${PORT}/`;
+const URL = process.env.E2E_URL ?? `http://localhost:${PORT}/`;
 const out = process.argv[2] ?? 'screens';
 mkdirSync(out, { recursive: true });
 
@@ -28,7 +29,7 @@ async function shoot(page: Page, name: string, hash: string, ready: string) {
   await page.screenshot({ path: join(out, `${name}.png`), fullPage: true });
 }
 
-const server = await preview({ preview: { port: PORT, strictPort: true }, logLevel: 'warn' });
+const server = process.env.E2E_URL ? null : await preview({ preview: { port: PORT, strictPort: true }, logLevel: 'warn' });
 try {
   // --- Screenshots (WebKit, iPhone) -------------------------------------------------
   const wk = await webkit.launch();
@@ -91,7 +92,7 @@ try {
   await page.screenshot({ path: join(out, 'offline.png'), fullPage: false });
   await cr.close();
 } finally {
-  await new Promise<void>((resolve) => server.httpServer.close(() => resolve()));
+  if (server) await new Promise<void>((resolve) => server.httpServer.close(() => resolve()));
 }
 
 console.log(failures.length ? `\n${failures.length} check(s) failed` : `\nAll browser checks passed. Screenshots in ${out}/`);
