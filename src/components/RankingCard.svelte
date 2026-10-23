@@ -1,4 +1,6 @@
 <script lang="ts">
+  // The AI ranks every resort; this shows only the phone's favorites, in that order. The
+  // ranking's overall summary is left out because it can name resorts the reader doesn't follow.
   import type { Ranking, ResortSummary } from '../../shared/types';
   import { fmtDay, timeAgo } from '../lib/display';
   import { resortHref } from '../lib/router.svelte';
@@ -6,27 +8,31 @@
   interface Props {
     ranking: Ranking;
     resorts: ResortSummary[];
+    favorites: string[];
   }
 
-  let { ranking, resorts }: Props = $props();
+  let { ranking, resorts, favorites }: Props = $props();
   const name = (id: string) => resorts.find((r) => r.id === id)?.shortName ?? id;
+  let entries = $derived(ranking.entries.filter((e) => favorites.includes(e.resortId)));
+  let best = $derived(entries[0]);
 </script>
 
-<section class="card ranking">
-  <p class="small muted">Best bet this week</p>
-  <h2>{name(ranking.bestResort)} · {fmtDay(ranking.bestDay)}</h2>
-  <p class="summary">{ranking.summary}</p>
-  <ol>
-    {#each ranking.entries as e (e.resortId)}
-      <li>
-        <a href={resortHref(e.resortId)}><strong>{name(e.resortId)}</strong></a>
-        <span class="muted small">{fmtDay(e.day)}</span>
-        <p class="small secondary">{e.reason}</p>
-      </li>
-    {/each}
-  </ol>
-  <p class="small muted">Written {timeAgo(ranking.generatedAt)} by {ranking.model}</p>
-</section>
+{#if best}
+  <section class="card ranking">
+    <p class="small muted">Best bet this week</p>
+    <h2>{name(best.resortId)} · {fmtDay(best.day)}</h2>
+    <ol>
+      {#each entries as e (e.resortId)}
+        <li>
+          <a href={resortHref(e.resortId)}><strong>{name(e.resortId)}</strong></a>
+          <span class="muted small">{fmtDay(e.day)}</span>
+          <p class="small secondary">{e.reason}</p>
+        </li>
+      {/each}
+    </ol>
+    <p class="small muted">Written {timeAgo(ranking.generatedAt)} by {ranking.model}</p>
+  </section>
+{/if}
 
 <style>
   .ranking {
@@ -35,9 +41,6 @@
   }
   .ranking > p {
     margin: 0;
-  }
-  .summary {
-    color: var(--text-2);
   }
   ol {
     margin: 4px 0;

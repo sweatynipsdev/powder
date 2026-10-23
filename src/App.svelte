@@ -2,8 +2,8 @@
   import { untrack } from 'svelte';
   import { clockTime, timeAgo } from './lib/display';
   import { router } from './lib/router.svelte';
-  import { initFavorites } from './lib/favorites.svelte';
-  import { ensureIndex, ensureResort, store } from './lib/store.svelte';
+  import { favorites, initFavorites } from './lib/favorites.svelte';
+  import { ensureIndex, ensureResort, ensureResorts, store } from './lib/store.svelte';
   import Favorites from './routes/Favorites.svelte';
   import Forecasts from './routes/Forecasts.svelte';
   import Resort from './routes/Resort.svelte';
@@ -28,6 +28,11 @@
     const index = store.index;
     // Untracked: initFavorites reads the favorites it writes.
     if (index) untrack(() => initFavorites(index));
+  });
+  // Load every favorite in the background so the service worker caches them for offline,
+  // not just the ones opened.
+  $effect(() => {
+    if (favorites.ready) ensureResorts(favorites.ids);
   });
 
   // Back returns to wherever you came from in the app (Favorites, Resorts, Forecasts…);

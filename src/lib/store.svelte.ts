@@ -40,7 +40,7 @@ export function ensureResort(id: string): Promise<void> {
   return p;
 }
 
-export async function ensureAllResorts(): Promise<void> {
-  await ensureIndex();
-  await Promise.all((store.index?.resorts ?? []).map((r) => ensureResort(r.id)));
+/** Loads these resorts' full files (e.g. a phone's favorites), skipping any already loaded. */
+export async function ensureResorts(ids: string[]): Promise<void> {
+  await Promise.all(ids.map((id) => ensureResort(id)));
 }

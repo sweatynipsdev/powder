@@ -1,22 +1,27 @@
 <script lang="ts">
   import type { DataIndex } from '../../shared/types';
   import RoadsPanel from '../components/RoadsPanel.svelte';
-  import { ensureAllResorts, store } from '../lib/store.svelte';
+  import { favorites } from '../lib/favorites.svelte';
+  import { ensureResorts, store } from '../lib/store.svelte';
 
   interface Props {
     index: DataIndex;
   }
 
   let { index }: Props = $props();
+  let shown = $derived(index.resorts.filter((s) => favorites.ids.includes(s.id)));
   $effect(() => {
-    ensureAllResorts();
+    ensureResorts(favorites.ids);
   });
 </script>
 
 <div class="stack">
   <h1>Roads</h1>
-  <p class="muted small sub">Caltrans chain controls, closures and highway cams for the drive to each resort.</p>
-  {#each index.resorts as s (s.id)}
+  <p class="muted small sub">Chain controls, closures and highway cams for the drive to each of your favorites.</p>
+  {#if favorites.ready && shown.length === 0}
+    <p class="card muted">No favorites yet. <a href="#/resorts">Star some resorts →</a></p>
+  {/if}
+  {#each shown as s (s.id)}
     {@const r = store.resorts[s.id]}
     <h2 class="section-title">{s.name}</h2>
     {#if r?.roads}

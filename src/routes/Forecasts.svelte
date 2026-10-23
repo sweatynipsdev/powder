@@ -2,28 +2,36 @@
   import type { DataIndex } from '../../shared/types';
   import ExpertCard from '../components/ExpertCard.svelte';
   import RankingCard from '../components/RankingCard.svelte';
+  import { bestFavorite } from '../lib/favorites';
+  import { favorites } from '../lib/favorites.svelte';
   import { resortHref } from '../lib/router.svelte';
-  import { ensureAllResorts, store } from '../lib/store.svelte';
+  import { ensureResorts, store } from '../lib/store.svelte';
 
   interface Props {
     index: DataIndex;
   }
 
   let { index }: Props = $props();
+  let favs = $derived(index.resorts.filter((s) => favorites.ids.includes(s.id)));
+  let others = $derived(index.resorts.filter((s) => !favorites.ids.includes(s.id)));
   $effect(() => {
-    ensureAllResorts();
+    ensureResorts(favorites.ids);
   });
-  let experts = $derived(index.resorts.map((s) => store.resorts[s.id]?.expert?.data).filter((x) => !!x));
+  let experts = $derived(favs.map((s) => store.resorts[s.id]?.expert?.data).filter((x) => !!x));
 </script>
 
 <div class="stack">
   <h1>Forecasts</h1>
 
-  {#if index.ranking}
-    <RankingCard ranking={index.ranking} resorts={index.resorts} />
+  {#if index.ranking && bestFavorite(index.ranking, favorites.ids)}
+    <RankingCard ranking={index.ranking} resorts={index.resorts} favorites={favorites.ids} />
   {/if}
 
-  {#each index.resorts as s (s.id)}
+  {#if favorites.ready && favs.length === 0}
+    <p class="card muted">No favorites yet. <a href="#/resorts">Star some resorts →</a></p>
+  {/if}
+
+  {#each favs as s (s.id)}
     {@const a = store.resorts[s.id]?.analysis}
     {#if a}
       <ExpertCard
@@ -55,6 +63,20 @@
       />
     {/each}
   {/if}
+
+  {#if favorites.ready && others.length}
+    <details class="card others">
+      <summary><strong>Other resorts</strong> <span class="muted small">({others.length})</span></summary>
+      <ul>
+        {#each others as s (s.id)}
+          <li>
+            <a href={resortHref(s.id, 'forecast')}><strong>{s.name}</strong></a>
+            {#if s.headline}<p class="small secondary">{s.headline}</p>{/if}
+          </li>
+        {/each}
+      </ul>
+    </details>
+  {/if}
 </div>
 
 <style>
@@ -62,5 +84,21 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: var(--gap);
+  }
+  .others summary {
+    cursor: pointer;
+  }
+  .others ul {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .others p {
+    margin: 2px 0 0;
+  }
+  .others a {
+    text-decoration: none;
   }
 </style>

@@ -103,22 +103,22 @@
 
 **Consumes:** T2 `bestFavorite` and `favorites`.
 
-- [ ] `store`: replace `ensureAllResorts()` with `ensureResorts(ids: string[]): Promise<void>`.
-- [ ] Favorites:
+- [x] `store`: replace `ensureAllResorts()` with `ensureResorts(ids: string[]): Promise<void>`.
+- [x] Favorites:
   - Show only favorites.
   - The defaults banner when `!favorites.chosen`.
   - An empty state when `ids.length === 0`.
   - The best-bet card from `bestFavorite`, showing the entry's reason and dropping `ranking.summary`.
-- [ ] RankingCard:
+- [x] RankingCard:
   - A `favorites: string[]` prop that filters the entries.
   - The heading is the first favorite entry.
   - No summary line.
-- [ ] Forecasts:
+- [x] Forecasts:
   - The favorites' write-ups and experts.
   - `<details>` "Other resorts (N)" with name + headline links.
-- [ ] Roads: only favorites.
-- [ ] App: after `initFavorites`, call `ensureResorts(favorites.ids)` in the background, so the service worker caches every favorite.
-- [ ] `npm run typecheck`, then commit.
+- [x] Roads: only favorites.
+- [x] App: after `initFavorites`, call `ensureResorts(favorites.ids)` in the background, so the service worker caches every favorite.
+- [x] `npm run typecheck`, then commit.
 
 ### T5 — ranking reasons stand alone
 
