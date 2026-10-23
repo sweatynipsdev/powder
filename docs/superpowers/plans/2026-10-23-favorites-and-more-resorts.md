@@ -156,18 +156,18 @@
 
 **Produces:** the same `AnalyzeResult` as today, with `out` in input order whatever order calls finish in.
 
-- [ ] Tests (the fake caller tracks in-flight calls):
+- [x] Tests (the fake caller tracks in-flight calls):
   - Max in flight ≤ 4.
   - The first resort's call resolves before any second call starts.
   - `res.resorts` keeps the input order.
   - The ranking call is last.
-- [ ] Update the existing "sequentially" test to compare label sets and check that the ranking is last.
-- [ ] Implement:
+- [x] Update the existing "sequentially" test to compare label sets and check that the ranking is last.
+- [x] Implement:
   - Split the resorts into skipped and to-write.
   - Write the first one alone.
   - Then run a pool of 4 workers over the rest.
   - Reassemble in input order.
-- [ ] Commit.
+- [x] Commit.
 
 ### T8 — code pushes reuse live data; workflow timeout
 

@@ -135,6 +135,18 @@ async function writeRanking(resorts: ResortData[], caller: Caller, model: string
 
 const message = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
+/** Write-ups in flight at once after the first. */
+const CONCURRENCY = 4;
+
+/** Runs `fn` over `items` with at most `size` running at a time. */
+async function pool<T>(items: T[], size: number, fn: (item: T) => Promise<void>): Promise<void> {
+  let next = 0;
+  const worker = async () => {
+    while (next < items.length) await fn(items[next++]);
+  };
+  await Promise.all(Array.from({ length: Math.min(size, items.length) }, worker));
+}
+
 export async function analyze(
   resorts: ResortData[],
   previousRanking: Ranking | null,
@@ -146,24 +158,29 @@ export async function analyze(
   const skipped: AnalyzeResult['skipped'] = [];
   const failed: AnalyzeResult['failed'] = [];
 
-  // Sequential on purpose: the first call writes the system-prompt cache the rest read.
-  const out: ResortData[] = [];
-  for (const r of resorts) {
+  // The first write-up runs alone so it writes the system-prompt cache; the rest read it,
+  // a few at a time so 35 resorts finish well inside the job's time limit.
+  const out: ResortData[] = [...resorts];
+  const todo: number[] = [];
+  resorts.forEach((r, i) => {
     const { rewrite, reason } = needsRewrite(r, mode, at);
-    if (!rewrite) {
-      skipped.push({ id: r.id, reason });
-      out.push(r);
-      continue;
-    }
+    if (rewrite) todo.push(i);
+    else skipped.push({ id: r.id, reason });
+  });
+  const write = async (i: number) => {
+    const r = resorts[i];
     try {
-      out.push({ ...r, analysis: await writeResort(r, caller, model, at, calls) });
+      out[i] = { ...r, analysis: await writeResort(r, caller, model, at, calls) };
       regenerated.push(r.id);
     } catch (e) {
       // Keep yesterday's write-up rather than showing nothing.
       failed.push({ id: r.id, error: message(e) });
-      out.push(r);
     }
-  }
+  };
+  if (todo.length) await write(todo[0]);
+  await pool(todo.slice(1), CONCURRENCY, write);
+  const position = new Map(resorts.map((r, i) => [r.id, i]));
+  regenerated.sort((a, b) => position.get(a)! - position.get(b)!);
 
   let ranking = previousRanking;
   const rankingOld = !ranking || (at.getTime() - Date.parse(ranking.generatedAt)) / 3_600_000 > MAX_AGE_HOURS;

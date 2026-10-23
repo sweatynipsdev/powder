@@ -215,13 +215,38 @@ const good = {
 const ranking = { bestResort: 'mammoth', bestDay: '2026-10-23', summary: 'Nothing big this week.', ranking: [] };
 
 describe('analyze', () => {
-  it('writes every resort plus the ranking on a forced run, sequentially', async () => {
+  it('writes every resort plus the ranking on a forced run', async () => {
     const caller = fakeCaller([good, good, good, good, ranking]);
     const res = await analyze(resorts, null, { caller, model: 'claude-haiku-5-5', at: recordedAt, mode: 'force' });
     expect(res.regenerated).toEqual(['palisades', 'alpine', 'mammoth', 'bigbear']);
     expect(res.resorts.every((r) => r.analysis?.headline === good.headline)).toBe(true);
     expect(res.ranking?.bestResort).toBe('mammoth');
-    expect(res.calls.map((c) => c.label)).toEqual(['palisades#1', 'alpine#1', 'mammoth#1', 'bigbear#1', 'ranking#1']);
+    const labels = res.calls.map((c) => c.label);
+    expect(labels.slice(0, 4).sort()).toEqual(['alpine#1', 'bigbear#1', 'mammoth#1', 'palisades#1']);
+    expect(labels.at(-1)).toBe('ranking#1');
+  });
+
+  it('warms the prompt cache with one write-up, then writes 4 at a time in input order', async () => {
+    const many = Array.from({ length: 9 }, (_, i) => ({ ...palisades, id: `r${i}`, name: `Resort ${i}` }));
+    let inFlight = 0;
+    let maxInFlight = 0;
+    const events: string[] = [];
+    const caller = (async (req: { system: string }) => {
+      inFlight++;
+      maxInFlight = Math.max(maxInFlight, inFlight);
+      events.push('start');
+      await new Promise((r) => setTimeout(r, 5));
+      inFlight--;
+      events.push('end');
+      const parsed = req.system === RANKING_SYSTEM ? ranking : good;
+      return { parsed, stopReason: 'end_turn', usage: USAGE } satisfies CallResult<unknown>;
+    }) as unknown as Caller;
+    const res = await analyze(many, null, { caller, model: 'm', at: recordedAt, mode: 'force' });
+    expect(events.slice(0, 3)).toEqual(['start', 'end', 'start']);
+    expect(maxInFlight).toBe(4);
+    expect(res.resorts.map((r) => r.id)).toEqual(many.map((r) => r.id));
+    expect(res.regenerated).toEqual(many.map((r) => r.id));
+    expect(res.calls.at(-1)!.label).toBe('ranking#1');
   });
 
   it('retries once when the draft invents a number, naming it', async () => {
