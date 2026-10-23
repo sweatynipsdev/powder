@@ -271,12 +271,15 @@ export interface AvalancheData {
   problems: string[];
 }
 
-export type RoadStatus = 'clear' | 'R-1' | 'R-2' | 'R-3' | 'closed' | 'unknown';
+/** Caltrans's chain-control levels, plus "advisory" for states that advise traction tires before requiring them. */
+export type RoadStatus = 'clear' | 'advisory' | 'R-1' | 'R-2' | 'R-3' | 'closed' | 'unknown';
 
 export interface RoadSegment {
   label: string;
   route: string;
   status: RoadStatus;
+  /** The agency's own words for the restriction, shown instead of the generic label (null for Caltrans). */
+  restriction: string | null;
   /** Chain-control stations matched to this segment. */
   stations: number;
   worst: { name: string; status: string; description: string; since: string | null } | null;
@@ -289,6 +292,8 @@ export interface RoadsData {
   segments: RoadSegment[];
   worst: RoadStatus;
   textAsOf: string | null;
+  /** Who the segments come from, e.g. ["Caltrans"] or ["WSDOT"]. */
+  agencies: string[];
 }
 
 export interface ReportArea {

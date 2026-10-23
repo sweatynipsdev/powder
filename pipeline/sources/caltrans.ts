@@ -1,10 +1,11 @@
 // Caltrans road conditions for the drive: chain controls (CWWP2 cc feed), full mainline
 // closures (CWWP2 lcs feed) and the highway-conditions text from roads.dot.ca.gov.
 
-import type { RoadSegment, RoadStatus, RoadsData } from '../../shared/types';
-import type { ResortConfig, RoadSegmentConfig } from '../config';
+import type { RoadSegment, RoadStatus } from '../../shared/types';
+import type { CaltransSegmentConfig } from '../config';
 import { now } from '../clock';
 import { fetchJson, fetchText } from '../http';
+import { SEVERITY } from './roadStatus';
 import { decodeEntities } from './text';
 
 const CWWP2 = 'https://cwwp2.dot.ca.gov/data';
@@ -17,9 +18,6 @@ export const roadsTextUrl = (numbers: string[]) => `https://roads.dot.ca.gov/roa
 /** Show closures that start within this many hours. */
 const UPCOMING_CLOSURE_HOURS = 12;
 
-const SEVERITY: RoadStatus[] = ['unknown', 'clear', 'R-1', 'R-2', 'R-3', 'closed'];
-export const worse = (a: RoadStatus, b: RoadStatus): RoadStatus => (SEVERITY.indexOf(b) > SEVERITY.indexOf(a) ? b : a);
-
 export function normalizeChainStatus(status: string, description = ''): RoadStatus {
   const s = `${status} ${description}`.toUpperCase();
   if (s.includes('CLOSED')) return 'closed';
@@ -28,7 +26,7 @@ export function normalizeChainStatus(status: string, description = ''): RoadStat
   return m[1] === '0' ? 'clear' : (`R-${m[1]}` as RoadStatus);
 }
 
-function inBox(lat: number, lon: number, [s, w, n, e]: RoadSegmentConfig['bbox']): boolean {
+function inBox(lat: number, lon: number, [s, w, n, e]: CaltransSegmentConfig['bbox']): boolean {
   return lat >= s && lat <= n && lon >= w && lon <= e;
 }
 
@@ -170,7 +168,7 @@ export function parseRoadsText(html: string): RoadsText {
 // --- assembly ----------------------------------------------------------------------
 
 export function buildSegment(
-  seg: RoadSegmentConfig,
+  seg: CaltransSegmentConfig,
   stations: ChainStation[],
   closures: Closure[],
   text: RoadsText | null,
@@ -199,6 +197,8 @@ export function buildSegment(
     label: seg.label,
     route: seg.route,
     status,
+    // "Chains R-2" is already Caltrans's own wording.
+    restriction: null,
     stations: matched.length,
     worst: worst && { name: worst.name, status: worst.rawStatus, description: worst.description, since: worst.since },
     closures: segClosures.map(({ description, start, end }) => ({ description, start, end })),
@@ -214,9 +214,9 @@ async function settle<T>(p: Promise<T>): Promise<T | null> {
   }
 }
 
-export async function fetchRoads(r: ResortConfig): Promise<RoadsData> {
-  const districts = [...new Set(r.roads.map((s) => s.district))];
-  const textRoutes = [...new Set(r.roads.map((s) => s.textRoute.replace(/^\D+/, '')))];
+export async function fetchCaltrans(segs: CaltransSegmentConfig[]): Promise<{ segments: RoadSegment[]; textAsOf: string | null }> {
+  const districts = [...new Set(segs.map((s) => s.district))];
+  const textRoutes = [...new Set(segs.map((s) => s.textRoute.replace(/^\D+/, '')))];
   const [cc, lcs, text] = await Promise.all([
     Promise.all(districts.map((d) => fetchJson<CcFeed>(ccUrl(d)).then(parseCc))),
     // Closures and text are supplementary; the chain-control feed is the source of truth.
@@ -225,10 +225,5 @@ export async function fetchRoads(r: ResortConfig): Promise<RoadsData> {
   ]);
   const stations = cc.flat();
   const closures = lcs?.flat() ?? [];
-  const segments = r.roads.map((seg) => buildSegment(seg, stations, closures, text));
-  return {
-    segments,
-    worst: segments.reduce<RoadStatus>((w, s) => worse(w, s.status), 'unknown'),
-    textAsOf: text?.asOf ?? null,
-  };
+  return { segments: segs.map((seg) => buildSegment(seg, stations, closures, text)), textAsOf: text?.asOf ?? null };
 }

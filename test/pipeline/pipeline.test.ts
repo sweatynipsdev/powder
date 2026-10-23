@@ -1,5 +1,6 @@
 // End-to-end: the whole pipeline replayed from recorded fixtures, no network.
 
+import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { setNow } from '../../pipeline/clock';
 import { loadConfig, parseConfig } from '../../pipeline/config';
@@ -40,6 +41,12 @@ describe('pipeline replay', () => {
       }
     }
     expect(result.resorts.find((r) => r.id === 'bigbear')!.avalanche).toBeNull();
+  });
+
+  it('credits Caltrans for its roads and leaves its wording to the app', () => {
+    const roads = result.resorts.find((r) => r.id === 'palisades')!.roads!.data!;
+    expect(roads.agencies).toEqual(['Caltrans']);
+    expect(roads.segments.every((s) => s.restriction === null)).toBe(true);
   });
 
   it('builds 16 days of day/night periods', () => {
@@ -171,6 +178,21 @@ describe('resorts.json validation', () => {
     const plain = structuredClone(base);
     delete plain.resorts[0].defaultFavorite;
     expect(parseConfig(plain).resorts[0].defaultFavorite).toBe(false);
+  });
+
+  it('reads a road with no provider as Caltrans, and a WSDOT pass by name', () => {
+    const raw = JSON.parse(readFileSync(new URL('../../resorts.json', import.meta.url), 'utf8')).resorts[0];
+    expect(raw.roads[0].provider).toBeUndefined();
+    const stevens = { provider: 'wsdot', label: 'US-2 Stevens Pass', route: 'US-2', pass: 'Stevens Pass US 2' };
+    const roads = parseConfig({ resorts: [{ ...raw, roads: [...raw.roads, stevens] }] }).resorts[0].roads;
+    expect(roads[0].provider).toBe('caltrans');
+    expect(roads.at(-1)).toEqual(stevens);
+  });
+
+  it('rejects a WSDOT road without a pass name', () => {
+    const bad = structuredClone(base);
+    bad.resorts[0].roads = [{ provider: 'wsdot', label: 'US-2', route: 'US-2' }];
+    expect(() => parseConfig(bad)).toThrow();
   });
 
   it('rejects duplicate ids', () => {

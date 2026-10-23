@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { buildBrief, buildRankingBrief, resortStatus, snowLevelMeaning } from '../../analysis/brief';
+import { buildBrief, buildRankingBrief, resortStatus, roadStatusText, snowLevelMeaning } from '../../analysis/brief';
 import { fingerprint } from '../../analysis/fingerprint';
 import { allowedNumbers, extractClaims, findUngrounded, genderedPronouns, isGrounded, metaReferences, tidyAmounts } from '../../analysis/grounding';
 import { RANKING_SYSTEM, RESORT_SYSTEM } from '../../analysis/prompt';
@@ -15,7 +15,7 @@ import { configureHttp } from '../../pipeline/http';
 import { EMPTY_PREVIOUS } from '../../pipeline/previous';
 import { runPipeline } from '../../pipeline/run';
 import { fmtSnow, fmtSnowAmount, fmtSnowRange } from '../../shared/format';
-import type { ResortData } from '../../shared/types';
+import type { ResortData, RoadSegment } from '../../shared/types';
 import { FIXTURE_DIR, recordedAt } from '../helpers';
 
 let resorts: ResortData[];
@@ -73,6 +73,25 @@ describe('brief', () => {
     expect(snowLevelMeaning(5000, 6000, 6200, 9050)).toMatch(/snow top to bottom/);
     expect(snowLevelMeaning(7200, 7700, 6200, 9050)).toMatch(/snow up high/);
     expect(snowLevelMeaning(null, null, 6200, 9050)).toBe('n/a');
+  });
+
+  it("words road status in the agency's terms", () => {
+    const seg = (status: RoadSegment['status'], restriction: string | null = null): RoadSegment => ({
+      label: 'x',
+      route: 'x',
+      status,
+      restriction,
+      stations: 0,
+      worst: null,
+      closures: [],
+      notes: [],
+    });
+    expect(roadStatusText(seg('clear'))).toBe('no restrictions');
+    expect(roadStatusText(seg('advisory'))).toBe('traction tires advised');
+    expect(roadStatusText(seg('R-2'))).toBe('chain control R-2');
+    expect(roadStatusText(seg('closed'))).toBe('CLOSED');
+    expect(roadStatusText(seg('unknown'))).toBe('unknown');
+    expect(roadStatusText(seg('R-1', 'Traction tires required'))).toBe('Traction tires required');
   });
 
   it('states whether the resort is open', () => {

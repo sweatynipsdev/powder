@@ -4,7 +4,9 @@ import { z } from 'zod';
 
 const link = z.object({ label: z.string(), url: z.url() });
 
-const roadSegment = z.object({
+const caltransSegment = z.object({
+  /** The default, so California entries don't have to say it. */
+  provider: z.literal('caltrans').default('caltrans'),
   label: z.string(),
   /** Route as Caltrans writes it in the chain-control feed, e.g. "I-80", "SR-89", "US-395". */
   route: z.string(),
@@ -18,6 +20,17 @@ const roadSegment = z.object({
   /** A highway-conditions statement is kept if it mentions any of these. */
   textMatch: z.array(z.string()).default([]),
 });
+
+/** A Washington mountain pass, read from WSDOT's pass reports. */
+const wsdotSegment = z.object({
+  provider: z.literal('wsdot'),
+  label: z.string(),
+  route: z.string(),
+  /** WSDOT's PassName exactly as the feed writes it, e.g. "Stevens Pass US 2". */
+  pass: z.string().min(1),
+});
+
+const roadSegment = z.union([wsdotSegment, caltransSegment]);
 
 const resort = z.object({
   id: z.string().regex(/^[a-z0-9-]+$/),
@@ -112,6 +125,8 @@ const config = z
 
 export type ResortConfig = z.infer<typeof resort>;
 export type RoadSegmentConfig = z.infer<typeof roadSegment>;
+export type CaltransSegmentConfig = z.infer<typeof caltransSegment>;
+export type WsdotSegmentConfig = z.infer<typeof wsdotSegment>;
 export type Config = z.infer<typeof config>;
 
 export const CONFIG_PATH = fileURLToPath(new URL('../resorts.json', import.meta.url));

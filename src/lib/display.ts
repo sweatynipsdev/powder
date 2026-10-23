@@ -33,6 +33,7 @@ export type StatusTone = 'good' | 'warning' | 'serious' | 'critical' | 'neutral'
 
 export const ROAD_STATUS: Record<RoadStatus, { tone: StatusTone; label: string; icon: string }> = {
   clear: { tone: 'good', label: 'No chain controls', icon: '✓' },
+  advisory: { tone: 'warning', label: 'Traction tires advised', icon: '⛓' },
   'R-1': { tone: 'warning', label: 'Chains R-1', icon: '⛓' },
   'R-2': { tone: 'serious', label: 'Chains R-2', icon: '⛓' },
   'R-3': { tone: 'critical', label: 'Chains R-3', icon: '⛓' },

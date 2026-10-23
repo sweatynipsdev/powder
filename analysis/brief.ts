@@ -4,7 +4,7 @@
 import { confidenceOf } from '../pipeline/process/blend';
 import { fmtDay, fmtFt, fmtSnow, fmtSnowAmount } from '../shared/format';
 import { beforeOpening } from '../shared/status';
-import type { CpcCat, DaySummary, ModelId, Period, ReportData, ResortData, SnowAmount, SourceKey } from '../shared/types';
+import type { CpcCat, DaySummary, ModelId, Period, ReportData, ResortData, RoadSegment, SnowAmount, SourceKey } from '../shared/types';
 
 const MODEL_LABEL: Record<ModelId, string> = {
   gfs: 'GFS',
@@ -130,6 +130,16 @@ function snowOnGround(r: ResortData): string {
   return sp.depthIn <= 0 ? `none at the ${sp.station.name} station` : `${sp.depthIn} inches at the ${sp.station.name} station`;
 }
 
+/** The agency's own wording when it has one (WSDOT), otherwise Caltrans's terms. */
+export function roadStatusText(s: RoadSegment): string {
+  if (s.restriction) return s.restriction;
+  if (s.status === 'clear') return 'no restrictions';
+  if (s.status === 'advisory') return 'traction tires advised';
+  if (s.status === 'closed') return 'CLOSED';
+  if (s.status === 'unknown') return 'unknown';
+  return `chain control ${s.status}`;
+}
+
 function ago(iso: string | null, now: Date): string {
   if (!iso) return 'unknown time';
   const h = Math.round((now.getTime() - Date.parse(iso)) / 3_600_000);
@@ -241,7 +251,7 @@ export function buildBrief(r: ResortData, now: Date): Brief {
     roads: r.roads?.data
       ? r.roads.data.segments.map((s) => ({
           route: s.label,
-          status: s.status === 'clear' ? 'no chain controls' : s.status === 'closed' ? 'CLOSED' : s.status === 'unknown' ? 'unknown' : `chain control ${s.status}`,
+          status: roadStatusText(s),
           ...(s.notes.length ? { notes: s.notes } : {}),
         }))
       : 'n/a',

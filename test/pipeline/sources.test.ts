@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { loadConfig } from '../../pipeline/config';
+import { type CaltransSegmentConfig, loadConfig } from '../../pipeline/config';
 import { parseAvalanche } from '../../pipeline/sources/avalanche';
-import { buildSegment, normalizeChainStatus, parseCc, parseRoadsText, worse } from '../../pipeline/sources/caltrans';
+import { buildSegment, normalizeChainStatus, parseCc, parseRoadsText } from '../../pipeline/sources/caltrans';
+import { worse } from '../../pipeline/sources/roadStatus';
 import { kmlPoint, normalizeCategory, parseArcPoint, parseEnso, parseKml, pointInRing } from '../../pipeline/sources/cpc';
 import { parseDateline, parseExpertPage } from '../../pipeline/sources/expert';
 import { afdSections, fetchOffice, filterAfd, parseAfd, parseAlerts, unwrap } from '../../pipeline/sources/nws';
@@ -192,16 +193,22 @@ describe('Caltrans', () => {
     expect(worse('R-2', 'clear')).toBe('R-2');
   });
 
+  it('ranks "traction tires advised" between clear and R-1', () => {
+    expect(worse('clear', 'advisory')).toBe('advisory');
+    expect(worse('advisory', 'R-1')).toBe('R-1');
+    expect(worse('advisory', 'unknown')).toBe('advisory');
+  });
+
   it('matches stations to segments, including the mislabeled "I-40" records', () => {
     const stations = parseCc(fixtureJson('ccStatusD03.json'));
-    const seg = resort('palisades').roads[0];
+    const seg = resort('palisades').roads[0] as CaltransSegmentConfig;
     const out = buildSegment(seg, stations, [], null);
     expect(out.stations).toBeGreaterThan(20);
     expect(stations.some((s) => s.route === 'I-40')).toBe(true);
   });
 
   it('reports the worst station and a closure', () => {
-    const seg = resort('palisades').roads[2];
+    const seg = resort('palisades').roads[2] as CaltransSegmentConfig;
     const mk = (status: string) => ({ name: 'x', route: 'SR-89', lat: 39.2, lon: -120.2, status: normalizeChainStatus(status), rawStatus: status, description: status, since: null });
     const out = buildSegment(seg, [mk('R-0'), mk('R-2'), mk('R-1')], [], null);
     expect(out.status).toBe('R-2');

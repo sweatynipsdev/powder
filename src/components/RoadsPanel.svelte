@@ -10,6 +10,13 @@
   }
 
   let { roads, status, cams }: Props = $props();
+
+  // Data cached on a phone before WSDOT was added has no agencies: it was all Caltrans.
+  const AGENCIES: Record<string, { caption: string; link: { label: string; url: string } }> = {
+    Caltrans: { caption: 'Caltrans chain controls and highway conditions', link: { label: 'Caltrans QuickMap', url: 'https://quickmap.dot.ca.gov/' } },
+    WSDOT: { caption: 'WSDOT mountain pass reports', link: { label: 'WSDOT mountain passes', url: 'https://wsdot.com/travel/real-time/mountainpasses' } },
+  };
+  let agencies = $derived((roads?.agencies ?? ['Caltrans']).map((a) => AGENCIES[a]).filter(Boolean));
 </script>
 
 <section class="card" aria-label="Roads">
@@ -23,7 +30,7 @@
         <li>
           <div class="row">
             <span class="secondary">{s.label}</span>
-            <span class="status {st.tone}"><span aria-hidden="true">{st.icon}</span>{st.label}</span>
+            <span class="status {st.tone}"><span aria-hidden="true">{st.icon}</span>{s.restriction ?? st.label}</span>
           </div>
           {#if s.worst}
             <p class="small secondary">{s.worst.name}: {s.worst.description}{s.worst.since ? ` (since ${s.worst.since.replace('T', ' ')})` : ''}</p>
@@ -35,7 +42,7 @@
         </li>
       {/each}
     </ul>
-    <p class="small muted">Caltrans chain controls and highway conditions{roads.textAsOf ? `, as of ${roads.textAsOf}` : ''}.</p>
+    <p class="small muted">{agencies.map((a) => a.caption).join(' · ')}{roads.textAsOf ? `, as of ${roads.textAsOf}` : ''}.</p>
   {/if}
   {#if cams.length}
     <div class="cams">
@@ -47,7 +54,9 @@
       {/each}
     </div>
   {/if}
-  <p class="small"><a href="https://quickmap.dot.ca.gov/" target="_blank" rel="noopener">Caltrans QuickMap ↗</a></p>
+  {#each agencies as a (a.link.url)}
+    <p class="small"><a href={a.link.url} target="_blank" rel="noopener">{a.link.label} ↗</a></p>
+  {/each}
 </section>
 
 <style>

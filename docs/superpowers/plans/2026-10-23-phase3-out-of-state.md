@@ -95,28 +95,28 @@ export async function fetchCaltrans(segments: CaltransSegmentConfig[]): Promise<
 export function roadStatusText(s: RoadSegment): string;
 ```
 
-- [ ] **Tests first:**
+- [x] **Tests first:**
   - A Caltrans entry with no `provider` parses with `provider: 'caltrans'`.
   - A `wsdot` entry parses.
   - A `wsdot` entry without `pass` is rejected.
   - `worse('clear', 'advisory') === 'advisory'` and `worse('advisory', 'R-1') === 'R-1'`.
   - `roadStatusText` follows the spec's wording, and a set `restriction` wins.
   - Replay: every Caltrans segment has `restriction: null`; Palisades' `roads.data.agencies` is `['Caltrans']`.
-- [ ] Move `SEVERITY` and `worse` from `caltrans.ts` into `roads.ts`, with `advisory` inserted. `caltrans.ts` imports them.
-- [ ] Split `caltrans.ts`'s `fetchRoads` into `fetchCaltrans(segments)`. `buildSegment` sets `restriction: null`.
-- [ ] `roads.ts` `fetchRoads`:
+- [x] Move `SEVERITY` and `worse` from `caltrans.ts` into `roads.ts`, with `advisory` inserted. `caltrans.ts` imports them.
+- [x] Split `caltrans.ts`'s `fetchRoads` into `fetchCaltrans(segments)`. `buildSegment` sets `restriction: null`.
+- [x] `roads.ts` `fetchRoads`:
   - Partitions by `provider`, runs `fetchCaltrans` for Caltrans segments. The `wsdot` branch is wired in T2; until then, a `wsdot` segment throws "not implemented".
   - Reassembles in config order.
   - Sets `agencies`: `'Caltrans'` and/or `'WSDOT'`, in first-seen order.
   - Sets `worst` over all segments, and `textAsOf` from the Caltrans part.
-- [ ] `run.ts` imports `fetchRoads` from `./sources/roads`.
-- [ ] `display.ts`: add `advisory: { tone: 'warning', label: 'Traction tires advised', icon: '⛓' }`.
-- [ ] `RoadsPanel.svelte`:
+- [x] `run.ts` imports `fetchRoads` from `./sources/roads`.
+- [x] `display.ts`: add `advisory: { tone: 'warning', label: 'Traction tires advised', icon: '⛓' }`.
+- [x] `RoadsPanel.svelte`:
   - Segment label is `seg.restriction ?? ROAD_STATUS[seg.status].label`.
   - Caption is built from `roads.agencies ?? ['Caltrans']`: "Caltrans chain controls and highway conditions", "WSDOT mountain pass reports", joined with " · ".
-- [ ] `SourcesNote.svelte`: the roads label is `r.roads?.data?.agencies?.join(' + ') ?? 'Roads'`.
-- [ ] `brief.ts`: road status uses `roadStatusText`.
-- [ ] Run `npm test` and `npm run typecheck`, then commit "T1: roads from more than one agency; advisory tier; agency wording".
+- [x] `SourcesNote.svelte`: the roads label is `r.roads?.data?.agencies?.join(' + ') ?? 'Roads'`.
+- [x] `brief.ts`: road status uses `roadStatusText`.
+- [x] Run `npm test` and `npm run typecheck`, then commit "T1: roads from more than one agency; advisory tier; agency wording".
 
 ## T2. WSDOT pass reports (`pipeline/sources/wsdot.ts`)
 
@@ -266,7 +266,7 @@ Research starts **before T1**, in background agents, so it runs while T1–T5 ar
 - Write evidence and entries to the scratchpad. Return a short summary.
 
 **Controller steps:**
-- [ ] Dispatch the three agents in background before starting T1.
+- [x] Dispatch the three agents in background before starting T1.
 - [ ] When they return, check every entry:
   - It parses (`parseConfig`).
   - Base and summit elevations from the elevation API are within 300 ft of the stated ones, or there's a noted reason.
@@ -405,3 +405,5 @@ export async function fetchAvcan(r: ResortConfig): Promise<AvalancheData>;  // s
 
 - Ruling: `nwsArea` stays required and falls back to `region` for Whistler, rather than becoming optional as the spec says — same effect, less churn in types and the app — cost if wrong: none visible; one field holds a region name.
 - Ruling: if a reuse run fails and falls back to a full update, the budget check doesn't run for it — that fallback is rare and only happens when the live data is broken — cost if wrong: one unguarded full run, about 2,550 calls.
+- Ruling: the severity order and `worse()` live in `pipeline/sources/roadStatus.ts`, not `roads.ts` as planned — `caltrans.ts` needs them and `roads.ts` imports `caltrans.ts`, so keeping them in `roads.ts` would make a circular import — cost if wrong: none; one extra small module.
+- Ruling: vitest `testTimeout` raised to 30 s for every test (in `vitest.config.ts`) — the outage test replays the pipeline twice and took 5.5 s at 21 resorts with the suite running in parallel; at 40 it would fail every run — cost if wrong: a hung test takes 30 s to report.
