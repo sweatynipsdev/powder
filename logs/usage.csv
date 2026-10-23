@@ -5,3 +5,4 @@ timestamp,model,mode,calls,regenerated,input_tokens,cache_read_tokens,cache_writ
 2026-10-23T17:18:25.542Z,claude-haiku-5-5,force,5,palisades;alpine;mammoth;bigbear,29324,7514,2128,6735,0.00664
 2026-10-23T17:19:18.936Z,claude-haiku-5-5,force,6,palisades;alpine;mammoth;bigbear,35735,8452,3275,12343,0.01024
 2026-10-23T17:22:22.001Z,claude-haiku-5-5,force,5,palisades;alpine;mammoth;bigbear,27786,9614,0,6844,0.00630
+2026-10-23T17:48:39.153Z,claude-haiku-5-5,auto,5,palisades;alpine;mammoth;bigbear,27886,6339,3275,7189,0.00686
