@@ -19,6 +19,7 @@ import { EMPTY_PREVIOUS, loadPrevious, type Previous } from './previous';
 import { buildForecast } from './process/forecast';
 import { attempt, carryForward, errorMessage } from './process/stale';
 import { fetchAvalanche } from './sources/avalanche';
+import { fetchAvcan } from './sources/avcan';
 import { fetchRoads } from './sources/roads';
 import { fetchCpc, fetchEnsoOnly } from './sources/cpc';
 import { fetchEcccAlerts } from './sources/eccc';
@@ -84,7 +85,7 @@ export async function buildResort(
     optional(!!nwsCfg, () => fetchNwsForecast(r), at),
     attempt(() => (nwsCfg ? fetchAlerts(r) : fetchEcccAlerts(r)), at),
     optional(!!nwsCfg, async () => filterAfd(await fetchAfd(nwsCfg!.afdOffice ?? (await fetchOffice(r))), nwsCfg!.ignore), at),
-    optional(!!av && 'center' in av, () => fetchAvalanche(r), at),
+    optional(!!av, () => (av && 'provider' in av ? fetchAvcan(r) : fetchAvalanche(r)), at),
     optional(r.roads.length > 0, () => fetchRoads(r), at),
     optional(!!r.report, () => fetchReport(r), at),
     optional(!!r.expert, () => fetchExpert(r), at),

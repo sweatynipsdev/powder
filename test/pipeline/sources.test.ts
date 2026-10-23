@@ -5,6 +5,7 @@ import { buildSegment, normalizeChainStatus, parseCc, parseRoadsText } from '../
 import { worse } from '../../pipeline/sources/roadStatus';
 import { buildWsdotSegment, parseWsdot, wsdotStatus } from '../../pipeline/sources/wsdot';
 import { ecccAlertsUrl, parseEcccAlerts } from '../../pipeline/sources/eccc';
+import { parseAvcan } from '../../pipeline/sources/avcan';
 import { kmlPoint, normalizeCategory, parseArcPoint, parseEnso, parseKml, pointInRing } from '../../pipeline/sources/cpc';
 import { parseDateline, parseExpertPage } from '../../pipeline/sources/expert';
 import { afdSections, fetchOffice, filterAfd, parseAfd, parseAlerts, unwrap } from '../../pipeline/sources/nws';
@@ -447,8 +448,53 @@ describe('ECCC alerts', () => {
     expect(alerts[0].description).toBe(TEXT);
   });
 
-  it('reads an empty collection as no alerts, and rejects anything else', () => {
+  it('reads an empty collection as no alerts, and rejects anything else (ECCC)', () => {
     expect(parseEcccAlerts({ type: 'FeatureCollection', features: [] }, now)).toEqual([]);
     expect(() => parseEcccAlerts({ code: 'InvalidParameterValue' }, now)).toThrow();
+  });
+});
+
+describe('Avalanche Canada', () => {
+  const band = (value: string) => ({ rating: { value, display: value } });
+  const ratings = (alp: string, tln: string, btl: string) => ({ ratings: { alp: band(alp), tln: band(tln), btl: band(btl) } });
+
+  it('reads the off-season province-wide product as no rating, without throwing', () => {
+    // Shaped like the live point product on 2026-10-23.
+    const off = {
+      url: 'https://avalanche.ca/forecasts/181218e0',
+      type: 'avalancheforecast',
+      report: {
+        title: 'Akamina-Badshot-Battle-Birkenhead-Blue River-Bonnington-Boundary-Brandywine-Bull-Central Selkirk-Clearwater-Clemina',
+        dateIssued: '2026-10-01T23:00:00.000Z',
+        validUntil: '2026-11-26T00:00:00.000Z',
+        highlights: '<p><a href="https://avalanche.ca/early-season-conditions">Avalanche hazard may exist where there is snow.</a></p>',
+        summaries: [{ type: { value: 'weather-summary' }, content: ' <p>More details in the Mountain Weather Forecast.</p>' }],
+        dangerRatings: [ratings('earlyseason', 'earlyseason', 'earlyseason'), ratings('earlyseason', 'earlyseason', 'earlyseason')],
+        problems: [],
+      },
+    };
+    const a = parseAvcan(off);
+    expect(a).toMatchObject({ center: 'Avalanche Canada', zoneName: 'Province-wide', overall: 0, overallText: 'No rating', publicText: false });
+    expect(a.current).toEqual({ upper: 0, middle: 0, lower: 0 });
+    expect(a.bottomLine).toBe('Avalanche hazard may exist where there is snow.');
+  });
+
+  it('maps the in-season bands, problems and text, and keeps the text out of the app', () => {
+    const a = parseAvcan({
+      url: 'https://avalanche.ca/forecasts/sea-to-sky',
+      type: 'avalancheforecast',
+      report: {
+        title: 'Sea To Sky',
+        highlights: '<p>Fresh wind slabs are reactive near ridgecrests.</p>',
+        summaries: [{ content: '<p>Avalanche summary.</p>' }, { content: '<p>Snowpack summary.</p>' }],
+        dangerRatings: [ratings('considerable', 'moderate', 'low'), ratings('high', 'considerable', 'moderate')],
+        problems: [{ type: { value: 'windSlab', display: 'Wind Slab' } }, { type: { value: 'stormSlab', display: 'Storm Slab' } }],
+      },
+    });
+    expect(a).toMatchObject({ zoneName: 'Sea To Sky', overall: 3, overallText: 'Considerable', problems: ['Wind Slab', 'Storm Slab'], publicText: false });
+    expect(a.current).toEqual({ upper: 3, middle: 2, lower: 1 });
+    expect(a.tomorrow).toEqual({ upper: 4, middle: 3, lower: 2 });
+    expect(a.discussion).toBe('Avalanche summary.\n\nSnowpack summary.');
+    expect(() => parseAvcan({ message: 'Not found' })).toThrow();
   });
 });

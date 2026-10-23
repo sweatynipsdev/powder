@@ -374,12 +374,12 @@ export function parseAvcan(json: unknown): AvalancheData;   // publicText: false
 export async function fetchAvcan(r: ResortConfig): Promise<AvalancheData>;  // summit point if set, else base
 ```
 
-- [ ] **Tests first:**
+- [x] **Tests first:**
   - A sample built from the live 2026-10-23 off-season response: all ratings 0, no throw (risky input 15).
   - A made-up in-season product built from the documented schema: `alp/tln/btl` map to upper/middle/lower for today and tomorrow, `highlights` HTML is stripped into `bottomLine`, `summaries` joined into `discussion`, `problems[].type` listed, `publicText` false.
-- [ ] Reuse the overall-rating and overall-text logic from `avalanche.ts`; export it from there if it's private.
-- [ ] `run.ts` dispatches: `'provider' in r.avalanche ? fetchAvcan : fetchAvalanche`.
-- [ ] Commit "T11: Avalanche Canada danger ratings".
+- [x] Reuse the overall-rating and overall-text logic from `avalanche.ts`; export it from there if it's private.
+- [x] `run.ts` dispatches: `'provider' in r.avalanche ? fetchAvcan : fetchAvalanche`.
+- [x] Commit "T11: Avalanche Canada danger ratings".
 
 ## T12. Whistler config, fixtures, checks
 
