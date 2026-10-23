@@ -115,6 +115,8 @@ export async function buildResort(
       cams: r.links.cams,
       radar: r.links.radar ?? null,
       roadCams: r.roadCams,
+      report: r.links.report ?? null,
+      roads: r.links.roads ?? null,
     },
     // The analysis step fills this in; keep the last one until then.
     analysis: prev?.analysis ?? null,

@@ -26,6 +26,8 @@
     <h2 class="section-title">{s.name}</h2>
     {#if r?.roads}
       <RoadsPanel roads={r.roads.data} status={r.roads.status} cams={r.links.roadCams} />
+    {:else if r?.links.roads}
+      <a class="card" href={r.links.roads} target="_blank" rel="noopener">Road conditions for the drive →</a>
     {:else if r}
       <p class="card muted">No routes configured.</p>
     {:else}

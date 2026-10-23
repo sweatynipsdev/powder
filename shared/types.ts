@@ -382,7 +382,16 @@ export interface ResortData {
   localNotes?: string[];
   /** Scheduled opening day, YYYY-MM-DD. */
   openingDate?: string;
-  links: { website: string | null; webcams: string | null; cams: Link[]; radar: string | null; roadCams: Link[] };
+  links: {
+    website: string | null;
+    webcams: string | null;
+    cams: Link[];
+    radar: string | null;
+    roadCams: Link[];
+    /** The resort's snow-report page, and a road-conditions page where Caltrans doesn't reach. */
+    report?: string | null;
+    roads?: string | null;
+  };
   analysis: ResortAnalysis | null;
 }
 

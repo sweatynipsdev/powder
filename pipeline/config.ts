@@ -97,6 +97,10 @@ const resort = z.object({
       webcams: z.url().optional(),
       cams: z.array(link).default([]),
       radar: z.url().optional(),
+      /** The resort's own snow-report page. */
+      report: z.url().optional(),
+      /** Road conditions where Caltrans doesn't cover the drive (e.g. Nevada 511). */
+      roads: z.url().optional(),
     })
     .default({ cams: [] }),
 });

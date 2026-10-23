@@ -143,8 +143,8 @@
     <h2 class="section-title">National Weather Service</h2>
     <NwsPanel nws={r.nws.data} afd={r.afd.data} />
   {:else if tab === 'report'}
-    {#if r.links.website}
-      <a class="card sitelink" href={r.links.website} target="_blank" rel="noopener">View the report on the resort website →</a>
+    {#if r.links.report ?? r.links.website}
+      <a class="card sitelink" href={r.links.report ?? r.links.website} target="_blank" rel="noopener">View the report on the resort website →</a>
     {/if}
     <h2 class="section-title">Recent Snow</h2>
     <p class="section-sub">Resort-reported when current, otherwise estimated from the nearest snow station.</p>
@@ -161,6 +161,9 @@
     {#if r.roads}
       <h2 class="section-title">Getting There</h2>
       <RoadsPanel roads={r.roads.data} status={r.roads.status} cams={[]} />
+    {:else if r.links.roads}
+      <h2 class="section-title">Getting There</h2>
+      <a class="card sitelink" href={r.links.roads} target="_blank" rel="noopener">Road conditions for the drive →</a>
     {/if}
     <LocalNotes notes={r.localNotes ?? []} />
     <SourcesNote resort={r} />
