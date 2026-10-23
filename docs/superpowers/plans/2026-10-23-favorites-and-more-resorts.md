@@ -215,9 +215,9 @@
 
 **Files:** modify `pipeline/config.ts`, `pipeline/sources/nws.ts` (export `fetchOffice(r): Promise<string>` reading `properties.cwa` from `pointsUrl(r)`, so the HTTP cache shares the request with `fetchNwsForecast`) and `pipeline/run.ts` (the AFD source uses `r.nws.afdOffice ?? await fetchOffice(r)`). Test in `test/pipeline/sources.test.ts`.
 
-- [ ] Test: with `afdOffice` removed from a palisades config copy, the AFD office resolves to `REV` (from the recorded points fixture).
-- [ ] Implement.
-- [ ] Commit.
+- [x] Test: with `afdOffice` removed from a palisades config copy, the AFD office resolves to `REV` (from the recorded points fixture).
+- [x] Implement.
+- [x] Commit.
 
 ### T11 — research and add the 17 resorts
 

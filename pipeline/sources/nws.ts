@@ -19,7 +19,15 @@ export function pointsUrl(r: ResortConfig): string {
 }
 
 interface PointsResponse {
-  properties: { forecast: string };
+  properties: { forecast: string; cwa?: string };
+}
+
+/** The NWS office covering the resort's base (e.g. "REV"); the points request is shared with the forecast. */
+export async function fetchOffice(r: ResortConfig): Promise<string> {
+  const points = await fetchJson<PointsResponse>(pointsUrl(r), { headers: HEADERS });
+  const cwa = points.properties?.cwa;
+  if (!cwa) throw new Error('NWS points response names no office (cwa)');
+  return cwa;
 }
 
 interface ForecastResponse {

@@ -34,7 +34,8 @@ const resort = z.object({
   /** Starred on a phone that hasn't picked its own favorites yet. */
   defaultFavorite: z.boolean().default(false),
   nws: z.object({
-    afdOffice: z.string().length(3),
+    /** Office whose forecast discussion is read; defaults to the office covering the base point. */
+    afdOffice: z.string().length(3).optional(),
     /** The part of the office's region this resort sits in, so the write-up ignores the rest. */
     area: z.string().optional(),
     /** Forecast-discussion sentences mentioning any of these (other parts of the region) are dropped. */

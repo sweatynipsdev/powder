@@ -4,12 +4,13 @@ import { parseAvalanche } from '../../pipeline/sources/avalanche';
 import { buildSegment, normalizeChainStatus, parseCc, parseRoadsText, worse } from '../../pipeline/sources/caltrans';
 import { kmlPoint, normalizeCategory, parseArcPoint, parseEnso, parseKml, pointInRing } from '../../pipeline/sources/cpc';
 import { parseDateline, parseExpertPage } from '../../pipeline/sources/expert';
-import { afdSections, filterAfd, parseAfd, parseAlerts, unwrap } from '../../pipeline/sources/nws';
+import { afdSections, fetchOffice, filterAfd, parseAfd, parseAlerts, unwrap } from '../../pipeline/sources/nws';
 import { durationHours, gridToHourly, parseGrid } from '../../pipeline/sources/nwsGrid';
 import { parseDeterministic, parseEnsemble } from '../../pipeline/sources/openMeteo';
 import { normalizeTimestamp, num, parseMtnpowder } from '../../pipeline/sources/report';
 import { cdecDate, cocorahsStation, parseAcis, parseAwdb, parseCdec } from '../../pipeline/sources/snowpack';
-import { fixtureJson, fixtureText, recordedAt } from '../helpers';
+import { FIXTURE_DIR, fixtureJson, fixtureText, recordedAt } from '../helpers';
+import { configureHttp } from '../../pipeline/http';
 
 const config = loadConfig();
 const resort = (id: string) => config.resorts.find((r) => r.id === id)!;
@@ -244,6 +245,15 @@ describe('MtnPowder report', () => {
     const r = parseMtnpowder(resort('palisades').report!, fixtureJson('resortId=61') as never, [], new Date('2026-10-23T12:00:00Z'));
     expect(r.updatedAt).not.toBeNull();
     expect(r.fresh).toBe(false);
+  });
+});
+
+describe('NWS office', () => {
+  it('comes from the points lookup when the config leaves it out', async () => {
+    configureHttp({ mode: 'replay', dir: FIXTURE_DIR, failPattern: null, retryDelaysMs: [] });
+    const r = structuredClone(resort('palisades'));
+    delete r.nws.afdOffice;
+    expect(await fetchOffice(r)).toBe('REV');
   });
 });
 

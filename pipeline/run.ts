@@ -21,7 +21,7 @@ import { attempt, carryForward, errorMessage } from './process/stale';
 import { fetchAvalanche } from './sources/avalanche';
 import { fetchRoads } from './sources/caltrans';
 import { fetchCpc } from './sources/cpc';
-import { fetchAfd, fetchAlerts, fetchNwsForecast, filterAfd } from './sources/nws';
+import { fetchAfd, fetchAlerts, fetchNwsForecast, fetchOffice, filterAfd } from './sources/nws';
 import { fetchNwsGrid } from './sources/nwsGrid';
 import { FORECAST_DAYS, fetchDeterministic, fetchEnsemble } from './sources/openMeteo';
 import { omPacer } from './sources/omBudget';
@@ -76,7 +76,7 @@ export async function buildResort(
     optional(!!r.snowpack, () => fetchSnowpack(r), at),
     attempt(() => fetchNwsForecast(r), at),
     attempt(() => fetchAlerts(r), at),
-    attempt(async () => filterAfd(await fetchAfd(r.nws.afdOffice), r.nws.ignore), at),
+    attempt(async () => filterAfd(await fetchAfd(r.nws.afdOffice ?? (await fetchOffice(r))), r.nws.ignore), at),
     optional(!!r.avalanche, () => fetchAvalanche(r), at),
     optional(r.roads.length > 0, () => fetchRoads(r), at),
     optional(!!r.report, () => fetchReport(r), at),
