@@ -8,3 +8,4 @@ timestamp,model,mode,calls,regenerated,input_tokens,cache_read_tokens,cache_writ
 2026-10-23T17:48:39.153Z,claude-haiku-5-5,auto,5,palisades;alpine;mammoth;bigbear,27886,6339,3275,7189,0.00686
 2026-10-23T17:51:36.065Z,claude-haiku-5-5,auto,5,palisades;alpine;mammoth;bigbear,27948,9614,0,9722,0.00775
 2026-10-23T18:47:34.463Z,claude-haiku-5-5,auto,6,palisades;alpine;mammoth;bigbear,38979,9888,3689,14778,0.01185
+2026-10-23T20:41:26.306Z,claude-haiku-5-5,auto,25,palisades;alpine;northstar;sugarbowl;boreal;homewood;heavenly;kirkwood;sierraattahoe;diamondpeak;mammoth;june;bearvalley;dodgeridge;chinapeak;bigbear;snowsummit;snowvalley;mountainhigh;mtbaldy,176730,56856,4073,63242,0.05037
