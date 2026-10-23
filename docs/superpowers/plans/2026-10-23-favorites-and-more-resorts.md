@@ -225,10 +225,10 @@
 - Modify: `resorts.json`.
 - Create: `docs/superpowers/research/2026-10-23-ca-nv-resorts.md`, holding the evidence (each URL checked live and the value read).
 
-- [ ] Research by region (Tahoe 9; Eastern/Central 4; SoCal 4 including the Snow Summit split), per the spec's "per resort" list. Each entry needs, per source, the live-checked URL and what it returned.
-- [ ] Split Big Bear: `bigbear` becomes Bear Mountain (MtnPowder 57 only), and `snowsummit` is new (58).
-- [ ] `npm run pipeline` live: every configured source ✓ for all 21 resorts. Fix or drop any source that fails.
-- [ ] Commit.
+- [x] Research by region (Tahoe 9; Eastern/Central 4; SoCal 4 including the Snow Summit split), per the spec's "per resort" list. Each entry needs, per source, the live-checked URL and what it returned.
+- [x] Split Big Bear: `bigbear` becomes Bear Mountain (MtnPowder 57 only), and `snowsummit` is new (58).
+- [x] `npm run pipeline` live: every configured source ✓ for all 21 resorts. Fix or drop any source that fails.
+- [x] Commit.
 
 ### T12 — fixtures, tests, sample
 

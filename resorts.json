@@ -123,6 +123,343 @@
       }
     },
     {
+      "id": "northstar",
+      "name": "Northstar California",
+      "shortName": "Northstar",
+      "region": "Tahoe",
+      "lat": 39.2746,
+      "lon": -120.121,
+      "baseFt": 6330,
+      "summitFt": 8610,
+      "summit": { "lat": 39.2615, "lon": -120.0975 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-11-20",
+        "notes": ["Base 6,330 ft, summit 8,610 ft (2,280 ft vertical), 3,170 skiable acres. Average snowfall is about 350 inches a year.", "Snowmaking covers about 50% of the terrain.", "Vail Resorts' announced 2026-27 opening is November 20 for Northstar and Heavenly, and December 4 for Kirkwood; dates depend on weather and snow."],
+        "sources": ["https://news.vailresorts.com/Northstar-California-2024-25-Winter-Tip-Sheet", "https://en.wikipedia.org/wiki/Northstar_California", "https://snowbrains.com/vail-resorts-announces-2026-27-opening-dates-for-11-resorts/"]
+      },
+      "nws": {
+        "afdOffice": "REV",
+        "area": "Lake Tahoe and the Sierra crest",
+        "ignore": ["Oregon border", "northeast CA", "northeast California", "northwest NV", "northwest Nevada", "far northeast", "Lassen", "Plumas", "Pershing", "Churchill", "Pyramid Lake", "Mineral", "Mono", "Surprise Valley"]
+      },
+      "snowpack": { "type": "awdb", "id": "834:CA:SNTL", "name": "Truckee #2 SNOTEL", "elevFt": 6500 },
+      "avalanche": { "center": "SAC", "zoneId": 2458 },
+      "roads": [
+        { "label": "I-80 Colfax → Truckee (Donner Summit)", "route": "I-80", "aliases": ["I-40"], "district": 3, "bbox": [39.05, -120.96, 39.4, -120.17], "textRoute": "I 80", "textMatch": ["Placer", "Nevada Co", "Truckee", "Donner", "Colfax", "Kingvale", "Nyack", "Applegate"] },
+        { "label": "SR-267 Truckee → Kings Beach (Brockway Summit)", "route": "SR-267", "district": 3, "bbox": [39.24, -120.18, 39.34, -120.03], "textRoute": "SR 267", "textMatch": ["Truckee", "Northstar", "Brockway", "Kings Beach", "Placer", "Nevada Co"] }
+      ],
+      "roadCams": [
+        { "label": "Hwy 267 at Northstar", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy267atnorthstar/hwy267atnorthstar.jpg" },
+        { "label": "Hwy 267 at Brockway Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy267atbrockwaysummit/hwy267atbrockwaysummit.jpg" }
+      ],
+      "links": {
+        "website": "https://www.northstarcalifornia.com/",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KRGX/standard"
+      }
+    },
+    {
+      "id": "sugarbowl",
+      "name": "Sugar Bowl",
+      "shortName": "Sugar Bowl",
+      "region": "Tahoe",
+      "lat": 39.3045,
+      "lon": -120.3335,
+      "baseFt": 6883,
+      "summitFt": 8383,
+      "summit": { "lat": 39.288, "lon": -120.328 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-11-27",
+        "notes": ["Base 6,883 ft, peaks to 8,383 ft (1,500 ft vertical), 1,650 acres across four peaks, 12 lifts.", "The resort cites an average of 500 inches a year and says it is first in line for incoming Pacific storms on the Sierra crest at Donner Summit.", "Terrain mix is 13.7% beginner, 42.2% intermediate and 44.1% advanced/expert.", "The resort's own page shows I-80 and Old 40 (Donner Pass Road) status, since Donner Summit is the only road access.", "Target opening is Friday, November 27, 2026, conditions permitting."],
+        "sources": ["https://www.sugarbowl.com/stats", "http://www.sugarbowl.com/home"]
+      },
+      "nws": {
+        "afdOffice": "STO",
+        "area": "the Sierra crest at Donner Summit",
+        "ignore": ["Shasta", "Coastal Range", "southern Cascades", "Sacramento Valley", "San Joaquin", "Delta", "Redding", "Bay Area", "Stockton", "Modesto"]
+      },
+      "snowpack": { "type": "awdb", "id": "428:CA:SNTL", "name": "CSS Lab SNOTEL", "elevFt": 6890 },
+      "avalanche": { "center": "SAC", "zoneId": 2458 },
+      "roads": [
+        { "label": "I-80 Colfax → Truckee (Donner Summit)", "route": "I-80", "aliases": ["I-40"], "district": 3, "bbox": [39.05, -120.96, 39.4, -120.17], "textRoute": "I 80", "textMatch": ["Placer", "Nevada Co", "Truckee", "Donner", "Colfax", "Kingvale", "Nyack", "Applegate"] },
+        { "label": "I-80 Truckee → Reno", "route": "I-80", "district": 3, "bbox": [39.33, -120.17, 39.53, -119.9], "textRoute": "I 80", "textMatch": ["Truckee", "Nevada State Line", "Stateline", "Floriston", "Boca"] }
+      ],
+      "roadCams": [
+        { "label": "I-80 at Donner Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atdonnersummit/hwy80atdonnersummit.jpg" },
+        { "label": "I-80 at Castle Peak", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atcastlepeak/hwy80atcastlepeak.jpg" }
+      ],
+      "links": {
+        "website": "https://www.sugarbowl.com/",
+        "webcams": "https://www.sugarbowl.com/webcams",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KRGX/standard",
+        "report": "https://www.sugarbowl.com/conditions"
+      }
+    },
+    {
+      "id": "boreal",
+      "name": "Boreal Mountain",
+      "shortName": "Boreal",
+      "region": "Tahoe",
+      "lat": 39.3365,
+      "lon": -120.349,
+      "baseFt": 7200,
+      "summitFt": 7700,
+      "summit": { "lat": 39.3455, "lon": -120.357 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-11-27",
+        "notes": ["Base 7,200 ft, top 7,700 ft (500 ft vertical), 380 acres. These figures are from Wikipedia; Boreal's own site has no stats page.", "It sits on I-80 at Donner Summit, offers night skiing until 8 pm, and is typically the first Northern California area to open (November 8 in 2017).", "ABC7's list of announced 2026-27 openings has Boreal on November 27."],
+        "sources": ["https://en.wikipedia.org/wiki/Boreal_Mountain_Resort", "https://abc7news.com/post/list-tahoe-ski-resorts-2026-27-opening-dates/19704870/"]
+      },
+      "nws": {
+        "afdOffice": "STO",
+        "area": "the Sierra crest at Donner Summit",
+        "ignore": ["Shasta", "Coastal Range", "southern Cascades", "Sacramento Valley", "San Joaquin", "Delta", "Redding", "Bay Area", "Stockton", "Modesto"]
+      },
+      "snowpack": { "type": "awdb", "id": "428:CA:SNTL", "name": "CSS Lab SNOTEL", "elevFt": 6890 },
+      "avalanche": { "center": "SAC", "zoneId": 2458 },
+      "roads": [
+        { "label": "I-80 Colfax → Truckee (Donner Summit)", "route": "I-80", "aliases": ["I-40"], "district": 3, "bbox": [39.05, -120.96, 39.4, -120.17], "textRoute": "I 80", "textMatch": ["Placer", "Nevada Co", "Truckee", "Donner", "Colfax", "Kingvale", "Nyack", "Applegate"] },
+        { "label": "I-80 Truckee → Reno", "route": "I-80", "district": 3, "bbox": [39.33, -120.17, 39.53, -119.9], "textRoute": "I 80", "textMatch": ["Truckee", "Nevada State Line", "Stateline", "Floriston", "Boca"] }
+      ],
+      "roadCams": [
+        { "label": "I-80 at Donner Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atdonnersummit/hwy80atdonnersummit.jpg" },
+        { "label": "I-80 at Soda Springs EB", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atsodaspringseb/hwy80atsodaspringseb.jpg" }
+      ],
+      "links": {
+        "website": "https://www.rideboreal.com/",
+        "webcams": "https://www.rideboreal.com/explore/webcams/boreal-mountain-cam/",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KRGX/standard",
+        "report": "https://www.rideboreal.com/explore/status-conditions/lift-trail-status/"
+      }
+    },
+    {
+      "id": "homewood",
+      "name": "Homewood Mountain Resort",
+      "shortName": "Homewood",
+      "region": "Tahoe",
+      "lat": 39.084,
+      "lon": -120.161,
+      "baseFt": 6230,
+      "summitFt": 7880,
+      "summit": { "lat": 39.0745, "lon": -120.183 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "notes": ["Base 6,230 ft, summit 7,880 ft (1,650 ft vertical), 1,260 acres, 7 lifts and 66 runs on the west shore of Lake Tahoe.", "The resort says Ellis Peak shelters the whole mountain from high-ridge winds, so a wind hold is almost unheard of there.", "More than 750 acres of guided snowcat terrain run from a snowcat summit at 8,740 ft, about 1,840 ft of vertical."],
+        "sources": ["https://skihomewood.com/trailmap/"]
+      },
+      "nws": {
+        "afdOffice": "REV",
+        "area": "Lake Tahoe and the Sierra crest",
+        "ignore": ["Oregon border", "northeast CA", "northeast California", "northwest NV", "northwest Nevada", "far northeast", "Lassen", "Plumas", "Pershing", "Churchill", "Pyramid Lake", "Mineral", "Mono", "Surprise Valley"]
+      },
+      "snowpack": { "type": "awdb", "id": "848:CA:SNTL", "name": "Ward Creek #3 SNOTEL", "elevFt": 6750 },
+      "avalanche": { "center": "SAC", "zoneId": 2458 },
+      "roads": [
+        { "label": "I-80 Colfax → Truckee (Donner Summit)", "route": "I-80", "aliases": ["I-40"], "district": 3, "bbox": [39.05, -120.96, 39.4, -120.17], "textRoute": "I 80", "textMatch": ["Placer", "Nevada Co", "Truckee", "Donner", "Colfax", "Kingvale", "Nyack", "Applegate"] },
+        { "label": "SR-89 Truckee → Tahoe City", "route": "SR-89", "district": 3, "bbox": [39.15, -120.22, 39.33, -120.13], "textRoute": "SR 89", "textMatch": ["Truckee", "Tahoe City", "Olympic", "Squaw", "Palisades", "Alpine Meadows", "Placer"] },
+        { "label": "SR-89 Tahoe City → Emerald Bay (West Shore)", "route": "SR-89", "district": 3, "bbox": [38.93, -120.16, 39.18, -120.06], "textRoute": "SR 89", "textMatch": ["El Dorado", "Placer", "Tahoma", "Homewood", "Emerald Bay", "Tahoe City", "Meeks", "Lake Tahoe"] }
+      ],
+      "roadCams": [
+        { "label": "Hwy 89 at Hwy 28 (Tahoe City)", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy89athwy28/hwy89athwy28.jpg" },
+        { "label": "Hwy 89 at Granlibakken", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy89atgranlibakken/hwy89atgranlibakken.jpg" }
+      ],
+      "links": {
+        "website": "https://skihomewood.com/",
+        "webcams": "https://skihomewood.com/webcams/",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KRGX/standard",
+        "report": "https://skihomewood.com/snowreport/"
+      }
+    },
+    {
+      "id": "heavenly",
+      "name": "Heavenly",
+      "shortName": "Heavenly",
+      "region": "Tahoe",
+      "lat": 38.9353,
+      "lon": -119.94,
+      "baseFt": 6540,
+      "summitFt": 10067,
+      "summit": { "lat": 38.9185, "lon": -119.9005 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-11-20",
+        "notes": ["Base 6,540 ft on the California side (gondola) and 7,200 ft on the Nevada side, summit 10,067 ft, 4,800 acres. Vail's fast facts are from the 2011-12 season.", "Average snowfall is about 360 inches at the summit but only about 125 inches at lake level, a 3x gap between the top and the lake.", "Snowmaking covers about 73% of trails.", "In the February 2020 high-wind warning, the Gondola, Tamarack and Big Easy lifts were closed for the day on rising wind.", "A December 2022 storm cut power on the Nevada side for three days and stopped the main gondola; rime ice up to 10 inches thick had to be chipped off chairs by hand.", "Vail Resorts' announced 2026-27 opening is November 20."],
+        "sources": ["https://news.vailresorts.com/2011-08-25-Heavenly-Winter-Fast-Facts-2012-13", "https://www.activenorcal.com/some-tahoe-ski-resorts-closing-for-the-day-amidst-winds-up-to-100-mph/", "https://sfstandard.com/2023/01/09/why-have-so-many-ski-lifts-been-closed-lately/", "https://snowbrains.com/vail-resorts-announces-2026-27-opening-dates-for-11-resorts/"]
+      },
+      "nws": {
+        "afdOffice": "REV",
+        "area": "Lake Tahoe and the Sierra crest",
+        "ignore": ["Oregon border", "northeast CA", "northeast California", "northwest NV", "northwest Nevada", "far northeast", "Lassen", "Plumas", "Pershing", "Churchill", "Pyramid Lake", "Mineral", "Mono", "Surprise Valley"]
+      },
+      "snowpack": { "type": "awdb", "id": "518:CA:SNTL", "name": "Heavenly Valley SNOTEL", "elevFt": 8540 },
+      "avalanche": { "center": "SAC", "zoneId": 2458 },
+      "roads": [
+        { "label": "US-50 Placerville → South Lake Tahoe (Echo Summit)", "route": "US-50", "district": 3, "bbox": [38.7, -120.8, 38.87, -120], "textRoute": "US 50", "textMatch": ["El Dorado", "Placerville", "Pollock Pines", "Kyburz", "Strawberry", "Twin Bridges", "Echo", "Meyers", "South Lake Tahoe", "Lake Tahoe Basin", "Wrights Lake"] }
+      ],
+      "roadCams": [
+        { "label": "Hwy 50 at Echo Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atechosummit/hwy50atechosummit.jpg" },
+        { "label": "Hwy 50 at Ski Run", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atskirun/hwy50atskirun.jpg" }
+      ],
+      "links": {
+        "website": "https://www.skiheavenly.com/",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KRGX/standard"
+      }
+    },
+    {
+      "id": "kirkwood",
+      "name": "Kirkwood",
+      "shortName": "Kirkwood",
+      "region": "Tahoe",
+      "lat": 38.685,
+      "lon": -120.065,
+      "baseFt": 7800,
+      "summitFt": 9805,
+      "summit": { "lat": 38.664, "lon": -120.064 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-12-04",
+        "notes": ["Base 7,800 ft, summit 9,805 ft (2,005 ft vertical), 2,300 skiable acres. Average snowfall is about 354 inches a year.", "Terrain is steep and expert-heavy: 20% expert, 38% advanced, 30% intermediate, 12% beginner.", "Vail Resorts' announced 2026-27 opening is December 4, two weeks after Heavenly and Northstar.", "The only road in is SR-88 over Carson Pass, which Caltrans District 10 (not District 3) controls; chain-control stations sit at Kirkwood and Caples Lake."],
+        "sources": ["https://news.vailresorts.com/Kirkwood-Mountain-Resort-2024-25-Winter-Tip-Sheet", "https://snowbrains.com/vail-resorts-announces-2026-27-opening-dates-for-11-resorts/", "https://cwwp2.dot.ca.gov/data/d10/cc/ccStatusD10.json"]
+      },
+      "nws": {
+        "afdOffice": "STO",
+        "area": "the central Sierra Nevada, western slopes and crest",
+        "ignore": ["Shasta", "Coastal Range", "southern Cascades", "Sacramento Valley", "San Joaquin", "Delta", "Redding", "Bay Area", "Stockton", "Modesto"]
+      },
+      "snowpack": { "type": "awdb", "id": "1067:CA:SNTL", "name": "Carson Pass SNOTEL", "elevFt": 8360 },
+      "avalanche": { "center": "SAC", "zoneId": 2458 },
+      "roads": [
+        { "label": "SR-88 Pine Grove → Carson Pass (Kirkwood)", "route": "SR-88", "district": 10, "bbox": [38.4, -120.66, 38.72, -119.94], "textRoute": "SR 88", "textMatch": ["Alpine", "Amador", "Kirkwood", "Carson", "Pioneer", "Pine Grove", "Nevada State Line"] }
+      ],
+      "roadCams": [],
+      "links": {
+        "website": "https://www.kirkwood.com/",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KRGX/standard"
+      }
+    },
+    {
+      "id": "sierraattahoe",
+      "name": "Sierra-at-Tahoe",
+      "shortName": "Sierra-at-Tahoe",
+      "region": "Tahoe",
+      "lat": 38.8002,
+      "lon": -120.0806,
+      "baseFt": 6640,
+      "summitFt": 8852,
+      "summit": { "lat": 38.7925, "lon": -120.0605 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "notes": ["Base 6,640 ft, top 8,852 ft (2,212 ft vertical), 2,000 acres, 50 trails and 14 lifts.", "Terrain split is 25% easier, 50% more difficult, 25% most difficult.", "In the February 9, 2020 high-wind warning, Sierra closed for the day from top to bottom because of extremely high winds.", "Access is US-50 over Echo Summit; the resort's webcam page carries the Caltrans cameras at Echo Summit, Meyers, Sierra EB and Twin Bridges."],
+        "sources": ["https://sierraattahoe.com/maps-and-stats/", "https://www.activenorcal.com/some-tahoe-ski-resorts-closing-for-the-day-amidst-winds-up-to-100-mph/", "https://sierraattahoe.com/live-cams/"]
+      },
+      "nws": {
+        "afdOffice": "STO",
+        "area": "the Sierra crest near Echo Summit and US-50",
+        "ignore": ["Shasta", "Coastal Range", "southern Cascades", "Sacramento Valley", "San Joaquin", "Delta", "Redding", "Bay Area", "Stockton", "Modesto"]
+      },
+      "snowpack": { "type": "awdb", "id": "463:CA:SNTL", "name": "Echo Peak SNOTEL", "elevFt": 7650 },
+      "avalanche": { "center": "SAC", "zoneId": 2458 },
+      "roads": [
+        { "label": "US-50 Placerville → South Lake Tahoe (Echo Summit)", "route": "US-50", "district": 3, "bbox": [38.7, -120.8, 38.87, -120], "textRoute": "US 50", "textMatch": ["El Dorado", "Placerville", "Pollock Pines", "Kyburz", "Strawberry", "Twin Bridges", "Echo", "Meyers", "South Lake Tahoe", "Lake Tahoe Basin", "Wrights Lake"] }
+      ],
+      "roadCams": [
+        { "label": "Hwy 50 at Echo Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atechosummit/hwy50atechosummit.jpg" },
+        { "label": "Hwy 50 at Meyers", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atmeyers/hwy50atmeyers.jpg" }
+      ],
+      "links": {
+        "website": "https://sierraattahoe.com/",
+        "webcams": "https://sierraattahoe.com/live-cams/",
+        "cams": [
+          { "label": "Summit Cam", "url": "https://img.hdrelay.com/frames/f5145304-44dc-475f-a654-8a7bacee1e81/sugar/last.jpg" }
+        ],
+        "radar": "https://radar.weather.gov/station/KRGX/standard",
+        "report": "https://sierraattahoe.com/weather-snow-report/"
+      }
+    },
+    {
+      "id": "mtrose",
+      "name": "Mt. Rose Ski Tahoe",
+      "shortName": "Mt. Rose",
+      "region": "Tahoe",
+      "lat": 39.3257,
+      "lon": -119.8855,
+      "baseFt": 8260,
+      "summitFt": 9700,
+      "summit": { "lat": 39.3095, "lon": -119.881 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-11-20",
+        "notes": ["Base 8,260 ft (the highest base in Tahoe), summit 9,700 ft (1,800 ft vertical), 1,200+ acres. The resort cites an average of 350 inches a year.", "Slopes face north and east, and snowmaking covers up to 28% of the mountain.", "The resort makes snow below about 26 F with low humidity, 4+ hour windows and low wind, and aims to be the first Tahoe resort open.", "Access is SR-431 (Mt. Rose Highway) over the summit between Reno and Incline Village; it is a Nevada road, outside Caltrans coverage.", "ABC7's list of announced 2026-27 openings has Mt. Rose on November 20."],
+        "sources": ["https://skirose.com/mountain-information/", "https://skirose.com/snow-report/", "https://abc7news.com/post/list-tahoe-ski-resorts-2026-27-opening-dates/19704870/"]
+      },
+      "nws": {
+        "afdOffice": "REV",
+        "area": "Lake Tahoe and the Carson Range",
+        "ignore": ["Oregon border", "northeast CA", "northeast California", "northwest NV", "northwest Nevada", "far northeast", "Lassen", "Plumas", "Pershing", "Churchill", "Pyramid Lake", "Mineral", "Mono", "Surprise Valley"]
+      },
+      "snowpack": { "type": "awdb", "id": "652:NV:SNTL", "name": "Mt Rose Ski Area SNOTEL", "elevFt": 8810 },
+      "avalanche": { "center": "SAC", "zoneId": 2458 },
+      "roads": [],
+      "roadCams": [],
+      "links": {
+        "website": "https://skirose.com/",
+        "webcams": "https://skirose.com/the-mountain-web-cams/",
+        "cams": [
+          { "label": "Main Lodge", "url": "https://player.brownrice.com/snapshot/mtrosecam" },
+          { "label": "Summit", "url": "https://player.brownrice.com/snapshot/mtrosesummit" },
+          { "label": "Slide Bowl", "url": "https://player.brownrice.com/snapshot/mtroseslidebowl" }
+        ],
+        "radar": "https://radar.weather.gov/station/KRGX/standard",
+        "roads": "https://www.nvroads.com/",
+        "report": "https://skirose.com/snow-report/"
+      }
+    },
+    {
+      "id": "diamondpeak",
+      "name": "Diamond Peak",
+      "shortName": "Diamond Peak",
+      "region": "Tahoe",
+      "lat": 39.253,
+      "lon": -119.9235,
+      "baseFt": 6700,
+      "summitFt": 8540,
+      "summit": { "lat": 39.265, "lon": -119.9 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "notes": ["Elevation 6,700-8,540 ft (1,840 ft vertical), 655 skiable acres, 30 runs, above Incline Village on the north shore of Lake Tahoe.", "Snowmaking covers 75% of the developed terrain.", "The resort says it typically opens in the first or second week of December; no 2026-27 date is set (listed as TBD, check back mid-November)."],
+        "sources": ["https://www.diamondpeak.com/about/", "https://www.diamondpeak.com/event/projected-opening-day/"]
+      },
+      "nws": {
+        "afdOffice": "REV",
+        "area": "Lake Tahoe and the Carson Range",
+        "ignore": ["Oregon border", "northeast CA", "northeast California", "northwest NV", "northwest Nevada", "far northeast", "Lassen", "Plumas", "Pershing", "Churchill", "Pyramid Lake", "Mineral", "Mono", "Surprise Valley"]
+      },
+      "snowpack": { "type": "awdb", "id": "615:NV:SNTL", "name": "Marlette Lake SNOTEL", "elevFt": 7860 },
+      "avalanche": { "center": "SAC", "zoneId": 2458 },
+      "roads": [],
+      "roadCams": [],
+      "links": {
+        "website": "https://www.diamondpeak.com/",
+        "webcams": "https://www.diamondpeak.com/the-mountain/web-cams/",
+        "cams": [
+          { "label": "Base Area", "url": "https://img.hdrelay.com/frames/f696eee0-2224-4f36-b215-864ddb36012f/default/last.jpg" },
+          { "label": "Snowflake Lodge (mid-mountain)", "url": "https://img.hdrelay.com/frames/0b881044-f574-49ff-b548-e2b617063ae6/default/last.jpg" },
+          { "label": "Summit", "url": "https://img.hdrelay.com/frames/544ccabf-7940-470e-86ba-4e06b192c29f/default/last.jpg" }
+        ],
+        "radar": "https://radar.weather.gov/station/KRGX/standard",
+        "roads": "https://www.nvroads.com/",
+        "report": "https://www.diamondpeak.com/the-mountain/mountain-report/"
+      }
+    },
+    {
       "id": "mammoth",
       "name": "Mammoth Mountain",
       "shortName": "Mammoth",
@@ -186,9 +523,159 @@
       }
     },
     {
+      "id": "june",
+      "name": "June Mountain",
+      "shortName": "June",
+      "region": "Eastern Sierra",
+      "lat": 37.7679,
+      "lon": -119.0898,
+      "baseFt": 7545,
+      "summitFt": 10090,
+      "summit": { "lat": 37.7403, "lon": -119.0731 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-12-19",
+        "notes": ["Base 7,545 ft, summit 10,090 ft (2,590 ft vertical) on 1,500 acres; the resort lists 250 inches of snow a year, and Tony Crocker's long-term average is 275 inches against 356 at Mammoth.", "About 65% of the lift-served terrain faces north and 30% faces west, with almost none facing south or east; Crocker calls it well protected and recommends it over Mammoth during storms.", "Terrain is 45% advanced, 40% intermediate and 15% beginner, and much of the acreage is tree-covered, with 2 quad chairs, 4 doubles and 1 carpet.", "Opening day is December 19, 2026, and the season normally runs December to April.", "Access is by US-395 and SR-158 (June Lake Loop); Caltrans chain-control stations on SR-158 include the ski area, with winter closure gates 4 miles north of June Lake Village and at the north junction with US-395."],
+        "sources": ["https://www.junemountain.com/mountain-information/trail-map", "https://bestsnow.net/calnet.htm", "https://en.wikipedia.org/wiki/June_Mountain_ski_area", "https://www.junemountain.com/things-to-do/opening-day", "https://www.mtnpowder.com/feed?resortId=59", "https://www.junemountain.com/mountain-information/road-conditions", "https://cwwp2.dot.ca.gov/data/d9/cc/ccStatusD09.json"]
+      },
+      "nws": {
+        "afdOffice": "REV",
+        "area": "Mono County and the eastern Sierra near June Lake and Mammoth Lakes",
+        "ignore": ["Oregon border", "northeast CA", "northeast California", "northwest NV", "northwest Nevada", "far northeast", "Lassen", "Plumas", "Pershing", "Churchill", "Pyramid Lake", "Tahoe", "I-80", "Surprise Valley"]
+      },
+      "snowpack": { "type": "cdec", "id": "DPO", "name": "Devils Postpile", "elevFt": 7569 },
+      "avalanche": { "center": "ESAC", "zoneId": 128 },
+      "report": {
+        "adapter": "mtnpowder",
+        "resortId": 59,
+        "stations": ["BaseArea"]
+      },
+      "roads": [
+        { "label": "US-395 Inyokern → Bishop", "route": "US-395", "district": 9, "bbox": [35.35, -118.45, 37.4, -117.6], "textRoute": "US 395", "textMatch": ["Inyo", "Kern", "Bishop", "Olancha", "Lone Pine", "Independence", "Big Pine", "Pearsonville", "Inyokern"] },
+        { "label": "US-395 Bishop → Mammoth (Sherwin Grade)", "route": "US-395", "district": 9, "bbox": [37.4, -118.95, 37.645, -118.4], "textRoute": "US 395", "textMatch": ["Bishop", "Sherwin", "Toms Place", "Crowley", "Mammoth", "Jct of SR 203"] },
+        { "label": "US-395 Mammoth → June Lake Junction", "route": "US-395", "district": 9, "bbox": [37.645, -119.1, 37.9, -118.9], "textRoute": "US 395", "textMatch": ["Mono", "Mammoth", "June Lake", "Lee Vining", "Crestview", "Deadman", "Jct of SR 158", "Jct of SR 203"] },
+        { "label": "SR-158 June Lake Loop", "route": "SR-158", "district": 9, "bbox": [37.74, -119.14, 37.89, -119.04], "textRoute": "SR 158", "textMatch": ["Mono", "June Lake", "Grant Lake", "Silver Lake", "Gull Lake", "Jct of US 395"] }
+      ],
+      "roadCams": [
+        { "label": "US-395 at Crestview", "url": "https://cwwp2.dot.ca.gov/data/d9/cctv/image/us395crestview/us395crestview.jpg" },
+        { "label": "US-395 at Obsidian Dome", "url": "https://cwwp2.dot.ca.gov/data/d9/cctv/image/us395obsidiandome/us395obsidiandome.jpg" }
+      ],
+      "links": {
+        "website": "https://www.junemountain.com/",
+        "webcams": "https://www.junemountain.com/mountain-information/live-cams",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KHNX/standard",
+        "report": "https://www.junemountain.com/mountain-information/mountain-report"
+      }
+    },
+    {
+      "id": "bearvalley",
+      "name": "Bear Valley Mountain Resort",
+      "shortName": "Bear Valley",
+      "region": "Central Sierra",
+      "lat": 38.4925,
+      "lon": -120.045,
+      "baseFt": 6600,
+      "summitFt": 8500,
+      "summit": { "lat": 38.4867, "lon": -120.0526 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "notes": ["Base 6,600 ft, summit about 8,500 ft (1,900 ft vertical) on 1,680 acres; snowmaking covers about 100 acres.", "Tony Crocker's long-term average is 352 inches a year (measured at 7,750 ft); he notes the steepest runs are low, below the lodge, and that there is no road connection to Tahoe.", "About 55% of the terrain faces north, 23% west, 20% east and 2% south.", "In a heavy storm with high winds (22 inches overnight, Feb 17 update) only Cub, Mokelumne Express and Polar Express ran, and Grizzly Bowl waited on conditions.", "The resort is on SR-207, a spur off SR-4 on the Ebbetts Pass road; Caltrans chain-control stations sit at Bear Valley (7,116 ft) and on SR-207 at Mt. Reba."],
+        "sources": ["https://www.indyskipass.com/our-resorts/bear-valley-mountain-resort", "https://en.wikipedia.org/wiki/Bear_Valley_Mountain_Resort", "https://bestsnow.net/calnet.htm", "https://www.bearvalley.com/post/5am-snow-update-22-counting-overnight", "https://cwwp2.dot.ca.gov/data/d10/cc/ccStatusD10.json"]
+      },
+      "nws": {
+        "afdOffice": "STO",
+        "area": "the Sierra and its western slopes",
+        "ignore": ["Shasta", "Coastal Range", "Cascades", "Delta", "Sacramento Valley", "San Joaquin Valley"]
+      },
+      "snowpack": { "type": "cdec", "id": "BLD", "name": "Bloods Creek", "elevFt": 7200 },
+      "avalanche": { "center": "SAC", "zoneId": 2458 },
+      "roads": [
+        { "label": "SR-4 Angels Camp → Arnold", "route": "SR-4", "district": 10, "bbox": [38.05, -120.55, 38.33, -120.22], "textRoute": "SR 4", "textMatch": ["Calaveras", "Angels Camp", "Murphys", "Arnold", "Alpine", "Bear Valley", "Ebbetts"] },
+        { "label": "SR-4 Arnold → Bear Valley", "route": "SR-4", "district": 10, "bbox": [38.33, -120.22, 38.5, -119.98], "textRoute": "SR 4", "textMatch": ["Calaveras", "Arnold", "Alpine", "Bear Valley", "Lake Alpine", "Ebbetts", "Mount Reba", "Mt Reba"] },
+        { "label": "SR-207 Mt. Reba Road", "route": "SR-207", "district": 10, "bbox": [38.47, -120.05, 38.5, -120], "textRoute": "SR 207", "textMatch": ["Alpine", "Calaveras", "Bear Valley", "Mount Reba", "Mt Reba", "Ebbetts"] }
+      ],
+      "roadCams": [],
+      "links": {
+        "website": "https://www.bearvalley.com/",
+        "webcams": "https://www.bearvalley.com/webcam",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KDAX/standard",
+        "report": "https://www.bearvalley.com/conditions-updates"
+      }
+    },
+    {
+      "id": "dodgeridge",
+      "name": "Dodge Ridge Mountain Resort",
+      "shortName": "Dodge Ridge",
+      "region": "Central Sierra",
+      "lat": 38.1892,
+      "lon": -119.9562,
+      "baseFt": 6600,
+      "summitFt": 8200,
+      "summit": { "lat": 38.1929, "lon": -119.9202 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "notes": ["Base 6,600 ft, mid-mountain 7,000 ft, summit 8,200 ft (1,600 ft vertical) on 862 acres; the whole mountain sits between 6,600 and 8,200 ft, so a rain-snow line near 7,000 ft puts rain on most of it.", "Snowmaking is limited: light snowmaking at the base was only first tested in 2021/22, so openings depend on natural snow; the season typically runs late November to mid April.", "The resort is about 30 miles east of Sonora on SR-108 near Pinecrest; Caltrans chain-control stations on SR-108 include Pinecrest (5,593 ft) and Strawberry."],
+        "sources": ["https://dodgeridge.com/webcams/", "https://en.wikipedia.org/wiki/Dodge_Ridge_Ski_Area", "https://cwwp2.dot.ca.gov/data/d10/cc/ccStatusD10.json"]
+      },
+      "nws": {
+        "afdOffice": "STO",
+        "area": "the Sierra and its western slopes",
+        "ignore": ["Shasta", "Coastal Range", "Cascades", "Delta", "Sacramento Valley", "San Joaquin Valley"]
+      },
+      "snowpack": { "type": "cdec", "id": "GNL", "name": "Gianelli Meadow", "elevFt": 8400 },
+      "roads": [
+        { "label": "SR-108 Sonora → Long Barn", "route": "SR-108", "district": 10, "bbox": [37.95, -120.45, 38.11, -120.1], "textRoute": "SR 108", "textMatch": ["Tuolumne", "Tuol", "Sonora", "Twain Harte", "Mi Wuk", "Long Barn"] },
+        { "label": "SR-108 Long Barn → Pinecrest", "route": "SR-108", "district": 10, "bbox": [38.11, -120.1, 38.26, -119.97], "textRoute": "SR 108", "textMatch": ["Tuolumne", "Tuol", "Long Barn", "Pinecrest", "Strawberry", "Dodge Ridge", "Sonora Pass"] }
+      ],
+      "roadCams": [],
+      "links": {
+        "website": "https://dodgeridge.com/",
+        "webcams": "https://dodgeridge.com/webcams/",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KDAX/standard",
+        "report": "https://dodgeridge.com/snow-report/"
+      }
+    },
+    {
+      "id": "chinapeak",
+      "name": "China Peak Mountain Resort",
+      "shortName": "China Peak",
+      "region": "Central Sierra",
+      "lat": 37.2352,
+      "lon": -119.1549,
+      "baseFt": 7030,
+      "summitFt": 8709,
+      "summit": { "lat": 37.2191, "lon": -119.1556 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "notes": ["Base 7,030 ft, peak just over 8,700 ft (1,679 ft vertical), served by six chairlifts and three carpets, on the south shore of Huntington Lake about 65 miles northeast of Fresno.", "The resort advertises one of the largest snowmaking systems in the state, and Wikipedia says it covers about 40% of the terrain; guns can cover more than a million square feet in under 40 hours, so it can open within days of cold nights.", "The stated goal is to open by Thanksgiving weekend; in 2025 it opened November 28 on limited terrain with marginal snowmaking temperatures and light natural snow, then ran weekends only through the end of December.", "Access is SR-168 from Fresno via Shaver Lake; Caltrans chain-control stations on SR-168 run from Prather up to Lakeshore (about 7,000 ft), the last two within about a mile of the resort."],
+        "sources": ["https://www.skichinapeak.com/the-mountain", "https://en.wikipedia.org/wiki/China_Peak", "https://abc30.com/post/massive-new-snowmaking-system-lengthens-season-at-china-peak/5718873/", "https://abc30.com/post/china-peak-opens-thanksgiving-weekend-limited-runs/18223022/", "https://cwwp2.dot.ca.gov/data/d6/cc/ccStatusD06.json"]
+      },
+      "nws": {
+        "afdOffice": "HNX",
+        "area": "the Sierra Nevada",
+        "ignore": ["Kern County", "Desert", "Mojave", "Tehachapi"]
+      },
+      "snowpack": { "type": "cdec", "id": "HNT", "name": "Huntington Lake (USBR)", "elevFt": 7000 },
+      "roads": [
+        { "label": "SR-168 Prather → Shaver Lake", "route": "SR-168", "district": 6, "bbox": [37.03, -119.48, 37.18, -119.28], "textRoute": "SR 168", "textMatch": ["Fresno", "Auberry", "Prather", "Tollhouse", "Shaver", "Pineridge"] },
+        { "label": "SR-168 Shaver Lake → Huntington Lake", "route": "SR-168", "district": 6, "bbox": [37.15, -119.28, 37.28, -119.14], "textRoute": "SR 168", "textMatch": ["Fresno", "Shaver", "Huntington", "Lakeshore", "Big Creek", "China Peak"] }
+      ],
+      "roadCams": [],
+      "links": {
+        "website": "https://www.skichinapeak.com/",
+        "webcams": "https://www.skichinapeak.com/webcam/",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KHNX/standard",
+        "report": "https://www.skichinapeak.com/conditions"
+      }
+    },
+    {
       "id": "bigbear",
-      "name": "Big Bear Mountain Resort",
-      "shortName": "Big Bear",
+      "name": "Bear Mountain",
+      "shortName": "Bear Mtn",
       "region": "SoCal",
       "defaultFavorite": true,
       "lat": 34.2275,
@@ -198,20 +685,8 @@
       "summit": { "lat": 34.208, "lon": -116.8345 },
       "tz": "America/Los_Angeles",
       "local": {
-        "notes": [
-          "Bear Mountain runs 7,140-8,805 ft and Snow Summit 7,000-8,200 ft. Each averages only about 100 inches of natural snow a season (season totals have ranged from 39 to 243 inches), so the resort relies on extensive snowmaking.",
-          "Snowmaking starts when overnight temperatures dip into the low 20s with low humidity and light wind, usually early to mid November; crews want 48-72 hours of those conditions, and dry Santa Ana air helps.",
-          "Warm storms, including atmospheric rivers, often bring high snow levels and rain on the mountain or only a few inches. Cold storms from the north can produce a foot or more even with limited moisture.",
-          "Openings from 2015/16 to 2023/24 fell between November 12 and December 8."
-        ],
-        "sources": [
-          "https://www.bigbearmountainresort.com/our-mountains",
-          "https://www.bigbearmountainresort.com/faq",
-          "https://www.bigbearmountainresort.com/mountain-information/historical-snowfall",
-          "https://www.bigbearmountainresort.com/blog/snowmaking",
-          "https://www.weather.gov/media/sgx/climate/Yearly/2024.pdf",
-          "https://www.weather.gov/media/sgx/climate/Yearly/2023.pdf"
-        ]
+        "notes": ["Bear Mountain runs 7,140-8,805 ft, the highest of the three Big Bear Mountain Resort mountains (Snow Summit tops out at 8,200 ft and Snow Valley at 7,841 ft).", "Natural snowfall swings widely: seasons from 2003-04 to 2025-26 ranged from 30 to 243 inches, and the last four were 243, 175, 79 and 51 inches, so the resort relies on extensive snowmaking.", "Snowmaking starts when overnight temperatures dip into the low 20s with low humidity and light wind, usually early to mid November; crews want 48-72 hours of those conditions, and dry Santa Ana air helps. Bear Mountain makes snow with about 62 fan guns plus high-pressure air and water lines.", "Warm storms, including atmospheric rivers, often bring high snow levels and rain on the mountain or only a few inches. Cold storms from the north can produce a foot or more even with limited moisture.", "Openings from 2015/16 to 2023/24 fell between November 12 and December 8."],
+        "sources": ["https://www.bigbearmountainresort.com/our-mountains", "https://www.bigbearmountainresort.com/webcams/bear-mountain", "https://www.bigbearmountainresort.com/faq", "https://www.bigbearmountainresort.com/mountain-information/historical-snowfall", "https://www.bigbearmountainresort.com/blog/snowmaking", "https://www.weather.gov/media/sgx/climate/Yearly/2024.pdf", "https://www.weather.gov/media/sgx/climate/Yearly/2023.pdf"]
       },
       "nws": {
         "afdOffice": "SGX",
@@ -219,18 +694,173 @@
         "ignore": ["marine layer", "coastal", "beaches", "surf", "San Diego", "Orange County", "Coachella", "low desert"]
       },
       "snowpack": { "type": "acis", "id": "US1CASR0098", "name": "Big Bear City 0.4 W (CoCoRaHS)", "elevFt": 6777 },
-      "report": { "adapter": "mtnpowder", "resortId": 57, "stations": ["BaseArea", "MidMountainArea", "SummitArea"], "extraResortIds": [58] },
+      "report": {
+        "adapter": "mtnpowder",
+        "resortId": 57,
+        "stations": ["BaseArea", "MidMountainArea", "SummitArea"]
+      },
       "roads": [
-        { "label": "SR-330 Highland → Running Springs", "route": "SR-330", "district": 8, "bbox": [34.10, -117.25, 34.22, -117.09], "textRoute": "SR 330", "textMatch": ["San Bernardino", "Running Springs", "Highland", "Big Bear"] },
+        { "label": "SR-330 Highland → Running Springs", "route": "SR-330", "district": 8, "bbox": [34.1, -117.25, 34.22, -117.09], "textRoute": "SR 330", "textMatch": ["San Bernardino", "Running Springs", "Highland", "Big Bear"] },
         { "label": "SR-18 Running Springs → Big Bear Lake", "route": "SR-18", "district": 8, "bbox": [34.19, -117.115, 34.25, -116.86], "textRoute": "SR 18", "textMatch": ["Running Springs", "Big Bear", "Snow Valley", "Arrowhead", "San Bernardino"] },
-        { "label": "SR-38 Mentone → Big Bear City", "route": "SR-38", "district": 8, "bbox": [34.05, -117.06, 34.28, -116.70], "textRoute": "SR 38", "textMatch": ["Big Bear", "Mentone", "Angelus Oaks", "Onyx", "San Bernardino"] }
+        { "label": "SR-38 Mentone → Big Bear City", "route": "SR-38", "district": 8, "bbox": [34.05, -117.06, 34.28, -116.7], "textRoute": "SR 38", "textMatch": ["Big Bear", "Mentone", "Angelus Oaks", "Onyx", "San Bernardino"] }
       ],
       "roadCams": [],
       "links": {
         "website": "https://www.bigbearmountainresort.com/",
         "webcams": "https://www.bigbearmountainresort.com/webcams/bear-mountain",
         "cams": [],
-        "radar": "https://radar.weather.gov/station/KSOX/standard"
+        "radar": "https://radar.weather.gov/station/KSOX/standard",
+        "report": "https://www.bigbearmountainresort.com/mountain-information"
+      }
+    },
+    {
+      "id": "snowsummit",
+      "name": "Snow Summit",
+      "shortName": "Snow Summit",
+      "region": "SoCal",
+      "lat": 34.2355,
+      "lon": -116.8895,
+      "baseFt": 7000,
+      "summitFt": 8200,
+      "summit": { "lat": 34.22, "lon": -116.89 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "notes": ["Snow Summit runs 7,000-8,200 ft, about 600 ft lower on top than Bear Mountain (8,805 ft) and 360 ft higher than Snow Valley (7,841 ft).", "Resort records for Snow Summit show seasonal natural snowfall of 243, 175, 79 and 51 inches over the last four seasons (2022-23 to 2025-26), and 30 to 243 inches since 2003-04, so the resort relies on extensive snowmaking.", "Snowmaking starts when overnight temperatures dip into the low 20s with low humidity and light wind, usually early to mid November; crews want 48-72 hours of those conditions, and dry Santa Ana air helps. Snow Summit has about 90 fan guns plus high-pressure air and water lines.", "Warm storms, including atmospheric rivers, often bring high snow levels and rain on the mountain or only a few inches. Cold storms from the north can produce a foot or more even with limited moisture."],
+        "sources": ["https://www.bigbearmountainresort.com/our-mountains", "https://www.bigbearmountainresort.com/mountain-information/historical-snowfall", "https://www.bigbearmountainresort.com/blog/snowmaking", "https://www.bigbearmountainresort.com/faq", "https://www.weather.gov/media/sgx/climate/Yearly/2024.pdf", "https://www.weather.gov/media/sgx/climate/Yearly/2023.pdf"]
+      },
+      "nws": {
+        "afdOffice": "SGX",
+        "area": "the San Bernardino Mountains",
+        "ignore": ["marine layer", "coastal", "beaches", "surf", "San Diego", "Orange County", "Coachella", "low desert"]
+      },
+      "snowpack": { "type": "acis", "id": "US1CASR0098", "name": "Big Bear City 0.4 W (CoCoRaHS)", "elevFt": 6777 },
+      "report": {
+        "adapter": "mtnpowder",
+        "resortId": 58,
+        "stations": ["BaseArea", "MidMountainArea", "SummitArea"]
+      },
+      "roads": [
+        { "label": "SR-330 Highland → Running Springs", "route": "SR-330", "district": 8, "bbox": [34.1, -117.25, 34.22, -117.09], "textRoute": "SR 330", "textMatch": ["San Bernardino", "Running Springs", "Highland", "Big Bear"] },
+        { "label": "SR-18 Running Springs → Big Bear Lake", "route": "SR-18", "district": 8, "bbox": [34.19, -117.115, 34.25, -116.86], "textRoute": "SR 18", "textMatch": ["Running Springs", "Big Bear", "Snow Valley", "Arrowhead", "San Bernardino"] },
+        { "label": "SR-38 Mentone → Big Bear City", "route": "SR-38", "district": 8, "bbox": [34.05, -117.06, 34.28, -116.7], "textRoute": "SR 38", "textMatch": ["Big Bear", "Mentone", "Angelus Oaks", "Onyx", "San Bernardino"] }
+      ],
+      "roadCams": [],
+      "links": {
+        "website": "https://www.bigbearmountainresort.com/",
+        "webcams": "https://www.bigbearmountainresort.com/webcams/snow-summit",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KSOX/standard",
+        "report": "https://www.bigbearmountainresort.com/mountain-information"
+      }
+    },
+    {
+      "id": "snowvalley",
+      "name": "Snow Valley",
+      "shortName": "Snow Valley",
+      "region": "SoCal",
+      "lat": 34.2253,
+      "lon": -117.0398,
+      "baseFt": 6800,
+      "summitFt": 7841,
+      "summit": { "lat": 34.243, "lon": -117.044 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "notes": ["Snow Valley runs 6,800-7,841 ft, the lowest base and summit of the three Big Bear Mountain Resort mountains (Snow Summit tops out at 8,200 ft and Bear Mountain at 8,805 ft), so it has the least elevation to work with when a warm storm lifts the snow level.", "In the resort's records Snow Valley's natural snowfall has run above Snow Summit and Bear Mountain in each of the last four seasons: 54 vs 51 in 2025-26, 87 vs 79 in 2024-25, 201 vs 175 in 2023-24 and 277 vs 243 in 2022-23.", "Snow Valley makes snow with fan guns only (about 87), unlike Snow Summit and Bear Mountain, which also use compressed-air guns and high-pressure air and water lines. Snowmaking starts when overnight temperatures dip into the low 20s with low humidity and light wind, usually early to mid November.", "Warm storms, including atmospheric rivers, often bring high snow levels and rain on the mountain or only a few inches. Cold storms from the north can produce a foot or more even with limited moisture."],
+        "sources": ["https://www.bigbearmountainresort.com/our-mountains", "https://www.bigbearmountainresort.com/mountain-information/historical-snowfall", "https://www.bigbearmountainresort.com/blog/snowmaking", "https://www.weather.gov/media/sgx/climate/Yearly/2024.pdf", "https://www.weather.gov/media/sgx/climate/Yearly/2023.pdf"]
+      },
+      "nws": {
+        "afdOffice": "SGX",
+        "area": "the San Bernardino Mountains",
+        "ignore": ["marine layer", "coastal", "beaches", "surf", "San Diego", "Orange County", "Coachella", "low desert"]
+      },
+      "snowpack": { "type": "acis", "id": "US1CASR0098", "name": "Big Bear City 0.4 W (CoCoRaHS)", "elevFt": 6777 },
+      "report": {
+        "adapter": "mtnpowder",
+        "resortId": 173,
+        "stations": ["BaseArea", "MidMountainArea", "SummitArea"]
+      },
+      "roads": [
+        { "label": "SR-330 Highland → Running Springs", "route": "SR-330", "district": 8, "bbox": [34.1, -117.25, 34.22, -117.09], "textRoute": "SR 330", "textMatch": ["San Bernardino", "Running Springs", "Highland", "Big Bear"] },
+        { "label": "SR-18 Running Springs → Big Bear Lake", "route": "SR-18", "district": 8, "bbox": [34.19, -117.115, 34.25, -116.86], "textRoute": "SR 18", "textMatch": ["Running Springs", "Big Bear", "Snow Valley", "Arrowhead", "San Bernardino"] }
+      ],
+      "roadCams": [],
+      "links": {
+        "website": "https://www.bigbearmountainresort.com/",
+        "webcams": "https://www.bigbearmountainresort.com/webcams/snow-valley",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KSOX/standard",
+        "report": "https://www.bigbearmountainresort.com/mountain-information"
+      }
+    },
+    {
+      "id": "mountainhigh",
+      "name": "Mountain High",
+      "shortName": "Mtn High",
+      "region": "SoCal",
+      "lat": 34.3747,
+      "lon": -117.6932,
+      "baseFt": 6600,
+      "summitFt": 8200,
+      "summit": { "lat": 34.355, "lon": -117.68 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "notes": ["The East Resort runs 6,600-8,200 ft and the West Resort 7,000-8,000 ft, about a mile apart; the lift ticket is good at both. The resort reports 12 lifts and 270 skiable acres.", "Average annual snowfall is 117 inches (23-year average), with snowmaking on 80% of the terrain and a season that typically runs early November to late April.", "The 2025-26 season finished well below average: the resort's May 21, 2026 report showed 49 inches of season snowfall at the base and 61 inches at the top.", "Snowmaking depends on wet-bulb temperature, not air temperature: with very low humidity the resort can make snow at air temperatures as high as 40 F.", "Damaging December 2025 storms closed the resort, which reopened in January 2026.", "Access is on SR-2 from SR-138 through Wrightwood; the resort's conditions page reports the status of Hwy 2 from Hwy 138 and of Largo Vista Road/Big Pines Highway."],
+        "sources": ["https://www.mthigh.com/site/trails-and-conditions/other/mountain-stats.html", "https://www.mthigh.com/site/trails-and-conditions/conditions/snow-and-weather-report", "https://www.mthigh.com/site/trails-and-conditions/other/snowmaking.html", "https://www.cbsnews.com/amp/losangeles/news/mountain-high-resorts-wrightwood-open-skiing-damaging-storms"]
+      },
+      "nws": {
+        "afdOffice": "LOX",
+        "area": "the San Gabriel Mountains",
+        "ignore": ["Santa Barbara", "Ventura", "Central Coast", "marine layer", "coastal", "beaches", "Santa Susana", "San Fernando", "LA Basin", "Malibu", "Point Mugu", "Antelope Valley"]
+      },
+      "roads": [
+        { "label": "SR-2 Wrightwood → Big Pines", "route": "SR-2", "district": 8, "bbox": [34.33, -117.8, 34.42, -117.6], "textRoute": "SR 2", "textMatch": ["Wrightwood", "Big Pines", "Islip Saddle", "Jct of SR 138", "Vincent Gulch"] },
+        { "label": "SR-138 Cajon Pass → SR-2", "route": "SR-138", "district": 8, "bbox": [34.34, -117.7, 34.46, -117.45], "textRoute": "SR 138", "textMatch": ["Wrightwood", "Cajon", "Jct of SR 2", "Jct of I 15", "Big Pines"] }
+      ],
+      "roadCams": [
+        { "label": "SR-2 at Wrightwood Fire Station", "url": "https://cwwp2.dot.ca.gov/data/d8/cctv/image/sr2379wrightwoodfirestation/sr2379wrightwoodfirestation.jpg" },
+        { "label": "SR-138 east of SR-2", "url": "https://cwwp2.dot.ca.gov/data/d8/cctv/image/sr138384015mileseastofsr2/sr138384015mileseastofsr2.jpg" }
+      ],
+      "links": {
+        "website": "https://www.mthigh.com/",
+        "webcams": "https://www.mthigh.com/site/mountain/mountain-info/livecams",
+        "cams": [
+          { "label": "West Base", "url": "https://www.mthigh.com/site/mountain/mountain-info/livecams/westbasecam" },
+          { "label": "Playground", "url": "https://www.mthigh.com/site/mountain/mountain-info/livecams/playgroundcam" },
+          { "label": "Upper Chisolm", "url": "https://www.mthigh.com/site/mountain/mountain-info/livecams/chisolmcam" },
+          { "label": "Borderline", "url": "https://www.mthigh.com/site/mountain/mountain-info/livecams/borderlinecam" }
+        ],
+        "radar": "https://radar.weather.gov/station/KSOX/standard",
+        "report": "https://www.mthigh.com/site/trails-and-conditions/conditions/snow-and-weather-report"
+      }
+    },
+    {
+      "id": "mtbaldy",
+      "name": "Mt. Baldy Resort",
+      "shortName": "Mt Baldy",
+      "region": "SoCal",
+      "lat": 34.26,
+      "lon": -117.63,
+      "baseFt": 6500,
+      "summitFt": 8600,
+      "summit": { "lat": 34.282, "lon": -117.62 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "notes": ["Four classic double chairs climb from 6,500 to 8,600 ft in the Angeles National Forest, 2,100 ft of vertical.", "Chair 1 (Sugar Pine) runs from the base area to the Top of the Notch at 7,800 ft and downloads, so skiers can ride back down; Chair 3 (Thunder Mountain) serves the upper mountain up to the 8,600 ft summit.", "Chair 4 (West Side) is the sun-exposed side and needs a big storm or a deep-snow year to open.", "Chains may be required on Mt Baldy Road, and the resort posts the road surface in its mountain report once the snow season starts."],
+        "sources": ["https://mtbaldyskilifts.com/", "https://www.mtbaldyresort.com/mountain-report", "https://www.mtbaldyresort.com/ski-and-ride"]
+      },
+      "nws": {
+        "afdOffice": "SGX",
+        "area": "the mountains of southwestern San Bernardino County",
+        "ignore": ["marine layer", "coastal", "beaches", "surf", "San Diego", "Orange County", "Coachella", "low desert"]
+      },
+      "roads": [],
+      "roadCams": [],
+      "links": {
+        "website": "https://www.mtbaldyresort.com/",
+        "webcams": "https://mtbaldyresort.com/web-cam",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KSOX/standard",
+        "report": "https://www.mtbaldyresort.com/mountain-report"
       }
     }
   ]

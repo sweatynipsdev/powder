@@ -17,7 +17,8 @@ export function resortOpenStatus(report: ReportData | null | undefined, now: Dat
   // Before the scheduled opening day, say so (unless lifts are already turning).
   if (!open && openingDate && Date.parse(`${openingDate}T23:59:59Z`) > now.getTime())
     return { state: 'not-open', text: `Opening ${shortDate(openingDate)}` };
-  if (!report) return { state: 'unknown', text: 'No resort report' };
+  // Resorts without a snow-report feed: we can't tell if lifts are turning, so say where to look.
+  if (!report) return { state: 'unknown', text: 'Lift status on resort site' };
   if (!report.fresh) {
     if (!report.updatedAt) return { state: 'unknown', text: 'No current report' };
     const days = Math.floor((now.getTime() - Date.parse(report.updatedAt)) / 86_400_000);

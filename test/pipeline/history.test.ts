@@ -111,6 +111,10 @@ describe('resort open status', () => {
     expect(resortOpenStatus(report({}), now, '2026-10-01')).toEqual({ state: 'not-open', text: 'Not open yet' });
   });
 
+  it('points to the resort when there is no snow-report feed', () => {
+    expect(resortOpenStatus(null, now)).toEqual({ state: 'unknown', text: 'Lift status on resort site' });
+  });
+
   it('calls an off-season report closed', () => {
     expect(resortOpenStatus(report({ fresh: false, updatedAt: '2026-06-08T17:00:00Z' }), now).text).toBe('Closed · last report Jun 8');
   });
