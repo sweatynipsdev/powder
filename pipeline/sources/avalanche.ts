@@ -8,6 +8,12 @@ import { htmlToText, truncate } from './text';
 
 export const DANGER_TEXT = ['No rating', 'Low', 'Moderate', 'Considerable', 'High', 'Extreme'];
 
+/** The highest of today's bands, as a number and in words; −1 when nothing was issued. */
+export function overallDanger(current: AvalancheDanger | null): { overall: number; overallText: string } {
+  const overall = current ? Math.max(current.upper, current.middle, current.lower) : -1;
+  return { overall, overallText: overall >= 0 ? DANGER_TEXT[overall] : 'No rating yet' };
+}
+
 interface ProductResponse {
   product_type?: string;
   published_time?: string | null;
@@ -44,7 +50,6 @@ export function parseAvalanche(center: string, zoneId: number, json: ProductResp
   if (!json || typeof json !== 'object' || !('product_type' in json)) throw new Error('unexpected avalanche.org response');
   const zone = json.forecast_zone?.find((z) => z.id === zoneId) ?? json.forecast_zone?.[0];
   const current = danger(json.danger, 'current');
-  const overall = current ? Math.max(current.upper, current.middle, current.lower) : -1;
   return {
     center,
     zoneName: zone?.name ?? center,
@@ -54,8 +59,7 @@ export function parseAvalanche(center: string, zoneId: number, json: ProductResp
     expiresAt: json.expires_time ?? null,
     current,
     tomorrow: danger(json.danger, 'tomorrow'),
-    overall,
-    overallText: overall >= 0 ? DANGER_TEXT[overall] : 'No rating yet',
+    ...overallDanger(current),
     bottomLine: json.bottom_line ? truncate(htmlToText(json.bottom_line), 900) : null,
     discussion: discussionText(json),
     problems: (json.forecast_avalanche_problems ?? []).map((p) => p.name),

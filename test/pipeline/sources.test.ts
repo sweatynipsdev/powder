@@ -416,41 +416,59 @@ describe('ECCC alerts', () => {
   const now = new Date('2026-12-02T18:00:00Z');
   // Shaped like the live weather-alerts collection: one feature per alert per forecast zone.
   const TEXT = 'Heavy snow is expected.\n\nTotal snowfall: 25 to 35 cm.\n\nVisibility may be suddenly reduced.';
+  const square = (w: number, s: number, e: number, n: number) => ({ type: 'Polygon', coordinates: [[[w, s], [e, s], [e, n], [w, n], [w, s]]] });
+  const ZONES: Record<string, { name: string; geometry: unknown }> = {
+    'fea1-2325': { name: 'Whistler', geometry: square(-123.2, 49.95, -122.7, 50.3) },
+    'fea1-2290': { name: 'Howe Sound', geometry: square(-123.4, 49.4, -123.0, 49.8) },
+  };
+  const whistler = { lat: 50.1146, lon: -122.9547 };
   const feature = (alertId: string, zone: string, over: Record<string, unknown> = {}) => ({
     id: `${alertId}_${zone}`,
+    geometry: ZONES[zone].geometry,
     properties: {
       alert_code: 'WS', alert_type: 'warning', alert_name_en: 'snowfall warning', alert_short_name_en: 'Snowfall',
       publication_datetime: '2026-12-02T15:00:00.000Z', validity_datetime: '2026-12-02T18:00:00.000Z', event_end_datetime: '2026-12-03T18:00:00.000Z',
-      expiration_datetime: '2026-12-03T03:00:00.000Z', alert_text_en: TEXT, risk_colour_en: 'yellow', feature_name_en: zone === 'fea1-2325' ? 'Whistler' : 'Howe Sound',
-      status_en: 'issued', feature_id: zone, ...over,
+      expiration_datetime: '2026-12-03T03:00:00.000Z', alert_text_en: TEXT, risk_colour_en: 'yellow', feature_name_en: ZONES[zone].name,
+      province: 'BC', status_en: 'issued', feature_id: zone, ...over,
     },
   });
+  const collection = (...features: unknown[]) => ({ type: 'FeatureCollection', numberMatched: features.length, features });
 
   it('asks for alerts in the box west,south,east,north', () => {
     expect(ecccAlertsUrl([50.05, -123.0, 50.15, -122.9])).toBe('https://api.weather.gc.ca/collections/weather-alerts/items?f=json&bbox=-123,50.05,-122.9,50.15&limit=50');
   });
 
-  it('keeps one copy of each active alert, its text unaltered', () => {
+  it("keeps active alerts for the resort's own zone, once each, text unaltered", () => {
     const alerts = parseEcccAlerts(
-      {
-        type: 'FeatureCollection',
-        features: [
-          feature('1001', 'fea1-2325'),
-          feature('1001', 'fea1-2290'),
-          feature('1002', 'fea1-2325', { alert_name_en: 'wind warning', alert_short_name_en: 'Wind', status_en: 'ended' }),
-          feature('1003', 'fea1-2325', { alert_name_en: 'special weather statement', alert_short_name_en: 'Special weather', expiration_datetime: '2026-12-02T12:00:00.000Z' }),
-        ],
-      },
+      collection(
+        feature('1001', 'fea1-2325'),
+        // The same alert again (a split zone), and one for the neighbouring zone only.
+        feature('1001', 'fea1-2325'),
+        feature('2001', 'fea1-2290', { alert_name_en: 'rainfall warning', alert_short_name_en: 'Rainfall' }),
+        feature('1002', 'fea1-2325', { alert_name_en: 'wind warning', alert_short_name_en: 'Wind', status_en: 'ended' }),
+        feature('1004', 'fea1-2325', { alert_name_en: 'wind warning', alert_short_name_en: 'Wind', status_en: 'cancelled' }),
+        feature('1003', 'fea1-2325', { alert_name_en: 'special weather statement', alert_short_name_en: 'Special weather', expiration_datetime: '2026-12-02T12:00:00.000Z' }),
+      ),
       now,
+      whistler,
     );
     expect(alerts).toHaveLength(1);
-    expect(alerts[0]).toMatchObject({ id: '1001', event: 'snowfall warning', headline: 'snowfall warning · Whistler', severity: 'yellow', winter: true, source: 'ECCC' });
+    expect(alerts[0]).toMatchObject({
+      id: '1001',
+      event: 'snowfall warning',
+      headline: 'snowfall warning · Whistler',
+      severity: 'yellow',
+      winter: true,
+      source: 'ECCC',
+      url: 'https://weather.gc.ca/warnings/index_e.html?prov=bc',
+    });
     expect(alerts[0].description).toBe(TEXT);
   });
 
-  it('reads an empty collection as no alerts, and rejects anything else (ECCC)', () => {
-    expect(parseEcccAlerts({ type: 'FeatureCollection', features: [] }, now)).toEqual([]);
-    expect(() => parseEcccAlerts({ code: 'InvalidParameterValue' }, now)).toThrow();
+  it('reads an empty collection as no alerts, and rejects anything else or a cut-off page (ECCC)', () => {
+    expect(parseEcccAlerts(collection(), now, whistler)).toEqual([]);
+    expect(() => parseEcccAlerts({ code: 'InvalidParameterValue' }, now, whistler)).toThrow();
+    expect(() => parseEcccAlerts({ ...collection(feature('1001', 'fea1-2325')), numberMatched: 60 }, now, whistler)).toThrow(/60 matched/);
   });
 });
 

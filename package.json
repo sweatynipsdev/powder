@@ -19,6 +19,7 @@
     "calibrate": "tsx scripts/calibrate.ts",
     "om-budget": "tsx scripts/omBudget.ts",
     "reuse-data": "tsx scripts/reuse-data.ts",
+    "strip-private": "tsx scripts/strip-private.ts",
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host",

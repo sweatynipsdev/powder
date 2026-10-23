@@ -1,9 +1,9 @@
 <script lang="ts">
-  // NWS alerts. Winter products (storm warnings, high wind) lead; others are listed quietly.
+  // Weather alerts (NWS, or ECCC in Canada). Winter products (storm warnings, high wind) lead; others are listed quietly.
   import type { Alert } from '../../shared/types';
 
   interface Props {
-    alerts: Pick<Alert, 'event' | 'headline' | 'winter'>[];
+    alerts: Pick<Alert, 'event' | 'headline' | 'winter' | 'source'>[];
     detailed?: Alert[];
   }
 
@@ -22,8 +22,9 @@
           <span class="status {tone(a)}"><span class="dot"></span>{a.event}</span>
         </summary>
         <p class="small secondary">{a.headline}</p>
-        <!-- ECCC alerts are shown exactly as issued (their licence), paragraph breaks included. -->
+        <!-- ECCC alerts are shown exactly as issued and credited, as their licence asks. -->
         {#if full?.description}<p class="small secondary text">{full.description}</p>{/if}
+        {#if (full?.source ?? a.source) === 'ECCC'}<p class="small muted">Source: Environment and Climate Change Canada</p>{/if}
       </details>
     {/each}
   </section>

@@ -109,6 +109,12 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
+      # The writer has used them; the public data files mustn't republish a local
+      # forecaster's words or Avalanche Canada's text. Idempotent, so reuse runs are fine.
+      - name: Strip writer-only text
+        if: steps.budget.outputs.defer != 'true'
+        run: npm run strip-private
+
       - name: Build the app
         if: steps.budget.outputs.defer != 'true'
         run: npm run build

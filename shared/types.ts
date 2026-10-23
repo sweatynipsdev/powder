@@ -445,7 +445,7 @@ export interface ResortSummary {
   /** Daily (5am-5am) blend for the first 10 days, both elevations. */
   days: { date: string; summit: number | null; base: number | null }[];
   reported: { h24: number | null; updatedAt: string | null; fresh: boolean } | null;
-  alerts: { event: string; headline: string; winter: boolean }[];
+  alerts: { event: string; headline: string; winter: boolean; source?: 'NWS' | 'ECCC' }[];
   avalanche: { overall: number; text: string } | null;
   roads: RoadStatus | null;
   /** The agency's own words for that worst status (WSDOT); absent for Caltrans and older data. */

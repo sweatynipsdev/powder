@@ -7,7 +7,7 @@
 import type { AvalancheDanger, AvalancheData } from '../../shared/types';
 import type { ResortConfig } from '../config';
 import { fetchJson } from '../http';
-import { DANGER_TEXT } from './avalanche';
+import { overallDanger } from './avalanche';
 import { htmlToText, truncate } from './text';
 
 export const avcanPointUrl = (lat: number, lon: number) => `https://api.avalanche.ca/forecasts/en/products/point?lat=${lat.toFixed(4)}&long=${lon.toFixed(4)}`;
@@ -42,7 +42,6 @@ export function parseAvcan(json: unknown): AvalancheData {
   const rep = p?.report;
   if (!rep || typeof rep !== 'object') throw new Error('unexpected Avalanche Canada response');
   const current = day(rep.dangerRatings, 0);
-  const overall = current ? Math.max(current.upper, current.middle, current.lower) : -1;
   const summaries = (rep.summaries ?? []).map((s) => (s.content ? htmlToText(s.content) : '')).filter(Boolean);
   return {
     center: 'Avalanche Canada',
@@ -54,8 +53,7 @@ export function parseAvcan(json: unknown): AvalancheData {
     expiresAt: rep.validUntil ?? null,
     current,
     tomorrow: day(rep.dangerRatings, 1),
-    overall,
-    overallText: overall >= 0 ? DANGER_TEXT[overall] : 'No rating yet',
+    ...overallDanger(current),
     bottomLine: rep.highlights ? truncate(htmlToText(rep.highlights), 900) : null,
     discussion: summaries.length ? truncate(summaries.join('\n\n'), 1500) : null,
     problems: (rep.problems ?? []).map((x) => (typeof x.type === 'string' ? x.type : (x.type?.display ?? x.type?.value ?? ''))).filter(Boolean),

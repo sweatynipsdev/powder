@@ -84,7 +84,8 @@ const daysSince = (iso: string, now: Date) => Math.floor((now.getTime() - Date.p
 /** A recent local forecaster's discussion, credited, for the writer to compare against. */
 function localExpert(r: ResortData, now: Date): { localExpert?: object } {
   const x = r.expert?.data;
-  if (!x?.publishedAt || (now.getTime() - Date.parse(x.publishedAt)) / 86_400_000 > EXPERT_MAX_AGE_DAYS) return {};
+  // No text: carried forward from the deployed data, which has the forecaster's words stripped.
+  if (!x?.publishedAt || !x.text || (now.getTime() - Date.parse(x.publishedAt)) / 86_400_000 > EXPERT_MAX_AGE_DAYS) return {};
   return {
     localExpert: {
       who: `${x.author}, ${x.source} (local forecaster)`,
@@ -155,10 +156,10 @@ function ago(iso: string | null, now: Date): string {
 
 const SOURCE_TEXT: Record<SourceKey, string> = {
   forecast: 'model forecast',
-  cpc: 'CPC outlooks',
+  cpc: 'long-range outlooks and ENSO',
   snowpack: 'snowpack station',
   nws: 'NWS point forecast',
-  alerts: 'NWS alerts',
+  alerts: 'weather alerts',
   afd: 'NWS forecast discussion',
   avalanche: 'avalanche forecast',
   roads: 'road conditions',
@@ -191,8 +192,7 @@ export function buildBrief(r: ResortData, now: Date): Brief {
   const brief = {
     resort: { name: r.name, region: r.region, baseFt: fmtFt(r.baseFt), summitFt: fmtFt(r.summitFt) },
     writtenFor: `${fmtDay(now.toLocaleDateString('en-CA', { timeZone: r.tz }))}, ${now.toLocaleTimeString('en-US', { timeZone: r.tz, hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}`,
-    howToRead:
-      'Snow in inches. "X (A-B)" means best estimate X, likely range A to B (middle half of ensemble members, or the spread of models when ensembles are missing). "<1" means a dusting under an inch. Daytime is 5am-5pm, overnight is 5pm-5am the next morning. "models" are single runs of each forecast model (GFS, ECMWF, ICON, GEM, ECMWF AI, and the short-range HRRR, NAM 3km and NBM); "NWS forecasters" is the hand-edited forecast from the local National Weather Service office. The ensembles are separate and only feed the ranges. Gusts and temperatures are forecasts, not measurements.',
+    howToRead: `Snow in inches. "X (A-B)" means best estimate X, likely range A to B (middle half of ensemble members, or the spread of models when ensembles are missing). "<1" means a dusting under an inch. Daytime is 5am-5pm, overnight is 5pm-5am the next morning. "models" are single runs of each forecast model (GFS, ECMWF, ICON, GEM, ECMWF AI, and the short-range HRRR, NAM 3km and NBM)${us ? '; "NWS forecasters" is the hand-edited forecast from the local National Weather Service office' : ''}. The ensembles are separate and only feed the ranges. Gusts and temperatures are forecasts, not measurements.`,
     resortStatus: resortStatus(r, now),
     ...(r.localNotes?.length ? { localKnowledge: r.localNotes } : {}),
     ...localExpert(r, now),
@@ -258,7 +258,15 @@ export function buildBrief(r: ResortData, now: Date): Brief {
     avalanche: av
       ? av.overall < 0
         ? `${av.zoneName}: no danger rating issued yet${av.bottomLine ? `. ${av.bottomLine}` : ''}`
-        : { zone: av.zoneName, overall: av.overallText, problems: av.problems, bottomLine: av.bottomLine }
+        : {
+            zone: av.zoneName,
+            overall: av.overallText,
+            problems: av.problems,
+            bottomLine: av.bottomLine,
+            // Outside the US the avalanche forecasters' summaries are the only forecaster
+            // discussion there is (no NWS).
+            ...(!us && av.discussion ? { forecasterSummaries: av.discussion } : {}),
+          }
       : 'no avalanche center',
     roads: r.roads?.data
       ? r.roads.data.segments.map((s) => ({

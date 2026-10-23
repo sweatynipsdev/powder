@@ -101,7 +101,13 @@ describe('brief', () => {
     expect(brief).not.toHaveProperty('nwsForecast');
     expect(brief).not.toHaveProperty('cpcOutlooks');
     expect(brief.enso).toMatch(/El Ni/);
+    expect(brief.howToRead).not.toMatch(/NWS/);
     expect(JSON.parse(buildBrief(palisades, recordedAt).json)).toHaveProperty('nwsDiscussion');
+    // Outside the US the avalanche forecasters' summaries stand in for the NWS discussion.
+    const rated = { ...palisades.avalanche!.data!, overall: 2, overallText: 'Moderate', discussion: 'Wind slabs near ridgecrests.' };
+    const canada = { ...palisades, nws: null, afd: null, cpc, avalanche: { ...palisades.avalanche!, data: rated } };
+    expect(JSON.parse(buildBrief(canada, recordedAt).json).avalanche.forecasterSummaries).toBe('Wind slabs near ridgecrests.');
+    expect(JSON.parse(buildBrief({ ...palisades, avalanche: canada.avalanche }, recordedAt).json).avalanche).not.toHaveProperty('forecasterSummaries');
     expect(RESORT_SYSTEM).toContain("outside NWS coverage and have no forecast discussion or forecasters' grid");
   });
 

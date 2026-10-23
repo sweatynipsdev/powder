@@ -34,7 +34,7 @@ export function summarize(r: ResortData, at: Date): ResortSummary {
     buckets: f ? { d1_5: f.buckets.d1_5, d6_10: f.buckets.d6_10 } : null,
     days: (f?.days ?? []).slice(0, STRIP_DAYS).map((d) => ({ date: d.date, summit: d.snow.summit.blend, base: d.snow.base.blend })),
     reported: report ? { h24: report.h24, updatedAt: report.updatedAt, fresh: report.fresh } : null,
-    alerts: (r.alerts.data ?? []).map((a) => ({ event: a.event, headline: a.headline, winter: a.winter })),
+    alerts: (r.alerts.data ?? []).map((a) => ({ event: a.event, headline: a.headline, winter: a.winter, source: a.source })),
     avalanche: r.avalanche?.data ? { overall: r.avalanche.data.overall, text: r.avalanche.data.overallText } : null,
     roads: r.roads?.data?.worst ?? null,
     roadsText: r.roads?.data?.segments.find((s) => s.status === r.roads!.data!.worst)?.restriction ?? null,

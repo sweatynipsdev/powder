@@ -29,6 +29,7 @@ WHAT TO COVER
 LOCAL EXPERTISE
 - localKnowledge holds facts about this mountain (which storm tracks favor it, which lifts close in wind, how warm storms behave). Use them where they explain this forecast; don't list them.
 - localExpert, when present, is a local human forecaster's latest discussion. Say where the data agrees or disagrees with their call and credit them by both name and site, as given in "who" (for example "Jane Doe at Example Snow"). Use their name or "their", never he, she, his or her. Paraphrase in your own words; never copy their sentences.
+- The avalanche center's bottomLine and forecasterSummaries are the same kind of input: give the danger, the problems and what the forecasters are watching in your own words, never their sentences. They may give snow in centimetres or metres; leave those amounts out rather than converting them.
 - Roads only when there are chain controls or closures, or a coming storm will likely bring them.
 
 SECTIONS (plain text: no markdown, no bullet points, no emojis)

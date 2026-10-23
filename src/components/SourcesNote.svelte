@@ -26,9 +26,11 @@
   // US, alerts come from Environment and Climate Change Canada, and avalanche data may too.
   const label = (k: SourceKey) => {
     if (k === 'roads' && r.roads?.data) return (r.roads.data.agencies ?? ['Caltrans']).join(' + ');
-    if (k === 'alerts' && r.nws === null) return 'ECCC alerts';
-    if (k === 'cpc' && r.nws === null) return 'ENSO (NOAA)';
-    if (k === 'avalanche' && r.avalanche?.data) return r.avalanche.data.center === 'Avalanche Canada' ? 'Avalanche Canada' : 'avalanche.org';
+    // Named from the resort, not from data that may have failed to arrive.
+    const canada = r.nws === null;
+    if (k === 'alerts' && canada) return 'Alerts: Environment and Climate Change Canada';
+    if (k === 'cpc' && canada) return 'ENSO (NOAA)';
+    if (k === 'avalanche') return canada || r.avalanche?.data?.center === 'Avalanche Canada' ? 'Avalanche Canada' : 'avalanche.org';
     return LABELS[k];
   };
 
