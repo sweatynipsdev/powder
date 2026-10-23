@@ -873,7 +873,7 @@
       "lon": -111.6375,
       "baseFt": 8530,
       "summitFt": 10500,
-      "summit": { "lat": 40.5687, "lon": -111.6355 },
+      "summit": { "lat": 40.565, "lon": -111.63 },
       "tz": "America/Denver",
       "local": {
         "openingDate": "2026-11-20",

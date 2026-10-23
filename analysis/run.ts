@@ -28,6 +28,12 @@ export const DEFAULT_EFFORT: Effort = 'medium';
 /** An afternoon run rewrites anyway if the last write-up is older than this. */
 export const MAX_AGE_HOURS = 20;
 const MAX_TOKENS = 8000;
+/**
+ * The ranking covers every resort, and Haiku's thinking counts against the cap: at 40
+ * resorts, 8,000 cut its JSON off mid-string. 16,000 keeps a non-streaming call well inside
+ * the SDK's timeout.
+ */
+const RANKING_MAX_TOKENS = 16_000;
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 export const USAGE_CSV = join(ROOT, 'logs', 'usage.csv');
@@ -75,13 +81,13 @@ function mapStrings<T>(v: T, f: (s: string) => string): T {
  * naming the problems; if the retry still fails it's published with `ungrounded` set.
  */
 async function checkedCall<S extends z.ZodType>(
-  req: { label: string; system: string; user: string; schema: S; brief: string; texts: (p: z.infer<S>) => string[] },
+  req: { label: string; system: string; user: string; schema: S; brief: string; texts: (p: z.infer<S>) => string[]; maxTokens?: number },
   caller: Caller,
   calls: CallLog[],
 ): Promise<{ parsed: z.infer<S>; ungrounded: string[] }> {
   let user = req.user;
   for (let attempt = 1; ; attempt++) {
-    const res = await caller({ system: req.system, user, schema: req.schema, maxTokens: MAX_TOKENS });
+    const res = await caller({ system: req.system, user, schema: req.schema, maxTokens: req.maxTokens ?? MAX_TOKENS });
     calls.push({ label: `${req.label}#${attempt}`, usage: res.usage, stopReason: res.stopReason });
     if (res.stopReason === 'refusal') throw new Error('model declined the request');
     if (!res.parsed) throw new Error(`no parsable output (stop_reason ${res.stopReason})`);
@@ -118,6 +124,7 @@ async function writeRanking(resorts: ResortData[], caller: Caller, model: string
       user: rankingUserMessage(brief),
       schema: rankingSchema(ids, dates),
       brief,
+      maxTokens: RANKING_MAX_TOKENS,
       // The app shows only the per-resort reasons (filtered to each phone's favorites), so
       // only those are checked; an invented number in the unused summary isn't worth a retry.
       texts: (out) => out.ranking.map((e) => e.reason),

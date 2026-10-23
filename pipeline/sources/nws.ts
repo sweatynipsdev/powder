@@ -116,7 +116,8 @@ export async function fetchAlerts(r: ResortConfig): Promise<Alert[]> {
 /** Splits a raw AFD into its ".SECTION..." blocks. */
 export function afdSections(text: string): Map<string, string> {
   const sections = new Map<string, string>();
-  const re = /^\.([A-Z][A-Z0-9 /\-]+?)\.\.\.(.*)$/gm;
+  // Salt Lake City adds the issue time to each heading: ".DISCUSSION, Issued 1059 AM MDT Fri Oct 23 2026..."
+  const re = /^\.([A-Z][A-Z0-9 /\-]+?)(?:,[^\n]*?)?\.\.\.(.*)$/gm;
   const marks = [...text.matchAll(re)];
   marks.forEach((m, i) => {
     const start = m.index! + m[0].length;

@@ -279,15 +279,15 @@ Research starts **before T1**, in background agents, so it runs while T1–T5 ar
 
 ## T7. Fixtures, tests at 40 resorts, write-up check
 
-- [ ] `npm run record-fixtures`: a full live run, about 2,200 Open-Meteo calls from the local IP.
+- [x] `npm run record-fixtures`: a full live run, about 2,200 Open-Meteo calls from the local IP.
   - Read its status table. Every configured source should be ✓.
   - Note each ✗ with its cause in the evidence file, and fix config errors.
-- [ ] Update tests that depend on fixture timing or counts, keeping each assertion's intent. Run `npm test` until green.
-- [ ] `npm run analyze:sample` (forced, all 40, about $0.10).
+- [x] Update tests that depend on fixture timing or counts, keeping each assertion's intent. Run `npm test` until green.
+- [x] `npm run analyze:sample` (forced, all 40, about $0.10).
   - Confirm the ranking call ended `end_turn`. If it hit `max_tokens`, give the ranking call its own higher cap, rerun, and record a ruling.
   - Read Alta, Vail and Crystal in `samples/analysis-sample.md`: numbers grounded, no CA-isms, roads wording right.
-- [ ] `git checkout -- logs/usage.csv` (local runs don't commit it).
-- [ ] Commit "T7: fixtures for 40 resorts; tests updated".
+- [x] `git checkout -- logs/usage.csv` (local runs don't commit it).
+- [x] Commit "T7: fixtures for 40 resorts; tests updated".
 
 ## T8. Browser checks for Batch A
 
@@ -407,3 +407,7 @@ export async function fetchAvcan(r: ResortConfig): Promise<AvalancheData>;  // s
 - Ruling: if a reuse run fails and falls back to a full update, the budget check doesn't run for it — that fallback is rare and only happens when the live data is broken — cost if wrong: one unguarded full run, about 2,550 calls.
 - Ruling: the severity order and `worse()` live in `pipeline/sources/roadStatus.ts`, not `roads.ts` as planned — `caltrans.ts` needs them and `roads.ts` imports `caltrans.ts`, so keeping them in `roads.ts` would make a circular import — cost if wrong: none; one extra small module.
 - Ruling: vitest `testTimeout` raised to 30 s for every test (in `vitest.config.ts`) — the outage test replays the pipeline twice and took 5.5 s at 21 resorts with the suite running in parallel; at 40 it would fail every run — cost if wrong: a hung test takes 30 s to report.
+- Ruling: AFD section headings may carry a comma suffix (`.DISCUSSION, Issued 1059 AM MDT…`) — Salt Lake City writes them that way, and the strict heading regex made all six Utah discussions fail in the T7 recording — cost if wrong: a heading with a stray comma elsewhere would be read as a section; it only ever narrows to the name before the comma.
+- Ruling: Alta's summit point moved to the top of the Supreme lift (grid cell 10,000 ft) — the agent's point fell in a lower NWS grid cell than the base, which inverted the "NWS forecasters" line and failed the summit ≥ base invariant — cost if wrong: none found; the point is 64 ft from the stated summit on the DEM.
+- Ruling: only Alta's fixtures were re-recorded after its fix (scratchpad `record-one.mts`, 54 Open-Meteo calls), not the full set — a full re-record is about 2,230 calls — cost if wrong: Alta's fixtures are about 40 minutes newer than the rest; replay freezes the clock at the original recording time, and all tests pass.
+- Ruling: the ranking call gets its own `max_tokens` of 16,000 (write-ups keep 8,000) — at 40 resorts the ranking used 6,868 output tokens including thinking, and at 8,000 it was cut off mid-JSON in the forced sample — cost if wrong: at most about $0.004 more per ranking at Haiku's output price.

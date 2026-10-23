@@ -9,6 +9,11 @@ Three research agents (Utah, Colorado, Pacific NW) built the 19 `resorts.json` e
 - **breckenridge:** summitFt 12,998 → 12,840 (top of Imperial Express, the highest lift). Every other entry uses the top of the highest lift, and the summit point reads 12,825 ft in the DEM. 12,998 is the hike-to summit of Peak 8.
 - **keystone:** Removed openingDate 2026-10-24. It came only from ticket sales (Denver Gazette); Vail Resorts officially targets "as soon as possible in October" (SnowBrains, ColoradoBiz). With no date and no lift feed, status reads "Lift status on resort site". The note was reworded to match.
 
+- **alta (found in T7):**
+  - **Problem:** the summit point (40.5687, −111.6355) fell in an NWS grid cell at 9,436 ft, below the base point's cell (9,800 ft). Alta's base sits in a narrow canyon, and the 2.5 km cell around it takes in the surrounding peaks. That inverted the "NWS forecasters" summit and base.
+  - **Fix:** moved the summit to the top of the Supreme lift (40.565, −111.63). Its cell is SLC 108,165 at 10,000 ft, and the point reads 10,436 ft on the DEM against Alta's 10,500.
+  - **Fixtures:** re-recorded for Alta alone (54 Open-Meteo calls) rather than a full re-record.
+
 ## Controller verification
 
 - **Every source, live (2026-10-23 ~23:40Z), one request per distinct source:**

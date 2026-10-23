@@ -131,6 +131,15 @@ describe('NWS', () => {
     expect(afd.discussion).toBe('A cold front moves in.');
   });
 
+  it('reads headings that carry their own issue time (Salt Lake City writes them that way)', () => {
+    const text =
+      '.KEY MESSAGES, Issued 1059 AM MDT Fri Oct 23 2026...\n\n- Showers continue Friday.\n\n&&\n\n.DISCUSSION, Issued 1059 AM MDT Fri Oct 23 2026...\nA trough pivots\ninto northern Utah.\n\n&&\n\n.SLC WATCHES/WARNINGS/ADVISORIES...\nUT...None.\n&&\n';
+    expect([...afdSections(text).keys()]).toEqual(['KEY MESSAGES', 'DISCUSSION', 'SLC WATCHES/WARNINGS/ADVISORIES']);
+    const afd = parseAfd('SLC', text, '2026-10-23T16:59:00Z', 'https://example');
+    expect(afd.keyMessages).toBe('- Showers continue Friday.');
+    expect(afd.discussion).toBe('A trough pivots into northern Utah.');
+  });
+
   it('drops forecast-discussion sentences about other parts of the region', () => {
     const afd = {
       office: 'REV',

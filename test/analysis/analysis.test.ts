@@ -320,6 +320,16 @@ describe('analyze', () => {
     expect(res.ranking!.entries).toEqual([{ resortId: 'palisades', day, reason: 'first' }]);
   });
 
+  it('gives the ranking more room than a write-up, since it covers every resort', async () => {
+    const caps: Record<string, number> = {};
+    const caller = (async (req: { system: string; maxTokens: number }) => {
+      caps[req.system === RANKING_SYSTEM ? 'ranking' : 'resort'] = req.maxTokens;
+      return { parsed: req.system === RANKING_SYSTEM ? ranking : good, stopReason: 'end_turn', usage: USAGE } satisfies CallResult<unknown>;
+    }) as unknown as Caller;
+    await analyze(resorts.slice(0, 1), null, { caller, model: 'm', at: recordedAt, mode: 'force' });
+    expect(caps).toEqual({ resort: 8000, ranking: 16000 });
+  });
+
   it('retries when the draft mentions the brief', async () => {
     const meta = { ...good, next5Days: 'The brief shows a dry week.' };
     const caller = fakeCaller([meta, good, ranking]);
