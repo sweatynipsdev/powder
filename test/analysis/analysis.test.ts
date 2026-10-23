@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { buildBrief, buildRankingBrief, resortStatus, snowLevelMeaning } from '../../analysis/brief';
 import { fingerprint } from '../../analysis/fingerprint';
-import { allowedNumbers, extractClaims, findUngrounded, isGrounded, metaReferences, tidyAmounts } from '../../analysis/grounding';
+import { allowedNumbers, extractClaims, findUngrounded, genderedPronouns, isGrounded, metaReferences, tidyAmounts } from '../../analysis/grounding';
 import { RANKING_SYSTEM, RESORT_SYSTEM } from '../../analysis/prompt';
 import { analyze, needsRewrite, usageRun } from '../../analysis/run';
 import { appendUsageCsv, costUsd, monthToDate } from '../../analysis/usage';
@@ -163,6 +163,11 @@ describe('grounding', () => {
     expect(metaReferences(['A wetScenario of 36, and days6to10Summit shows 8.'])).toEqual(['wetScenario', 'days6to10Summit']);
   });
 
+  it('flags a guessed pronoun for the local forecaster', () => {
+    expect(genderedPronouns(['Steve Taylor expected a second system, and his call holds.', 'He sees more.'])).toEqual(['his', 'he']);
+    expect(genderedPronouns(['Steve Taylor expected a second system; their call holds. The shell, herringbone, shear.'])).toEqual([]);
+  });
+
   it('rewrites the brief shorthand "6 (0-10)" as a plain range', () => {
     expect(tidyAmounts('A storm brings 6 (0-10) inches; Friday <1 (0-1). Range 2-5 (wide).')).toBe('A storm brings 0-10 inches; Friday 0-1. Range 2-5 (wide).');
   });
@@ -274,6 +279,15 @@ describe('analyze', () => {
     const res = await analyze(resorts.slice(0, 1), null, { caller, model: 'm', at: recordedAt, mode: 'force' });
     expect(caller.users[1]).toContain(planted);
     expect(res.resorts[0].analysis!.ungrounded).toEqual([]);
+    expect(res.calls.map((c) => c.label)).toEqual(['palisades#1', 'palisades#2', 'ranking#1']);
+  });
+
+  it('retries once when the draft guesses the local forecaster’s pronoun', async () => {
+    const guessed = { ...good, modelAgreement: { summary: 'Models agree, and so does his call.', confidence: 'high' } };
+    const caller = fakeCaller([guessed, good, ranking]);
+    const res = await analyze(resorts.slice(0, 1), null, { caller, model: 'm', at: recordedAt, mode: 'force' });
+    expect(caller.users[1]).toContain('it called the local forecaster "his"; use their name or "their" instead');
+    expect(res.resorts[0].analysis!.modelAgreement.summary).toBe(good.modelAgreement.summary);
     expect(res.calls.map((c) => c.label)).toEqual(['palisades#1', 'palisades#2', 'ranking#1']);
   });
 

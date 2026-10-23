@@ -74,10 +74,11 @@ export function rankingUserMessage(briefJson: string): string {
 }
 
 /** Appended to a retry when the first draft broke the number or style rules. */
-export function retryNote(ungrounded: string[], metaWords: string[]): string {
+export function retryNote(ungrounded: string[], metaWords: string[], pronouns: string[] = []): string {
   const problems = [
     ungrounded.length ? `it used numbers that are not in this brief (${ungrounded.join(', ')}); use only numbers that appear in the brief, or describe those amounts in words` : '',
     metaWords.length ? `it mentioned ${metaWords.map((w) => `"${w}"`).join(' and ')}; write as the forecaster, without referring to the data you were given` : '',
+    pronouns.length ? `it called the local forecaster ${pronouns.map((w) => `"${w}"`).join(' and ')}; use their name or "their" instead` : '',
   ].filter(Boolean);
   return `\n\nRewrite your previous draft: ${problems.join('; and ')}.`;
 }

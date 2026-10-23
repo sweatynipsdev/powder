@@ -40,6 +40,45 @@ describe('pacing', () => {
     expect(clock.at()).toBe(0);
   });
 
+  it('runs only maxInFlight requests at once, the rest in arrival order', async () => {
+    const pacer = new OmPacer({ perMinute: 1_000, maxInFlight: 2 });
+    const flush = () => new Promise((r) => setTimeout(r, 0));
+    const started: number[] = [];
+    const finish: (() => void)[] = [];
+    let running = 0;
+    let peak = 0;
+    const request = (i: number) => () =>
+      new Promise<number>((resolve) => {
+        started.push(i);
+        peak = Math.max(peak, ++running);
+        finish[i] = () => {
+          running--;
+          resolve(i);
+        };
+      });
+    const runs = [0, 1, 2, 3, 4].map((i) => pacer.run(1, request(i)));
+    await flush();
+    expect(started).toEqual([0, 1]);
+    finish[1]();
+    await flush();
+    expect(started).toEqual([0, 1, 2]);
+    finish[0]();
+    finish[2]();
+    await flush();
+    expect(started).toEqual([0, 1, 2, 3, 4]);
+    finish[3]();
+    finish[4]();
+    expect(await Promise.all(runs)).toEqual([0, 1, 2, 3, 4]);
+    expect(peak).toBe(2);
+    expect(pacer.total).toBe(5);
+  });
+
+  it('frees the slot when a request fails', async () => {
+    const pacer = new OmPacer({ perMinute: 1_000, maxInFlight: 1 });
+    await expect(pacer.run(1, () => Promise.reject(new Error('reset')))).rejects.toThrow('reset');
+    await expect(pacer.run(1, async () => 'ok')).resolves.toBe('ok');
+  });
+
   it('only counts when switched off (fixture replay)', async () => {
     const clock = fakeClock();
     const pacer = new OmPacer({ perMinute: 10, now: clock.now, sleep: clock.sleep, enabled: () => false });

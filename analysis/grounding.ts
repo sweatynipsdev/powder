@@ -102,6 +102,16 @@ export function metaReferences(texts: string[]): string[] {
   return [...found];
 }
 
+/**
+ * The only person a forecast talks about is a local forecaster, whose pronouns the writer
+ * doesn't know, so any he/she/his/her is a guess. The prompt asks for their name or "their".
+ */
+export function genderedPronouns(texts: string[]): string[] {
+  const found = new Set<string>();
+  for (const t of texts) for (const m of t.matchAll(/\b(he|she|him|his|her|hers|himself|herself)\b/gi)) found.add(m[1].toLowerCase());
+  return [...found];
+}
+
 /** "6 (0-10) inches" → "0-10 inches": the brief's best-then-range shorthand reads badly in prose. */
 export function tidyAmounts(text: string): string {
   return text.replace(/(?<![\w.])(?:<1|\d+) \((\d+-\d+)\)/g, '$1');

@@ -91,8 +91,10 @@ export interface RequestOptions {
   body?: string;
   headers?: Record<string, string>;
   timeoutMs?: number;
-  /** Awaited before every network attempt, retries included (rate-limit pacing). */
-  beforeAttempt?: () => Promise<void>;
+  /** Wraps every network attempt, retries included (rate-limit pacing, requests in flight). */
+  gate?: <T>(attempt: () => Promise<T>) => Promise<T>;
+  /** Waits before each retry, for a source that needs longer than the default to recover. */
+  retryDelaysMs?: number[];
 }
 
 function fixtureKey(method: string, url: string, body: string | undefined): string {
@@ -142,33 +144,51 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
  */
 const retryable = (status: number) => status >= 500 || status === 429 || status === 403;
 
+/** Node's fetch says only "fetch failed"; the reason (reset, refused, DNS) is on its cause. */
+export function describeFetchError(e: unknown): string {
+  if (!(e instanceof Error)) return String(e);
+  const cause = e.cause as (Error & { code?: string }) | undefined;
+  if (!(cause instanceof Error)) return e.message;
+  const why = [cause.code, cause.message].filter(Boolean).join(': ');
+  return why ? `${e.message} (${why})` : e.message;
+}
+
+/** Host and path, for log lines; Open-Meteo query strings run to hundreds of characters. */
+const shortUrl = (url: string) => {
+  const u = new URL(url);
+  return `${u.host}${u.pathname}`;
+};
+
+async function attemptFetch(url: string, opts: RequestOptions): Promise<Response> {
+  const res = await fetch(url, {
+    method: opts.method ?? 'GET',
+    body: opts.body,
+    headers: { 'User-Agent': USER_AGENT, ...opts.headers },
+    signal: AbortSignal.timeout(opts.timeoutMs ?? 30_000),
+  });
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  if (!res.ok) throw new HttpError(`HTTP ${res.status} for ${url}`, res.status, url);
+  return { status: res.status, contentType: res.headers.get('content-type') ?? '', bytes };
+}
+
 async function liveFetch(url: string, opts: RequestOptions): Promise<Response> {
-  let lastError: unknown;
-  const attempts = cfg.retryDelaysMs.length + 1;
-  for (let attempt = 0; attempt < attempts; attempt++) {
-    if (attempt > 0) await sleep(cfg.retryDelaysMs[attempt - 1]);
-    await opts.beforeAttempt?.();
+  const delays = opts.retryDelaysMs ?? cfg.retryDelaysMs;
+  const gate = opts.gate ?? ((go) => go());
+  let lastError: Error | undefined;
+  for (let attempt = 0; attempt <= delays.length; attempt++) {
+    if (attempt > 0) {
+      const wait = delays[attempt - 1];
+      console.warn(`  retry ${attempt}/${delays.length} in ${wait / 1000}s: ${shortUrl(url)}: ${lastError?.message}`);
+      await sleep(wait);
+    }
     try {
-      const res = await fetch(url, {
-        method: opts.method ?? 'GET',
-        body: opts.body,
-        headers: { 'User-Agent': USER_AGENT, ...opts.headers },
-        signal: AbortSignal.timeout(opts.timeoutMs ?? 30_000),
-      });
-      const bytes = new Uint8Array(await res.arrayBuffer());
-      if (!res.ok) {
-        const err = new HttpError(`HTTP ${res.status} for ${url}`, res.status, url);
-        if (!retryable(res.status)) throw err;
-        lastError = err;
-        continue;
-      }
-      return { status: res.status, contentType: res.headers.get('content-type') ?? '', bytes };
+      return await gate(() => attemptFetch(url, opts));
     } catch (e) {
       if (e instanceof HttpError && e.status !== null && !retryable(e.status)) throw e;
-      lastError = e;
+      lastError = e instanceof HttpError ? e : new HttpError(describeFetchError(e), null, url);
     }
   }
-  throw lastError instanceof Error ? lastError : new HttpError(String(lastError), null, url);
+  throw lastError!;
 }
 
 async function request(url: string, opts: RequestOptions = {}): Promise<Response> {

@@ -17,7 +17,7 @@ import { DEFAULT_OUT_DIR } from '../pipeline/run';
 import type { DataIndex, Ranking, ResortAnalysis, ResortData, UsageRun } from '../shared/types';
 import { buildBrief, buildRankingBrief } from './brief';
 import { fingerprint } from './fingerprint';
-import { findUngrounded, metaReferences, tidyAmounts } from './grounding';
+import { findUngrounded, genderedPronouns, metaReferences, tidyAmounts } from './grounding';
 import { RANKING_SYSTEM, rankingUserMessage, RESORT_SYSTEM, resortUserMessage, retryNote } from './prompt';
 import { rankingSchema, resortAnalysisSchema, type ResortAnalysisOutput } from './schema';
 import { addUsage, appendUsageCsv, type CallUsage, costUsd, monthToDate, ZERO_USAGE } from './usage';
@@ -89,8 +89,9 @@ async function checkedCall<S extends z.ZodType>(
     const texts = req.texts(parsed);
     const ungrounded = findUngrounded(texts, req.brief);
     const meta = metaReferences(texts);
-    if ((ungrounded.length === 0 && meta.length === 0) || attempt === 2) return { parsed, ungrounded };
-    user = req.user + retryNote(ungrounded, meta);
+    const pronouns = genderedPronouns(texts);
+    if ((ungrounded.length === 0 && meta.length === 0 && pronouns.length === 0) || attempt === 2) return { parsed, ungrounded };
+    user = req.user + retryNote(ungrounded, meta, pronouns);
   }
 }
 

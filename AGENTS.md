@@ -43,7 +43,7 @@ Mikey's personal OpenSnow replacement: an installable, always-dark PWA covering 
 - **Don't commit `logs/usage.csv` changes from local runs.** Restore the file instead (`git checkout -- logs/usage.csv`), because the workflow bot appends to it and a local change would conflict.
 
 ## Workflow
-- **Work in a git worktree** (`.claude/worktrees/`). The only `.env` is in `.claude/worktrees/build`, and the root checkout may be behind `main`.
+- **Work in a git worktree** (`.claude/worktrees/`). `.env` is gitignored, so a new worktree needs a copy from the root checkout before `npm run analyze`.
 - **Real features** go through the `build` skill: spec, then plan, then tasks with tests, then a whole-branch review.
 - **Pushing to `main` deploys.** Only push when Mikey says so.
 - **Before saying something is done,** run `npm test`, `npm run typecheck`, `npm run build` and `npm run e2e`, and look at the screenshots. Full-page screenshots show the fixed tab bar halfway down the page, which is expected.

@@ -123,9 +123,21 @@ export function parseDeterministic(json: unknown): DeterministicResult {
   return { times, elevs, models };
 }
 
+/**
+ * Open-Meteo drops connections in spells that outlast a few seconds; on 2026-10-23 one
+ * resort failed all three attempts 1.5s and 4s apart and had no earlier forecast to fall back on.
+ */
+const OM_RETRY_DELAYS_MS = [5_000, 20_000, 60_000];
+
 export async function fetchDeterministic(r: ResortConfig): Promise<DeterministicResult> {
   // Paced per attempt, so retries count against the per-minute limit too.
-  return parseDeterministic(await fetchJson(deterministicUrl(r), { timeoutMs: 45_000, beforeAttempt: () => omPacer.take(DET_WEIGHT) }));
+  return parseDeterministic(
+    await fetchJson(deterministicUrl(r), {
+      timeoutMs: 45_000,
+      retryDelaysMs: OM_RETRY_DELAYS_MS,
+      gate: (request) => omPacer.run(DET_WEIGHT, request),
+    }),
+  );
 }
 
 export interface EnsembleResult {
@@ -172,5 +184,11 @@ export function parseEnsemble(json: unknown): EnsembleResult {
 }
 
 export async function fetchEnsemble(r: ResortConfig): Promise<EnsembleResult> {
-  return parseEnsemble(await fetchJson(ensembleUrl(r), { timeoutMs: 60_000, beforeAttempt: () => omPacer.take(ENS_WEIGHT) }));
+  return parseEnsemble(
+    await fetchJson(ensembleUrl(r), {
+      timeoutMs: 60_000,
+      retryDelaysMs: OM_RETRY_DELAYS_MS,
+      gate: (request) => omPacer.run(ENS_WEIGHT, request),
+    }),
+  );
 }
