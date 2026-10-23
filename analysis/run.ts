@@ -117,7 +117,9 @@ async function writeRanking(resorts: ResortData[], caller: Caller, model: string
       user: rankingUserMessage(brief),
       schema: rankingSchema(ids, dates),
       brief,
-      texts: (out) => [out.summary, ...out.ranking.map((e) => e.reason)],
+      // The app shows only the per-resort reasons (filtered to each phone's favorites), so
+      // only those are checked; an invented number in the unused summary isn't worth a retry.
+      texts: (out) => out.ranking.map((e) => e.reason),
     },
     caller,
     calls,
@@ -128,7 +130,11 @@ async function writeRanking(resorts: ResortData[], caller: Caller, model: string
     bestDay: p.bestDay,
     bestResort: p.bestResort,
     summary: p.summary,
-    entries: p.ranking.map((e) => ({ resortId: e.resortId, day: e.day, reason: e.reason })),
+    // The schema checks each id is a real resort, not that each appears once; the app keys
+    // its list by resort, so keep only the first (best-ranked) entry per resort.
+    entries: p.ranking
+      .filter((e, i, all) => all.findIndex((x) => x.resortId === e.resortId) === i)
+      .map((e) => ({ resortId: e.resortId, day: e.day, reason: e.reason })),
     ungrounded,
   };
 }

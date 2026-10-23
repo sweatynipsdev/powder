@@ -39,8 +39,6 @@ jobs:
       PREVIOUS_DATA_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/data/
     steps:
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0 # the push diff decides between a full update and reusing live data
 
       - uses: actions/setup-node@v7
         with:
@@ -50,23 +48,24 @@ jobs:
       - run: npm ci
 
       # A push that changes only the app rebuilds it against the live data: no source fetches
-      # and no AI calls, so code pushes don't spend Open-Meteo's daily budget. Scheduled and
-      # manual runs, and pushes touching the data side, always do a full update.
+      # and no AI calls, so code pushes don't spend Open-Meteo's daily budget. The diff runs
+      # from the commit the live data was built from (data.json `builtFrom`), not just this
+      # push, so data-side changes from a cancelled or failed run are never skipped. Scheduled
+      # and manual runs, and pushes touching the data side, always do a full update.
       - name: Choose a full update or reuse
         id: mode
-        env:
-          BEFORE: ${{ github.event.before }}
         run: |
           mode=full
-          if [ "$GITHUB_EVENT_NAME" = "push" ] && [ -n "$BEFORE" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
-            if changed=$(git diff --name-only "$BEFORE" "$GITHUB_SHA"); then
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            built=$(curl -fsS "${PREVIOUS_DATA_URL}data.json" | node -e 'let s="";process.stdin.on("data",(d)=>(s+=d)).on("end",()=>{try{process.stdout.write(JSON.parse(s).builtFrom||"")}catch{}})' || true)
+            if [ -n "$built" ] && git fetch --quiet --depth=1 origin "$built" && changed=$(git diff --name-only "$built" "$GITHUB_SHA"); then
               if ! echo "$changed" | grep -qE '^(pipeline/|analysis/|shared/|resorts\.json$|scripts/calibrate\.ts$|\.github/workflows/update\.yml$)'; then
                 mode=reuse
               fi
             fi
           fi
           echo "mode=$mode" >> "$GITHUB_OUTPUT"
-          echo "Update mode: $mode"
+          echo "Update mode: $mode (live data built from ${built:-unknown})"
 
       # Falls back to a full update if the live data is missing anything.
       - name: Reuse the live data

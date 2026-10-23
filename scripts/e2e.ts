@@ -120,6 +120,24 @@ try {
   await page.waitForSelector(HOME);
   check((await bigBearOnHome()) === 1, 'starring from the Resorts tab adds it back');
 
+  // Back from a shared link goes to Favorites, even after switching tabs on the resort; from
+  // inside the app it returns to where you came from.
+  await page.goto(URL + '#/r/mammoth');
+  await page.reload();
+  await page.waitForSelector(SUMMARY);
+  await page.locator('nav.tabs a', { hasText: 'Weather' }).tap();
+  await page.waitForSelector('figure');
+  await page.locator('a.back').tap();
+  await page.waitForSelector(HOME);
+  check(new globalThis.URL(page.url()).hash === '#/', 'Back from a shared link goes to Favorites, even after switching tabs');
+  await page.goto(URL + '#/resorts');
+  await page.waitForSelector('.search');
+  await page.locator('a[href="#/r/june"]').tap();
+  await page.waitForSelector(SUMMARY);
+  await page.locator('a.back').tap();
+  await page.waitForSelector('.search');
+  check(new globalThis.URL(page.url()).hash === '#/resorts', 'Back returns to the Resorts list you came from');
+
   // Search ignores case and punctuation and filters the list.
   await page.goto(URL + '#/resorts');
   await page.fill('.search', 'MAM');

@@ -34,7 +34,7 @@
   let { resort: r, tab, summary }: Props = $props();
   let f = $derived(r.forecast.data);
   let e = $derived(prefs.elevation);
-  let status = $derived(summary?.status ?? resortOpenStatus(r.report?.data, new Date(), r.openingDate));
+  let status = $derived(summary?.status ?? resortOpenStatus(r.report?.data, new Date(), { openingDate: r.openingDate, tz: r.tz, hasFeed: !!r.report }));
   let last24 = $derived(summary?.last24 ?? last24Of(r.report?.data, r.snowpack?.data));
   // Days before today; today's partial day is "Last 24 Hours".
   let observed = $derived(stationDailySnow(r.snowpack?.data).slice(0, -1));
@@ -87,7 +87,16 @@
     </div>
     <nav class="tabs hscroll" aria-label="Resort sections">
       {#each TABS as t (t.id)}
-        <a href={resortHref(r.id, t.id)} class:on={tab === t.id} aria-current={tab === t.id ? 'page' : undefined}>{t.label}</a>
+        <!-- Replace, not push: Back should leave the resort, not step through its tabs. -->
+        <a
+          href={resortHref(r.id, t.id)}
+          class:on={tab === t.id}
+          aria-current={tab === t.id ? 'page' : undefined}
+          onclick={(e) => {
+            e.preventDefault();
+            location.replace(resortHref(r.id, t.id));
+          }}>{t.label}</a
+        >
       {/each}
     </nav>
   </header>

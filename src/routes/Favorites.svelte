@@ -5,7 +5,7 @@
   import FavoriteRow from '../components/FavoriteRow.svelte';
   import { fmtDay, timeAgo } from '../lib/display';
   import { bestFavorite } from '../lib/favorites';
-  import { favorites } from '../lib/favorites.svelte';
+  import { favorites, followed } from '../lib/favorites.svelte';
   import { resortHref } from '../lib/router.svelte';
 
   interface Props {
@@ -13,8 +13,10 @@
   }
 
   let { index }: Props = $props();
-  let shown = $derived(index.resorts.filter((r) => favorites.ids.includes(r.id)));
+  let shown = $derived(followed(index.resorts));
   let best = $derived(bestFavorite(index.ranking, favorites.ids));
+  // When nothing is open (pre-season), the pick is about snow, not a ski day: say so.
+  let bestStatus = $derived(best ? index.resorts.find((r) => r.id === best!.resortId)?.status : undefined);
   let alerts = $derived(
     [...new Map(shown.flatMap((r) => r.alerts.filter((a) => a.winter)).map((a) => [a.headline, a])).values()],
   );
@@ -36,8 +38,9 @@
 
   {#if best}
     <a class="card best" href={resortHref(best.resortId)}>
-      <span class="small label">Best bet this week</span>
+      <span class="small label">{bestStatus?.state === 'open' ? 'Best bet this week' : 'Best snow this week'}</span>
       <strong>{name(best.resortId)} · {fmtDay(best.day)}</strong>
+      {#if bestStatus && bestStatus.state !== 'open'}<span class="small muted">{bestStatus.text}</span>{/if}
       <span class="secondary small">{best.reason}</span>
     </a>
   {/if}

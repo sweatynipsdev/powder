@@ -1,18 +1,16 @@
 <script lang="ts">
   import type { DataIndex } from '../../shared/types';
   import RoadsPanel from '../components/RoadsPanel.svelte';
-  import { favorites } from '../lib/favorites.svelte';
-  import { ensureResorts, store } from '../lib/store.svelte';
+  import { favorites, followed } from '../lib/favorites.svelte';
+  import { store } from '../lib/store.svelte';
 
   interface Props {
     index: DataIndex;
   }
 
   let { index }: Props = $props();
-  let shown = $derived(index.resorts.filter((s) => favorites.ids.includes(s.id)));
-  $effect(() => {
-    ensureResorts(favorites.ids);
-  });
+  // App loads every favorite's file in the background; these fill in as they arrive.
+  let shown = $derived(followed(index.resorts));
 </script>
 
 <div class="stack">

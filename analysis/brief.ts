@@ -3,6 +3,7 @@
 
 import { confidenceOf } from '../pipeline/process/blend';
 import { fmtDay, fmtFt, fmtSnow, fmtSnowAmount } from '../shared/format';
+import { beforeOpening } from '../shared/status';
 import type { CpcCat, DaySummary, ModelId, Period, ReportData, ResortData, SnowAmount, SourceKey } from '../shared/types';
 
 const MODEL_LABEL: Record<ModelId, string> = {
@@ -93,12 +94,20 @@ function localExpert(r: ResortData, now: Date): { localExpert?: object } {
   };
 }
 
+/** How long after its opening day a resort with no current report is presumed to be running. */
+const SEASON_DAYS = 150;
+
 /** Whether the resort is open, stated outright so the write-up doesn't assume. */
 export function resortStatus(r: ResortData, now: Date): string {
   const rep = r.report?.data;
-  const upcoming = r.openingDate && Date.parse(`${r.openingDate}T23:59:59Z`) > now.getTime() ? fmtDay(r.openingDate) : null;
-  // With no current report (none, or an old one), the announced opening date settles it.
-  if (upcoming && !rep?.fresh) return `not open yet: scheduled to open ${upcoming}`;
+  const upcoming = beforeOpening(r.openingDate, now, r.tz) ? fmtDay(r.openingDate!) : null;
+  // With no current report (none, or an old one), the opening date is the best evidence.
+  if (!rep?.fresh) {
+    if (upcoming) return `not open yet: scheduled to open ${upcoming}`;
+    if (r.openingDate && daysSince(`${r.openingDate}T12:00:00Z`, now) <= SEASON_DAYS)
+      return `likely open: its scheduled opening day (${fmtDay(r.openingDate)}) has passed, but no current lift report confirms it`;
+    if (!rep && r.report) return 'unknown: the lift report could not be read this run, so it is not confirmed open';
+  }
   return statusText(rep, now) + (upcoming && !rep?.liftsOpen ? `; scheduled to open ${upcoming}` : '');
 }
 

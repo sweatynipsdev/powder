@@ -78,7 +78,7 @@
     {@const id = router.route.id}
     {#if store.resorts[id]}
       <Resort resort={store.resorts[id]} tab={router.route.tab} summary={store.index?.resorts.find((s) => s.id === id) ?? null} />
-    {:else if store.error}
+    {:else if store.resortErrors[id]}
       <p class="card">Couldn't load this resort. {online ? 'Try again in a minute.' : "You're offline and it isn't cached yet."}</p>
     {:else}
       <p class="loading muted">Loading…</p>

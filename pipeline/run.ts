@@ -164,6 +164,7 @@ async function main(): Promise<void> {
   const calibration = live ? loadCalibration(join(historyDir, 'calibration.json')) : {};
 
   const result = await runPipeline(config, previous, at, calibration);
+  result.index.builtFrom = process.env.GITHUB_SHA ?? null;
   writeOutput(outDir, result);
   if (live && process.env.POWDER_RECORD_HISTORY === '1') appendHistory(historyDir, result.resorts, at);
   if (httpMode() === 'record') writeRecordingMeta(at);

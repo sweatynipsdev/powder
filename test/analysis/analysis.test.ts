@@ -83,6 +83,12 @@ describe('brief', () => {
     const heavenly = resorts.find((r) => r.id === 'heavenly')!;
     expect(resortStatus(heavenly, recordedAt)).toMatch(/^not open yet: scheduled to open \w+ Nov 20$/);
     expect(resortStatus(resorts.find((r) => r.id === 'homewood')!, recordedAt)).toMatch(/^unknown: .*not confirmed open$/);
+    // After opening day, a resort with no feed is presumed running for the season.
+    expect(resortStatus(heavenly, new Date('2026-12-15T13:20:00Z'))).toMatch(/^likely open: .*Fri Nov 20/);
+    expect(resortStatus(heavenly, new Date('2027-05-15T13:20:00Z'))).toMatch(/^unknown: /);
+    // A feed that exists but failed this run isn't "publishes no lift report".
+    const failed = { ...palisades, openingDate: undefined, report: { ...palisades.report!, data: null } };
+    expect(resortStatus(failed, recordedAt)).toMatch(/^unknown: the lift report could not be read/);
     const mammoth = resorts.find((r) => r.id === 'mammoth')!;
     expect(resortStatus(mammoth, recordedAt)).toMatch(/^not open yet: 0 of 25 lifts running; scheduled to open \w+ Nov 13$/);
     const open = structuredClone(mammoth);
@@ -269,6 +275,16 @@ describe('analyze', () => {
     expect(caller.users[1]).toContain(planted);
     expect(res.resorts[0].analysis!.ungrounded).toEqual([]);
     expect(res.calls.map((c) => c.label)).toEqual(['palisades#1', 'palisades#2', 'ranking#1']);
+  });
+
+  it('keeps one ranking entry per resort when the model repeats one', async () => {
+    const day = palisades.forecast.data!.days[0].date;
+    const dup = { ...ranking, ranking: [
+      { resortId: 'palisades', day, reason: 'first' },
+      { resortId: 'palisades', day, reason: 'again' },
+    ] };
+    const res = await analyze(resorts.slice(0, 1), null, { caller: fakeCaller([good, dup]), model: 'm', at: recordedAt, mode: 'force' });
+    expect(res.ranking!.entries).toEqual([{ resortId: 'palisades', day, reason: 'first' }]);
   });
 
   it('retries when the draft mentions the brief', async () => {

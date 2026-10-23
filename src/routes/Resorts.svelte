@@ -38,7 +38,7 @@
               <span class="small st {r.status.state}"><span class="dot"></span>{r.status.text}</span>
             </a>
             <span class="next" title="Next 1–5 days">
-              <strong>{fmtSnow(next5)}"</strong>
+              <strong>{next5 === null ? '—' : `${fmtSnow(next5)}"`}</strong>
               <span class="small muted">1–5 days</span>
             </span>
             <StarButton id={r.id} name={r.name} />

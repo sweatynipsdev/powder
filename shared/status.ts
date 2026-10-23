@@ -12,13 +12,33 @@ const shortDate = (iso: string) => {
 /** A report older than this means the resort is closed (off-season), not just slow to update. */
 export const CLOSED_AFTER_DAYS = 14;
 
-export function resortOpenStatus(report: ReportData | null | undefined, now: Date, openingDate?: string): ResortStatus {
+/** Today's date (YYYY-MM-DD) at the resort. */
+export function localDate(now: Date, tz: string): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
+}
+
+/** Before the morning of opening day, in the resort's own time zone. */
+export const beforeOpening = (openingDate: string | undefined, now: Date, tz: string): boolean =>
+  !!openingDate && localDate(now, tz) < openingDate;
+
+export interface StatusOptions {
+  openingDate?: string;
+  /** Default Pacific: every resort so far. */
+  tz?: string;
+  /** The resort has a report feed (configured), even if this run couldn't read it. */
+  hasFeed?: boolean;
+}
+
+export function resortOpenStatus(report: ReportData | null | undefined, now: Date, opts: StatusOptions = {}): ResortStatus {
   const open = report?.fresh && report.liftsOpen;
   // Before the scheduled opening day, say so (unless lifts are already turning).
-  if (!open && openingDate && Date.parse(`${openingDate}T23:59:59Z`) > now.getTime())
-    return { state: 'not-open', text: `Opening ${shortDate(openingDate)}` };
-  // Resorts without a snow-report feed: we can't tell if lifts are turning, so say where to look.
-  if (!report) return { state: 'unknown', text: 'Lift status on resort site' };
+  if (!open && opts.openingDate && beforeOpening(opts.openingDate, now, opts.tz ?? 'America/Los_Angeles'))
+    return { state: 'not-open', text: `Opening ${shortDate(opts.openingDate)}` };
+  if (!report)
+    return opts.hasFeed
+      ? { state: 'unknown', text: 'Lift report unavailable' }
+      : // No snow-report feed: we can't tell if lifts are turning, so say where to look.
+        { state: 'unknown', text: 'Lift status on resort site' };
   if (!report.fresh) {
     if (!report.updatedAt) return { state: 'unknown', text: 'No current report' };
     const days = Math.floor((now.getTime() - Date.parse(report.updatedAt)) / 86_400_000);

@@ -240,11 +240,23 @@
 
 ## Rulings
 
-- Ruling: the ranking card on Forecasts and the best-bet card both use the ranking's per-entry `day` and `reason`, and drop `bestDay`/`bestResort`/`summary` entirely. Why: those name the overall winner, which may not be a favorite. Cost if wrong: the AI's one-sentence overview is no longer shown anywhere; it's easy to bring back for phones whose favorites include the winner.
+- Ruling: the ranking card on Forecasts and the best-bet card both use the ranking's per-entry `day` and `reason`, and drop `bestDay`/`bestResort`/`summary`. Why: those name the overall winner, which may not be a favorite.
+  - Revised after review: the "nothing is open" caveat used to live only in the summary. The cards now read "Best snow this week" plus the resort's status whenever the pick isn't confirmed open.
+  - The summary is still generated but no longer grounding-checked, so it never triggers a retry.
+  - Cost if wrong: the one-sentence overview isn't shown anywhere.
 - Ruling: when a write-up fails, `analyze` keeps the input resort object (with the previous analysis) at its original index, rather than pushing it after the successful ones. Why: the output order must match the input order. Cost if wrong: none; the behavior matches the old sequential loop.
 - Ruling: `package.json`/lockfile changes take the reuse path, not a full run. Why: dependency bumps are mostly app-side, and the next scheduled run (≤ 12h) picks up pipeline-side effects. Cost if wrong: a pipeline-affecting dependency bump isn't exercised until the next scheduled run, so run it manually from Actions when that matters.
+- Ruling: reuse-vs-full diffs from `data.json`'s `builtFrom` (the commit that built the live data), not from `github.event.before`. Why: review showed a cancelled or failed full run would otherwise be skipped by the next app-only push. Cost if wrong: a missing or unfetchable `builtFrom` means a full run, which is safe and just spends budget.
 - Ruling: when no resort in the index has `defaultFavorite` (data written before the flag existed: an old cached `data.json`, or live data reused right after deploy), a new phone starts with every resort. Why: e2e against live data showed an empty Favorites tab otherwise. Cost if wrong: once there are 21+ resorts, a phone holding old cached data briefly shows them all, until the next data load.
-- Ruling: with no current report, an announced opening date decides the AI's status line ("not open yet: scheduled to open …"). A resort with no report feed and no date is "unknown … not confirmed open", and the ranking never puts unknown above confirmed-open. Why: the first 21-resort ranking put no-feed resorts (Heavenly) first as "status unknown" despite a Nov 20 opening. Cost if wrong: a no-feed resort that opens early stays "not open yet" in the write-up until its opening date passes; the same applies in the app's status line.
-- Ruling: "No resort report" became "Lift status on resort site" in the app. Why: 13 resorts have no feed, and the old text read as broken data. Cost if wrong: wording only.
+- Ruling: the AI's status line with no current report:
+  - Before opening day in the resort's time zone: "not open yet: scheduled to open …".
+  - Up to 150 days after it: "likely open … no current lift report confirms it".
+  - A configured feed that failed: "unknown: the lift report could not be read".
+  - No feed and no date: "unknown … not confirmed open".
+  - The ranking ranks likely-open and unknown resorts on their snow and prefers confirmed-open ones only when the snow is similar.
+  - Why: the first 21-resort ranking put Heavenly first as "unknown" despite a Nov 20 opening. Review then showed the strict "never above confirmed-open" rule would bench the 13 no-feed resorts all season.
+  - Cost if wrong: a no-feed resort that opens late, or closes early, reads "likely open" when it isn't. The writer flags it as unconfirmed, and filling in `openingDate` keeps that window accurate.
+- Ruling: the app says "Lift status on resort site" when a resort has no feed, and "Lift report unavailable" when its feed failed. Why: 13 resorts have no feed, the old "No resort report" read as broken data, and review showed a failing feed was getting the no-feed wording. Cost if wrong: wording only.
 - Ruling: the planted-number tests pick the first candidate that isn't in the brief. Why: new fixture data put 47 into Palisades' brief and broke three tests. Cost if wrong: none; the test throws if every candidate collides.
-- Ruling: the background prefetch loads every favorite's file on each app open (about 60 KB each). Why: offline should cover all favorites, not just visited ones. Cost if wrong: with 10+ favorites on a slow connection, the first open does extra downloads; it can be limited to the first N if that ever shows up.
+- Ruling: the background prefetch loads every favorite's file on each app open (about 60 KB each), and per-route loading was removed as redundant. Why: offline should cover all favorites, not just visited ones. Cost if wrong: with 10+ favorites on a slow connection, the first open does extra downloads; it can be limited to the first N if that ever shows up.
+- Ruling: resort-page tabs replace the history entry, and only page changes count as in-app navigation. Why: review showed Back stepping through tabs and leaving the app from a shared link. Cost if wrong: the browser's own back gesture also skips tab switches, which matches how OpenSnow's tabs behave.

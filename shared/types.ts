@@ -462,6 +462,8 @@ export interface UsageRun {
 
 export interface DataIndex {
   generatedAt: string;
+  /** The commit whose pipeline built this data (GITHUB_SHA), so an app-only push can tell what changed since. */
+  builtFrom?: string | null;
   resorts: ResortSummary[];
   enso: EnsoStatus | null;
   ranking: Ranking | null;

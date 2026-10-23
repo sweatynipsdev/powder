@@ -1,6 +1,6 @@
 <script lang="ts">
   // Follow or unfollow a resort. A filled orange star means it's on this phone's Favorites.
-  import { isFavorite, toggle } from '../lib/favorites.svelte';
+  import { favorites, isFavorite, toggle } from '../lib/favorites.svelte';
 
   interface Props {
     id: string;
@@ -11,6 +11,8 @@
   let on = $derived(isFavorite(id));
 </script>
 
+<!-- Hidden until favorites load: a tap before then can't know what's already starred. -->
+{#if favorites.ready}
 <button
   class="star"
   class:on
@@ -33,6 +35,7 @@
     />
   </svg>
 </button>
+{/if}
 
 <style>
   .star {

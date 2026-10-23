@@ -2,28 +2,25 @@
   import type { DataIndex } from '../../shared/types';
   import ExpertCard from '../components/ExpertCard.svelte';
   import RankingCard from '../components/RankingCard.svelte';
-  import { bestFavorite } from '../lib/favorites';
-  import { favorites } from '../lib/favorites.svelte';
+  import { favorites, followed } from '../lib/favorites.svelte';
   import { resortHref } from '../lib/router.svelte';
-  import { ensureResorts, store } from '../lib/store.svelte';
+  import { store } from '../lib/store.svelte';
 
   interface Props {
     index: DataIndex;
   }
 
   let { index }: Props = $props();
-  let favs = $derived(index.resorts.filter((s) => favorites.ids.includes(s.id)));
+  // App loads every favorite's file in the background; these fill in as they arrive.
+  let favs = $derived(followed(index.resorts));
   let others = $derived(index.resorts.filter((s) => !favorites.ids.includes(s.id)));
-  $effect(() => {
-    ensureResorts(favorites.ids);
-  });
   let experts = $derived(favs.map((s) => store.resorts[s.id]?.expert?.data).filter((x) => !!x));
 </script>
 
 <div class="stack">
   <h1>Forecasts</h1>
 
-  {#if index.ranking && bestFavorite(index.ranking, favorites.ids)}
+  {#if index.ranking}
     <RankingCard ranking={index.ranking} resorts={index.resorts} favorites={favorites.ids} />
   {/if}
 

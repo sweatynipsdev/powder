@@ -91,6 +91,8 @@ export interface RequestOptions {
   body?: string;
   headers?: Record<string, string>;
   timeoutMs?: number;
+  /** Awaited before every network attempt, retries included (rate-limit pacing). */
+  beforeAttempt?: () => Promise<void>;
 }
 
 function fixtureKey(method: string, url: string, body: string | undefined): string {
@@ -145,6 +147,7 @@ async function liveFetch(url: string, opts: RequestOptions): Promise<Response> {
   const attempts = cfg.retryDelaysMs.length + 1;
   for (let attempt = 0; attempt < attempts; attempt++) {
     if (attempt > 0) await sleep(cfg.retryDelaysMs[attempt - 1]);
+    await opts.beforeAttempt?.();
     try {
       const res = await fetch(url, {
         method: opts.method ?? 'GET',

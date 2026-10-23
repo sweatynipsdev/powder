@@ -35,7 +35,8 @@ window.addEventListener('hashchange', () => {
   const next = parseRoute(location.hash);
   const sameResort = router.route.name === 'resort' && next.name === 'resort' && router.route.id === next.id;
   router.route = next;
-  router.navigated = true;
+  // Switching tabs on one resort page is not a page change (those links replace history).
+  if (!sameResort) router.navigated = true;
   // Switching tabs within a resort keeps your place; anything else starts at the top.
   if (!sameResort) window.scrollTo(0, 0);
 });

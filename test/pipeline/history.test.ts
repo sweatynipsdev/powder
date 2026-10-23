@@ -102,17 +102,25 @@ describe('resort open status', () => {
   });
 
   it('shows the opening date before opening day', () => {
-    expect(resortOpenStatus(report({}), now, '2026-11-13')).toEqual({ state: 'not-open', text: 'Opening Nov 13' });
-    expect(resortOpenStatus(null, now, '2026-11-13').text).toBe('Opening Nov 13');
+    expect(resortOpenStatus(report({}), now, { openingDate: '2026-11-13' })).toEqual({ state: 'not-open', text: 'Opening Nov 13' });
+    expect(resortOpenStatus(null, now, { openingDate: '2026-11-13' }).text).toBe('Opening Nov 13');
+  });
+
+  it("stops counting down on the morning of opening day, in the resort's time zone", () => {
+    const openingMorning = new Date('2026-11-13T13:20:00Z'); // 5:20am PST
+    const eveBefore = new Date('2026-11-13T07:00:00Z'); // 11pm PST on Nov 12
+    expect(resortOpenStatus(null, openingMorning, { openingDate: '2026-11-13' }).text).not.toBe('Opening Nov 13');
+    expect(resortOpenStatus(null, eveBefore, { openingDate: '2026-11-13' }).text).toBe('Opening Nov 13');
   });
 
   it('says open when lifts turn early, and ignores a past opening date', () => {
-    expect(resortOpenStatus(report({ liftsOpen: 3 }), now, '2026-11-13')).toEqual({ state: 'open', text: 'Open · 3/25 lifts' });
-    expect(resortOpenStatus(report({}), now, '2026-10-01')).toEqual({ state: 'not-open', text: 'Not open yet' });
+    expect(resortOpenStatus(report({ liftsOpen: 3 }), now, { openingDate: '2026-11-13' })).toEqual({ state: 'open', text: 'Open · 3/25 lifts' });
+    expect(resortOpenStatus(report({}), now, { openingDate: '2026-10-01' })).toEqual({ state: 'not-open', text: 'Not open yet' });
   });
 
-  it('points to the resort when there is no snow-report feed', () => {
+  it('points to the resort when there is no snow-report feed, and says so when a feed failed', () => {
     expect(resortOpenStatus(null, now)).toEqual({ state: 'unknown', text: 'Lift status on resort site' });
+    expect(resortOpenStatus(null, now, { hasFeed: true })).toEqual({ state: 'unknown', text: 'Lift report unavailable' });
   });
 
   it('calls an off-season report closed', () => {

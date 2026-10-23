@@ -28,7 +28,7 @@ export function summarize(r: ResortData, at: Date): ResortSummary {
     defaultFavorite: r.defaultFavorite,
     baseFt: r.baseFt,
     summitFt: r.summitFt,
-    status: resortOpenStatus(report, at, r.openingDate),
+    status: resortOpenStatus(report, at, { openingDate: r.openingDate, tz: r.tz, hasFeed: !!r.report }),
     last24: last24(report, r.snowpack?.data),
     windows: f?.windows ?? null,
     buckets: f ? { d1_5: f.buckets.d1_5, d6_10: f.buckets.d6_10 } : null,

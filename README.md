@@ -102,7 +102,9 @@ When a source fails, the last good value is carried forward and marked stale, an
 
 **Open-Meteo's free tier** allows 600 calls a minute and 10,000 a day, counted by size: `locations × days/14 × variables/10`, where every model or ensemble member counts its variables. A resort's two requests weigh about 54 calls (16.5 deterministic plus 37.5 ensemble), so 35 resorts are about 1,900 per run.
 - `pipeline/sources/omBudget.ts` paces requests to 450 a minute, and the run summary prints the total.
-- A push that changes only the app doesn't refetch anything: the workflow rebuilds against the live data (`npm run reuse-data`). It falls back to a full run if that data is incomplete.
+- A push that changes only the app doesn't refetch anything: the workflow rebuilds against the live data (`npm run reuse-data`).
+  - The changes are counted from the commit the live data was built from (`builtFrom` in `data.json`), not just the latest push, so a data-side change from a cancelled or failed run is never skipped.
+  - It falls back to a full run if that data is incomplete or `builtFrom` is missing.
 - Scheduled runs, manual runs, and pushes touching `pipeline/`, `analysis/`, `shared/`, `resorts.json`, `scripts/calibrate.ts` or the update workflow always do a full update.
 
 ## How the snow numbers are made

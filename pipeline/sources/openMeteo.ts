@@ -124,8 +124,8 @@ export function parseDeterministic(json: unknown): DeterministicResult {
 }
 
 export async function fetchDeterministic(r: ResortConfig): Promise<DeterministicResult> {
-  await omPacer.take(DET_WEIGHT);
-  return parseDeterministic(await fetchJson(deterministicUrl(r), { timeoutMs: 45_000 }));
+  // Paced per attempt, so retries count against the per-minute limit too.
+  return parseDeterministic(await fetchJson(deterministicUrl(r), { timeoutMs: 45_000, beforeAttempt: () => omPacer.take(DET_WEIGHT) }));
 }
 
 export interface EnsembleResult {
@@ -172,6 +172,5 @@ export function parseEnsemble(json: unknown): EnsembleResult {
 }
 
 export async function fetchEnsemble(r: ResortConfig): Promise<EnsembleResult> {
-  await omPacer.take(ENS_WEIGHT);
-  return parseEnsemble(await fetchJson(ensembleUrl(r), { timeoutMs: 60_000 }));
+  return parseEnsemble(await fetchJson(ensembleUrl(r), { timeoutMs: 60_000, beforeAttempt: () => omPacer.take(ENS_WEIGHT) }));
 }

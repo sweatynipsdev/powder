@@ -15,12 +15,14 @@
   const name = (id: string) => resorts.find((r) => r.id === id)?.shortName ?? id;
   let entries = $derived(ranking.entries.filter((e) => favorites.includes(e.resortId)));
   let best = $derived(entries[0]);
+  let bestStatus = $derived(best ? resorts.find((r) => r.id === best.resortId)?.status : undefined);
 </script>
 
 {#if best}
   <section class="card ranking">
-    <p class="small muted">Best bet this week</p>
+    <p class="small muted">{bestStatus?.state === 'open' ? 'Best bet this week' : 'Best snow this week'}</p>
     <h2>{name(best.resortId)} · {fmtDay(best.day)}</h2>
+    {#if bestStatus && bestStatus.state !== 'open'}<p class="small muted">{bestStatus.text}</p>{/if}
     <ol>
       {#each entries as e (e.resortId)}
         <li>
