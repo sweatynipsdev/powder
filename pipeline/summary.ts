@@ -25,6 +25,7 @@ export function summarize(r: ResortData, at: Date): ResortSummary {
     name: r.name,
     shortName: r.shortName,
     region: r.region,
+    defaultFavorite: r.defaultFavorite,
     baseFt: r.baseFt,
     summitFt: r.summitFt,
     status: resortOpenStatus(report, at, r.openingDate),

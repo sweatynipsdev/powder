@@ -87,6 +87,7 @@ export async function buildResort(
     name: r.name,
     shortName: r.shortName,
     region: r.region,
+    defaultFavorite: r.defaultFavorite,
     tz: r.tz,
     lat: r.lat,
     lon: r.lon,

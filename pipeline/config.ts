@@ -31,6 +31,8 @@ const resort = z.object({
   /** An upper-mountain point, so the NWS forecasters' grid can be read near the summit too. */
   summit: z.object({ lat: z.number(), lon: z.number() }).optional(),
   tz: z.string(),
+  /** Starred on a phone that hasn't picked its own favorites yet. */
+  defaultFavorite: z.boolean().default(false),
   nws: z.object({
     afdOffice: z.string().length(3),
     /** The part of the office's region this resort sits in, so the write-up ignores the rest. */

@@ -357,6 +357,8 @@ export interface ResortData {
   name: string;
   shortName: string;
   region: string;
+  /** Starred on a phone that hasn't picked its own favorites yet. */
+  defaultFavorite: boolean;
   tz: string;
   lat: number;
   lon: number;
@@ -405,6 +407,7 @@ export interface ResortSummary {
   name: string;
   shortName: string;
   region: string;
+  defaultFavorite: boolean;
   baseFt: number;
   summitFt: number;
   status: ResortStatus;

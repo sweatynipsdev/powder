@@ -42,11 +42,11 @@
 
 **Produces:** `ResortSummary.defaultFavorite: boolean`.
 
-- [ ] Test: the summaries' `defaultFavorite` values are `[true, true, true, true]` for the shipped config, and `parseConfig` defaults the field to `false` when it's missing.
-- [ ] `config.ts`: `defaultFavorite: z.boolean().default(false)`.
-- [ ] Pass it through `ResortData` and `summarize`.
-- [ ] Set `"defaultFavorite": true` on the 4 resorts.
-- [ ] `npm test` and `npm run typecheck`, then commit.
+- [x] Test: the summaries' `defaultFavorite` values are `[true, true, true, true]` for the shipped config, and `parseConfig` defaults the field to `false` when it's missing.
+- [x] `config.ts`: `defaultFavorite: z.boolean().default(false)`.
+- [x] Pass it through `ResortData` and `summarize`.
+- [x] Set `"defaultFavorite": true` on the 4 resorts.
+- [x] `npm test` and `npm run typecheck`, then commit.
 
 ### T2 — favorites logic (pure) and state
 

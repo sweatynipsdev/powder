@@ -118,6 +118,11 @@ describe('pipeline replay', () => {
     }
     expect(result.index.enso?.status).toBeTruthy();
   });
+
+  it('marks which resorts a new phone starts with', () => {
+    const defaults = result.index.resorts.filter((s) => s.defaultFavorite).map((s) => s.id);
+    expect(defaults).toEqual(['palisades', 'alpine', 'mammoth', 'bigbear']);
+  });
 });
 
 describe('a source outage', () => {
@@ -158,6 +163,12 @@ describe('resorts.json validation', () => {
     const bad = structuredClone(base);
     bad.resorts[0].summitFt = 100;
     expect(() => parseConfig(bad)).toThrow(/summitFt/);
+  });
+
+  it('leaves a resort off the default favorites unless it says otherwise', () => {
+    const plain = structuredClone(base);
+    delete plain.resorts[0].defaultFavorite;
+    expect(parseConfig(plain).resorts[0].defaultFavorite).toBe(false);
   });
 
   it('rejects duplicate ids', () => {
