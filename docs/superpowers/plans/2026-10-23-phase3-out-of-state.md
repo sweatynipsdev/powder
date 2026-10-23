@@ -242,7 +242,7 @@ Research starts **before T1**, in background agents, so it runs while T1–T5 ar
 
 **Files:**
 - Modify: `resorts.json` (hand-formatted: small objects and arrays on one line)
-- Create: `docs/superpowers/research/2026-10-24-phase3-resorts.md`
+- Create: `docs/superpowers/research/2026-10-23-phase3-resorts.md`
 
 **Agent briefs** (three agents: Utah, Colorado, Pacific NW; general-purpose, mid-tier model):
 - Read `resorts.json` (the Mammoth and Palisades entries), `pipeline/config.ts`, the Phase 2 evidence file and the Phase 3 sources file.
@@ -267,15 +267,15 @@ Research starts **before T1**, in background agents, so it runs while T1–T5 ar
 
 **Controller steps:**
 - [x] Dispatch the three agents in background before starting T1.
-- [ ] When they return, check every entry:
+- [x] When they return, check every entry:
   - It parses (`parseConfig`).
   - Base and summit elevations from the elevation API are within 300 ft of the stated ones, or there's a noted reason.
   - One `curl` per avalanche zone, SNOTEL station and MtnPowder id.
   - Opening dates are cited.
   - `nws.ignore` terms appear in that office's discussion.
-- [ ] Merge into `resorts.json` after the SoCal entries, in region order, hand-formatted.
-- [ ] Write the evidence file: agent logs unedited (emails removed), plus a "Review changes at merge" section listing every controller change.
-- [ ] Run `npm test`. Replay will fail for missing fixtures until T7; that's expected, so commit with config-validation tests passing. Commit "T6: 19 US resorts, each source checked live".
+- [x] Merge into `resorts.json` after the SoCal entries, in region order, hand-formatted.
+- [x] Write the evidence file: agent logs unedited (emails removed), plus a "Review changes at merge" section listing every controller change.
+- [x] Run `npm test`. Replay will fail for missing fixtures until T7; that's expected, so commit with config-validation tests passing. Commit "T6: 19 US resorts, each source checked live".
 
 ## T7. Fixtures, tests at 40 resorts, write-up check
 

@@ -862,6 +862,663 @@
         "radar": "https://radar.weather.gov/station/KSOX/standard",
         "report": "https://www.mtbaldyresort.com/mountain-report"
       }
+    },
+    {
+      "id": "alta",
+      "name": "Alta Ski Area",
+      "shortName": "Alta",
+      "region": "Utah",
+      "defaultFavorite": false,
+      "lat": 40.5885,
+      "lon": -111.6375,
+      "baseFt": 8530,
+      "summitFt": 10500,
+      "summit": { "lat": 40.5687, "lon": -111.6355 },
+      "tz": "America/Denver",
+      "local": {
+        "openingDate": "2026-11-20",
+        "notes": ["Base 8,530 ft; the Sugarloaf lift unloads at 10,500 ft. Alta says it averages 543 inches of snow a year, with a record 903 inches in 2022-23.", "Northwest flow, the most common Utah pattern, is the one Alta and Snowbird \"famously do well\" in, and the same flow can add Great Salt Lake lake-effect snow.", "Highway 210 is the only road in. It is fully closed to the public during avalanche mitigation, with overnight closures typically starting about 12:30 a.m. the night before.", "Opening is scheduled for Friday Nov 20, 2026, conditions permitting. Last season the target moved from Nov 21 to Dec 1."],
+        "sources": ["https://www.alta.com/about", "https://www.alta.com/Ikon", "https://www.alta.com/first-time-skiing-alta", "https://www.skiutah.com/blog/authors/yeti/diy-snow-forecasting", "https://cottonwoodcanyons.udot.utah.gov/avalanche-information/", "https://www.alta.com/", "https://www.alta.com/stories/november-update-from-altas-gm"]
+      },
+      "nws": {
+        "area": "the central Wasatch and the Cottonwood canyons",
+        "ignore": ["southern Utah", "southeast Utah", "eastern Utah", "Four Corners", "Desert Southwest", "Great Basin", "Capitol Reef", "Zion", "Bryce"]
+      },
+      "snowpack": { "type": "awdb", "id": "1308:UT:SNTL", "name": "Atwater SNOTEL", "elevFt": 8750 },
+      "avalanche": { "center": "UAC", "zoneId": 1738 },
+      "links": {
+        "website": "https://www.alta.com/",
+        "webcams": "https://www.alta.com/weather",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KMTX/standard",
+        "report": "https://www.alta.com/weather",
+        "roads": "https://cottonwoodcanyons.udot.utah.gov/road-information/"
+      }
+    },
+    {
+      "id": "snowbird",
+      "name": "Snowbird",
+      "shortName": "Snowbird",
+      "region": "Utah",
+      "defaultFavorite": false,
+      "lat": 40.579,
+      "lon": -111.662,
+      "baseFt": 7760,
+      "summitFt": 11000,
+      "summit": { "lat": 40.561, "lon": -111.645 },
+      "tz": "America/Denver",
+      "local": {
+        "openingDate": "2026-11-27",
+        "notes": ["Lowest point 7,760 ft (bottom of Baby Thunder); the top is 11,000-ft Hidden Peak. Snowbird says it averages more than 500 inches a year, and its season runs mid-November through May.", "Northwest flow is the pattern Snowbird and Alta \"famously do well\" in, and the same flow can bring Great Salt Lake lake-effect snow.", "Highway 210 in Little Cottonwood Canyon is fully closed to the public during avalanche mitigation, with overnight closures typically starting about 12:30 a.m. the night before.", "Ski Utah projects opening on Nov 27, 2026; this is a projection, not a firm date."],
+        "sources": ["https://www.snowbird.com/about", "https://www.skiutah.com/blog/authors/yeti/diy-snow-forecasting", "https://cottonwoodcanyons.udot.utah.gov/avalanche-information/", "https://www.skiutah.com/blog/authors/dallas/2026-utah-resort-updates", "https://www.deseret.com/lifestyle/2026/10/07/utah-ski-resorts-opening-dates-new-terrain-upgraded-chairlifts/"]
+      },
+      "nws": {
+        "area": "the central Wasatch and the Cottonwood canyons",
+        "ignore": ["southern Utah", "southeast Utah", "eastern Utah", "Four Corners", "Desert Southwest", "Great Basin", "Capitol Reef", "Zion", "Bryce"]
+      },
+      "snowpack": { "type": "awdb", "id": "766:UT:SNTL", "name": "Snowbird SNOTEL", "elevFt": 9170 },
+      "avalanche": { "center": "UAC", "zoneId": 1738 },
+      "links": {
+        "website": "https://www.snowbird.com/",
+        "webcams": "https://www.snowbird.com/the-mountain/webcams/",
+        "cams": [
+          { "label": "Snowstake", "url": "https://img.hdrelay.com/frames/8611e276-7ee5-42c0-b8cd-d9e1890e1cd4/default/last.jpg" }
+        ],
+        "radar": "https://radar.weather.gov/station/KMTX/standard",
+        "report": "https://www.snowbird.com/the-mountain/mountain-report/",
+        "roads": "https://cottonwoodcanyons.udot.utah.gov/road-information/"
+      }
+    },
+    {
+      "id": "brighton",
+      "name": "Brighton Resort",
+      "shortName": "Brighton",
+      "region": "Utah",
+      "defaultFavorite": false,
+      "lat": 40.598,
+      "lon": -111.5832,
+      "baseFt": 8755,
+      "summitFt": 10500,
+      "summit": { "lat": 40.59, "lon": -111.597 },
+      "tz": "America/Denver",
+      "local": {
+        "openingDate": "2026-12-04",
+        "notes": ["Base 8,755 ft, top 10,500 ft (1,875 ft of lift-served vertical). Brighton says it averages over 500 inches a year.", "Ski Utah lists Brighton among the areas that often do well in southwest flow.", "Brighton announces its opening only days ahead. Last season it announced Nov 28 for a Dec 2 opening, with two runs served by the Majestic and Explorer lifts.", "Access is by SR-190 in Big Cottonwood Canyon, which UDOT covers with its Cottonwood Canyons road status and traction-law pages."],
+        "sources": ["https://www.brightonresort.com/about", "https://www.skiutah.com/blog/authors/yeti/diy-snow-forecasting", "https://www.brightonresort.com/press-kit/press-releases/brighton-resort-announces-opening-day-25-26", "https://cottonwoodcanyons.udot.utah.gov/", "https://www.skiutah.com/blog/authors/dallas/2026-utah-resort-updates"]
+      },
+      "nws": {
+        "area": "the central Wasatch and the Cottonwood canyons",
+        "ignore": ["southern Utah", "southeast Utah", "eastern Utah", "Four Corners", "Desert Southwest", "Great Basin", "Capitol Reef", "Zion", "Bryce"]
+      },
+      "snowpack": { "type": "awdb", "id": "366:UT:SNTL", "name": "Brighton SNOTEL", "elevFt": 8790 },
+      "avalanche": { "center": "UAC", "zoneId": 1738 },
+      "links": {
+        "website": "https://www.brightonresort.com/",
+        "webcams": "https://www.brightonresort.com/conditions",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KMTX/standard",
+        "report": "https://www.brightonresort.com/conditions",
+        "roads": "https://cottonwoodcanyons.udot.utah.gov/road-information/"
+      }
+    },
+    {
+      "id": "solitude",
+      "name": "Solitude Mountain Resort",
+      "shortName": "Solitude",
+      "region": "Utah",
+      "defaultFavorite": false,
+      "lat": 40.6199,
+      "lon": -111.5919,
+      "baseFt": 7994,
+      "summitFt": 10488,
+      "summit": { "lat": 40.599, "lon": -111.609 },
+      "tz": "America/Denver",
+      "local": {
+        "openingDate": "2026-11-20",
+        "notes": ["Base 7,994 ft, top 10,488 ft, 1,200 skiable acres. Solitude says it averages 500 inches a year; OnTheSnow lists a lower 376-387 inches.", "Access is by SR-190 in Big Cottonwood Canyon, covered by UDOT's Cottonwood Canyons road status and traction-law pages.", "The resort's site announces an opening party on Nov 20, 2026, conditions permitting. Last season the target was Nov 14 and the opening slipped to Nov 27."],
+        "sources": ["https://www.solitudemountain.com/mountain-and-village/mountain-information/solitude-by-the-numbers", "https://www.onthesnow.com/utah/solitude-mountain-resort/travel.html", "https://www.skiutah.com/blog/authors/yeti/diy-snow-forecasting", "https://cottonwoodcanyons.udot.utah.gov/", "https://www.solitudemountain.com/", "https://townlift.com/2025/11/utah-ski-season-set-to-kick-off-as-resorts-gear-up-for-winter/"]
+      },
+      "nws": {
+        "area": "the central Wasatch and the Cottonwood canyons",
+        "ignore": ["southern Utah", "southeast Utah", "eastern Utah", "Four Corners", "Desert Southwest", "Great Basin", "Capitol Reef", "Zion", "Bryce"]
+      },
+      "snowpack": { "type": "awdb", "id": "366:UT:SNTL", "name": "Brighton SNOTEL", "elevFt": 8790 },
+      "avalanche": { "center": "UAC", "zoneId": 1738 },
+      "report": {
+        "adapter": "mtnpowder",
+        "resortId": 65,
+        "stations": ["MidMountainArea"]
+      },
+      "links": {
+        "website": "https://www.solitudemountain.com/",
+        "webcams": "https://www.solitudemountain.com/mountain-and-village/webcams",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KMTX/standard",
+        "report": "https://www.solitudemountain.com/mountain-and-village/conditions-and-maps",
+        "roads": "https://cottonwoodcanyons.udot.utah.gov/road-information/"
+      }
+    },
+    {
+      "id": "parkcity",
+      "name": "Park City Mountain",
+      "shortName": "Park City",
+      "region": "Utah",
+      "defaultFavorite": false,
+      "lat": 40.6514,
+      "lon": -111.508,
+      "baseFt": 6800,
+      "summitFt": 10026,
+      "summit": { "lat": 40.625, "lon": -111.567 },
+      "tz": "America/Denver",
+      "local": {
+        "openingDate": "2026-11-20",
+        "notes": ["Base 6,800 ft, summit 10,026 ft (Jupiter Peak). The resort lists average snowfall at 355 inches a year.", "Southeast flow \"favors the Wasatch Back such as Deer Valley and Park City\"; northwest flow favors Little Cottonwood (Alta and Snowbird) more.", "In a March 2024 storm, ridgeline winds over 70 mph brought down power lines in Thaynes Canyon and the Jupiter chairlift was closed because patrol could not reach the area for snow safety.", "Ski Utah projects opening on Nov 20, 2026; this is a projection, not a firm date."],
+        "sources": ["https://www.parkcitymountain.com/the-mountain/about-the-mountain/mountain-info.aspx", "https://www.skiutah.com/blog/authors/yeti/diy-snow-forecasting", "https://www.kpcw.org/summit-county/2024-03-03/high-winds-blow-tree-down-onto-resort-power-lines", "https://www.skiutah.com/blog/authors/dallas/2026-utah-resort-updates", "https://www.deseret.com/lifestyle/2026/10/07/utah-ski-resorts-opening-dates-new-terrain-upgraded-chairlifts/"]
+      },
+      "nws": {
+        "area": "the Park City area (Wasatch Back)",
+        "ignore": ["southern Utah", "southeast Utah", "eastern Utah", "Four Corners", "Desert Southwest", "Great Basin", "Capitol Reef", "Zion", "Bryce"]
+      },
+      "snowpack": { "type": "awdb", "id": "814:UT:SNTL", "name": "Thaynes Canyon SNOTEL", "elevFt": 9260 },
+      "avalanche": { "center": "UAC", "zoneId": 1738 },
+      "links": {
+        "website": "https://www.parkcitymountain.com/",
+        "webcams": "https://www.parkcitymountain.com/the-mountain/mountain-conditions/mountain-cams.aspx",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KMTX/standard",
+        "report": "https://www.parkcitymountain.com/the-mountain/mountain-conditions/terrain-and-lift-status.aspx",
+        "roads": "https://udottraffic.utah.gov/"
+      }
+    },
+    {
+      "id": "deervalley",
+      "name": "Deer Valley Resort",
+      "shortName": "Deer Valley",
+      "region": "Utah",
+      "defaultFavorite": false,
+      "lat": 40.637,
+      "lon": -111.4795,
+      "baseFt": 6570,
+      "summitFt": 9570,
+      "summit": { "lat": 40.6128, "lon": -111.5248 },
+      "tz": "America/Denver",
+      "local": {
+        "openingDate": "2026-12-05",
+        "notes": ["Base 6,570 ft (6,530 ft at East Village in later press kits), top 9,570 ft. The resort's MtnPowder feed lists an average of 300 inches a year. Snow Park Lodge, the main base, sits near 7,200 ft.", "Southeast flow \"favors the Wasatch Back such as Deer Valley and Park City\", and Deer Valley is also listed among areas that often do well in southwest flow.", "Ski Utah projects opening on Dec 5, 2026; this is a projection, not a firm date. Last season the resort planned Dec 1."],
+        "sources": ["https://www.mtnpowder.com/feed?resortId=49", "https://en.wikipedia.org/wiki/Deer_Valley", "https://www.skiutah.com/blog/authors/yeti/diy-snow-forecasting", "https://townlift.com/2025/11/utah-ski-season-set-to-kick-off-as-resorts-gear-up-for-winter/", "https://www.skiutah.com/blog/authors/dallas/2026-utah-resort-updates", "https://www.deseret.com/lifestyle/2026/10/07/utah-ski-resorts-opening-dates-new-terrain-upgraded-chairlifts/"]
+      },
+      "nws": {
+        "area": "the Park City area (Wasatch Back)",
+        "ignore": ["southern Utah", "southeast Utah", "eastern Utah", "Four Corners", "Desert Southwest", "Great Basin", "Capitol Reef", "Zion", "Bryce"]
+      },
+      "snowpack": { "type": "awdb", "id": "814:UT:SNTL", "name": "Thaynes Canyon SNOTEL", "elevFt": 9260 },
+      "avalanche": { "center": "UAC", "zoneId": 1738 },
+      "report": {
+        "adapter": "mtnpowder",
+        "resortId": 49,
+        "stations": ["BaseArea", "MidMountainArea", "SummitArea"]
+      },
+      "links": {
+        "website": "https://www.deervalley.com/",
+        "webcams": "https://www.deervalley.com/explore-the-mountain/webcams",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KMTX/standard",
+        "report": "https://www.deervalley.com/explore-the-mountain/mountain-report",
+        "roads": "https://udottraffic.utah.gov/"
+      }
+    },
+    {
+      "id": "vail",
+      "name": "Vail",
+      "shortName": "Vail",
+      "region": "Colorado",
+      "defaultFavorite": false,
+      "lat": 39.6405,
+      "lon": -106.3743,
+      "baseFt": 8120,
+      "summitFt": 11570,
+      "summit": { "lat": 39.573, "lon": -106.3079 },
+      "tz": "America/Denver",
+      "local": {
+        "openingDate": "2026-11-13",
+        "notes": ["Base 8,120 ft, peak 11,570 ft; average snowfall is about 354 inches a year (resort fast-facts sheet, 2012-13 season).", "Vail does best in a northwest wind: the air funnels into the Vail Valley along the Gore Range and rises at the resort, which unloads on Vail (OpenSnow chief operating officer, Colorado Sun).", "The 2026-27 opening is a target, not a promise: Vail Mountain is aimed at Nov 13, 2026, weather permitting."],
+        "sources": ["https://news.vailresorts.com/2011-09-08-Vail-Mountain-Winter-Fast-Facts-2012-13", "https://coloradosun.com/2023/03/12/colorado-ski-resorts-best-snow-conditions/", "https://www.denver7.com/news/local-news/vail-resorts-announces-target-opening-dates-for-2026-2027-season"]
+      },
+      "nws": {
+        "area": "the central Colorado mountains along I-70 near Vail",
+        "ignore": ["San Juan", "Four Corners", "southeast Utah", "southwest Colorado", "southern foothills", "Pagosa Springs", "NM border"]
+      },
+      "snowpack": { "type": "awdb", "id": "842:CO:SNTL", "name": "Vail Mountain SNOTEL", "elevFt": 10290 },
+      "links": {
+        "website": "https://www.vail.com/",
+        "webcams": "https://www.vail.com/the-mountain/mountain-conditions/mountain-cams.aspx",
+        "radar": "https://radar.weather.gov/station/KGJX/standard",
+        "report": "https://www.vail.com/the-mountain/mountain-conditions/snow-and-weather-report.aspx",
+        "roads": "https://www.cotrip.org/",
+        "avalanche": "https://avalanche.state.co.us/"
+      }
+    },
+    {
+      "id": "breckenridge",
+      "name": "Breckenridge",
+      "shortName": "Breckenridge",
+      "region": "Colorado",
+      "defaultFavorite": false,
+      "lat": 39.4854,
+      "lon": -106.0478,
+      "baseFt": 9603,
+      "summitFt": 12840,
+      "summit": { "lat": 39.4727, "lon": -106.1013 },
+      "tz": "America/Denver",
+      "local": {
+        "openingDate": "2026-11-06",
+        "notes": ["Base 9,603 ft, summit 12,998 ft; Imperial Express, the highest chairlift in North America, tops out at 12,840 ft. Average snowfall is about 353 inches a year (Breckenridge Tourism Office facts page).", "Summit County resorts (Breckenridge, Keystone, Arapahoe Basin) have big mountains in almost every direction and generally do best when the wind is north to northwest, but rarely get the really big snowfalls.", "Snow can pile up in Summit County after a storm has moved onto the Eastern Plains and strengthens: it draws Gulf moisture around, wraps it across the Wyoming high plains and sends it south into the Summit County mountains.", "The 2026-27 opening is a target: Breckenridge is aimed at Nov 6, 2026, weather permitting."],
+        "sources": ["https://gobreck.com/plan-your-visit/travel-faqs/facts-stats-breckenridge/", "https://coloradosun.com/2023/03/12/colorado-ski-resorts-best-snow-conditions/", "https://www.denver7.com/news/local-news/vail-resorts-announces-target-opening-dates-for-2026-2027-season"]
+      },
+      "nws": {
+        "area": "the Summit County mountains and Tenmile Range",
+        "ignore": ["plains", "Denver", "I-25", "urban corridor", "Lincoln", "Boulder"]
+      },
+      "snowpack": { "type": "awdb", "id": "415:CO:SNTL", "name": "Copper Mountain SNOTEL", "elevFt": 10500 },
+      "links": {
+        "website": "https://www.breckenridge.com/",
+        "webcams": "https://www.breckenridge.com/the-mountain/mountain-conditions/mountain-cams.aspx",
+        "radar": "https://radar.weather.gov/station/KFTG/standard",
+        "report": "https://www.breckenridge.com/the-mountain/mountain-conditions/snow-and-weather-report.aspx",
+        "roads": "https://www.cotrip.org/",
+        "avalanche": "https://avalanche.state.co.us/"
+      }
+    },
+    {
+      "id": "keystone",
+      "name": "Keystone",
+      "shortName": "Keystone",
+      "region": "Colorado",
+      "defaultFavorite": false,
+      "lat": 39.6045,
+      "lon": -105.9565,
+      "baseFt": 9280,
+      "summitFt": 12408,
+      "summit": { "lat": 39.5634, "lon": -105.9147 },
+      "tz": "America/Denver",
+      "local": {
+        "notes": ["Base 9,280 ft, summit 12,408 ft; average snowfall is about 235 inches a year, with 662 acres of snowmaking (resort fast-facts sheet, 2012-13 season).", "Summit County resorts do best when the wind is north to northwest but rarely get really big snowfalls; wraparound moisture after a storm moves onto the Eastern Plains can pile up snow here.", "Keystone is an early opener on snowmaking: Vail Resorts targets opening \"as soon as possible in October\" and has not announced a firm date."],
+        "sources": ["https://news.vailresorts.com/2011-09-08-Keystone-Winter-Fast-Facts-2012-13", "https://coloradosun.com/2023/03/12/colorado-ski-resorts-best-snow-conditions/", "https://www.denvergazette.com/outtherecolorado/2026/10/15/race-to-open-snowmaking-underway-at-four-colorado-ski-areas/", "https://www.denver7.com/news/local-news/vail-resorts-announces-target-opening-dates-for-2026-2027-season", "https://snowbrains.com/vail-resorts-announces-2026-27-opening-dates-for-11-resorts/"]
+      },
+      "nws": {
+        "area": "the Summit County mountains near Loveland Pass",
+        "ignore": ["plains", "Denver", "I-25", "urban corridor", "Lincoln", "Boulder"]
+      },
+      "snowpack": { "type": "awdb", "id": "505:CO:SNTL", "name": "Grizzly Peak SNOTEL", "elevFt": 11110 },
+      "links": {
+        "website": "https://www.keystoneresort.com/",
+        "webcams": "https://www.keystoneresort.com/the-mountain/mountain-conditions/mountain-cams.aspx",
+        "radar": "https://radar.weather.gov/station/KFTG/standard",
+        "report": "https://www.keystoneresort.com/the-mountain/mountain-conditions/snow-and-weather-report.aspx",
+        "roads": "https://www.cotrip.org/",
+        "avalanche": "https://avalanche.state.co.us/"
+      }
+    },
+    {
+      "id": "abasin",
+      "name": "Arapahoe Basin",
+      "shortName": "A-Basin",
+      "region": "Colorado",
+      "defaultFavorite": false,
+      "lat": 39.6413,
+      "lon": -105.8737,
+      "baseFt": 10780,
+      "summitFt": 12456,
+      "summit": { "lat": 39.6245, "lon": -105.8744 },
+      "tz": "America/Denver",
+      "local": {
+        "notes": ["Base about 10,780 ft; the top lift terminal (Lenawee Express) and summit building are at 12,456 ft, and the East Wall reaches 13,050 ft. 1,428 acres, 73% advanced-expert terrain; earliest opening day on record is Oct 9.", "Summit County resorts and Loveland sit on the Continental Divide with big mountains in almost every direction, and do best when the wind is north to northwest, but rarely get really big snowfalls.", "Wind is the usual operating problem on the exposed upper mountain: on April 5, 2022 Pali, The Beavers and Zuma were put on wind hold, and in December 2025 gusts near 100 mph caused a widespread power outage (the resort kept lifts running on auxiliary power).", "No 2026-27 opening date is announced; A-Basin says it will open as soon as possible, and snowmaking has started."],
+        "sources": ["https://www.arapahoebasin.com/", "https://www.arapahoebasin.com/the-mountain/webcams/", "https://coloradosun.com/2023/03/12/colorado-ski-resorts-best-snow-conditions/", "https://www.tetongravity.com/100-mph-gusts-vs-auxiliary-power-arapahoe-basin-stays-open", "https://digital-release.kdvr.com/news/local/ski-resorts-impacted-by-high-winds-tuesday/amp/", "https://www.denvergazette.com/outtherecolorado/2026/10/15/race-to-open-snowmaking-underway-at-four-colorado-ski-areas/"]
+      },
+      "nws": {
+        "area": "the Continental Divide near Loveland Pass and Summit County",
+        "ignore": ["plains", "Denver", "I-25", "urban corridor", "Lincoln", "Boulder"]
+      },
+      "snowpack": { "type": "awdb", "id": "505:CO:SNTL", "name": "Grizzly Peak SNOTEL", "elevFt": 11110 },
+      "report": {
+        "adapter": "mtnpowder",
+        "resortId": 93,
+        "stations": ["MidMountainArea"]
+      },
+      "links": {
+        "website": "https://www.arapahoebasin.com/",
+        "webcams": "https://www.arapahoebasin.com/the-mountain/webcams/",
+        "cams": [
+          { "label": "Mountain Goat Plaza", "url": "https://dirigo-resorts-f4e2bde5azc2cne6.z02.azurefd.net/arapahoe/images/medium/webcams/abasincam1001m.jpg" },
+          { "label": "Montezuma Bowl", "url": "https://dirigo-resorts-f4e2bde5azc2cne6.z02.azurefd.net/arapahoe/images/medium/webcams/abasincam5.jpg" }
+        ],
+        "radar": "https://radar.weather.gov/station/KFTG/standard",
+        "report": "https://www.arapahoebasin.com/snow-report/",
+        "roads": "https://www.cotrip.org/",
+        "avalanche": "https://avalanche.state.co.us/"
+      }
+    },
+    {
+      "id": "copper",
+      "name": "Copper Mountain",
+      "shortName": "Copper",
+      "region": "Colorado",
+      "defaultFavorite": false,
+      "lat": 39.499,
+      "lon": -106.15,
+      "baseFt": 9712,
+      "summitFt": 12441,
+      "summit": { "lat": 39.4683, "lon": -106.1744 },
+      "tz": "America/Denver",
+      "local": {
+        "openingDate": "2026-11-06",
+        "notes": ["Base 9,712 ft, summit 12,441 ft; average snowfall is about 299 inches a year, with 379 acres of snowmaking. Recent seasons: 352 in (2023-24), 340 in (2024-25), 263 in (2025-26).", "Copper is an in-between case: it can get snow like Vail on northwest winds, but its higher elevation can generate more snow than Vail or Beaver Creek gets.", "Copper announced Friday, Nov 6, 2026 as its opening day (the resort site says \"Winter opening day is November 6\")."],
+        "sources": ["https://www.coppercolorado.com/the-mountain/mountain-safety-stats/winter-mountain-stats/", "https://coloradosun.com/2023/03/12/colorado-ski-resorts-best-snow-conditions/", "https://unofficialnetworks.com/2026/09/08/copper-mountain-announces-november-6th-as-opening-day-of-2026-27-winter-season/"]
+      },
+      "nws": {
+        "area": "the Tenmile Range and Summit County near Vail Pass",
+        "ignore": ["plains", "Denver", "I-25", "urban corridor", "Lincoln", "Boulder"]
+      },
+      "snowpack": { "type": "awdb", "id": "415:CO:SNTL", "name": "Copper Mountain SNOTEL", "elevFt": 10500 },
+      "links": {
+        "website": "https://www.coppercolorado.com/",
+        "webcams": "https://www.coppercolorado.com/the-mountain/webcams/",
+        "cams": [
+          { "label": "Snow stake", "url": "https://img.hdrelay.com/frames/fb469125-f1f3-459f-aeb4-98cb674e395f/default/last.jpg" }
+        ],
+        "radar": "https://radar.weather.gov/station/KFTG/standard",
+        "report": "https://www.coppercolorado.com/the-mountain/conditions-weather/snow-report/",
+        "roads": "https://www.cotrip.org/",
+        "avalanche": "https://avalanche.state.co.us/"
+      }
+    },
+    {
+      "id": "winterpark",
+      "name": "Winter Park",
+      "shortName": "Winter Park",
+      "region": "Colorado",
+      "defaultFavorite": false,
+      "lat": 39.8859,
+      "lon": -105.7631,
+      "baseFt": 9000,
+      "summitFt": 12060,
+      "summit": { "lat": 39.8443, "lon": -105.7819 },
+      "tz": "America/Denver",
+      "local": {
+        "notes": ["Base 9,000 ft, summit 12,060 ft, 3,081 acres; the resort says it gets over 344.6 inches of snow a year.", "Winter Park benefits from a north-northwest wind coming down the Fraser Valley; a northwest flow in early December 2023 funneled snow toward Berthoud Pass and gave Winter Park 15 inches in 24 hours (Steamboat 13).", "No 2026-27 opening date is announced: the resort says its first day will be \"as soon as possible.\" Last season Winter Park opened Oct 31, 2025 and Mary Jane on Jan 9, 2026."],
+        "sources": ["https://www.winterparkresort.com/the-mountain/mountain-information/statistics", "https://coloradosun.com/2023/03/12/colorado-ski-resorts-best-snow-conditions/", "https://www.denvergazette.com/2023/12/04/whiteout-daily-snow-report-dec-4/", "https://www.winterparkresort.com/the-mountain/hours-of-operation"]
+      },
+      "nws": {
+        "area": "the Continental Divide and Fraser Valley near Berthoud Pass",
+        "ignore": ["plains", "Denver", "I-25", "urban corridor", "Lincoln", "Boulder"]
+      },
+      "snowpack": { "type": "awdb", "id": "1186:CO:SNTL", "name": "Fool Creek SNOTEL", "elevFt": 11130 },
+      "report": {
+        "adapter": "mtnpowder",
+        "resortId": 5,
+        "stations": ["BaseArea", "MidMountainArea", "SummitArea"]
+      },
+      "links": {
+        "website": "https://www.winterparkresort.com/",
+        "webcams": "https://www.winterparkresort.com/the-mountain/mountain-cams",
+        "cams": [
+          { "label": "Town view", "url": "https://cams.winterparkresort.com/best-western-cam.jpg" }
+        ],
+        "radar": "https://radar.weather.gov/station/KFTG/standard",
+        "report": "https://www.winterparkresort.com/the-mountain/mountain-report",
+        "roads": "https://www.cotrip.org/",
+        "avalanche": "https://avalanche.state.co.us/"
+      }
+    },
+    {
+      "id": "steamboat",
+      "name": "Steamboat",
+      "shortName": "Steamboat",
+      "region": "Colorado",
+      "defaultFavorite": false,
+      "lat": 40.4571,
+      "lon": -106.8034,
+      "baseFt": 6900,
+      "summitFt": 10568,
+      "summit": { "lat": 40.4551, "lon": -106.7441 },
+      "tz": "America/Denver",
+      "local": {
+        "openingDate": "2026-11-21",
+        "notes": ["Summit 10,568 ft (Mount Werner), base 6,900 ft, 3,741 acres; ten-year average snowfall is 289 inches a year (2025-26 press kit).", "The resort credits northwesterly Pacific storms: the Park Range is the first significant barrier in the northern Colorado Rockies, and supercooled cloud water makes rimed \"Champagne Powder\" flakes plus rime ice on trees and chairlifts.", "The biggest surprises come on a west or west-northwest wind with enough moisture and a summit temperature near 5 F, when the Utah mountains have not stolen the moisture (OpenSnow, Colorado Sun).", "Opening day is scheduled for Saturday, Nov 21, 2026 (resort snow-report alert)."],
+        "sources": ["https://www.steamboat.com/-/media/steamboat/media-center-folders/dynamictabs/press-kit-2526.pdf", "https://www.steamboat.com/the-mountain/mountain-stats", "https://coloradosun.com/2023/03/12/colorado-ski-resorts-best-snow-conditions/", "https://www.denvergazette.com/2023/12/04/whiteout-daily-snow-report-dec-4/", "https://www.mtnpowder.com/feed?resortId=6"]
+      },
+      "nws": {
+        "area": "the northern Colorado mountains around Steamboat Springs and the Park Range",
+        "ignore": ["San Juan", "Four Corners", "southeast Utah", "southwest Colorado", "southern foothills", "Pagosa Springs", "NM border"]
+      },
+      "snowpack": { "type": "awdb", "id": "457:CO:SNTL", "name": "Dry Lake SNOTEL", "elevFt": 8240 },
+      "report": {
+        "adapter": "mtnpowder",
+        "resortId": 6,
+        "stations": ["BaseArea", "MidMountainArea", "SummitArea"]
+      },
+      "links": {
+        "website": "https://www.steamboat.com/",
+        "webcams": "https://www.steamboat.com/the-mountain/live-cams",
+        "radar": "https://radar.weather.gov/station/KGJX/standard",
+        "report": "https://www.steamboat.com/the-mountain/mountain-report",
+        "roads": "https://www.cotrip.org/",
+        "avalanche": "https://avalanche.state.co.us/"
+      }
+    },
+    {
+      "id": "snowmass",
+      "name": "Snowmass",
+      "shortName": "Snowmass",
+      "region": "Colorado",
+      "defaultFavorite": false,
+      "lat": 39.2135,
+      "lon": -106.9333,
+      "baseFt": 8110,
+      "summitFt": 12510,
+      "summit": { "lat": 39.16, "lon": -106.9647 },
+      "tz": "America/Denver",
+      "local": {
+        "openingDate": "2026-11-26",
+        "notes": ["Base 8,110 ft, summit 12,510 ft, 3,342 acres; average snowfall is about 300 inches a year (Aspen Snowmass mountain stats sheet, 2025-26).", "The biggest snowfalls on the Roaring Fork Valley hills usually come with a west or west-northwest wind; Snowmass does OK with a west-southwest wind.", "Aspen Snowmass lists Snowmass season dates as Nov 26, 2026 to Apr 11, 2027."],
+        "sources": ["https://www.aspensnowmass.com/-/media/aspen-snowmass/documents/pdfs/25-26/aspen-snowmass-mountain-stats.pdf", "https://coloradosun.com/2023/03/12/colorado-ski-resorts-best-snow-conditions/", "https://www.aspensnowmass.com/four-mountains/snowmass"]
+      },
+      "nws": {
+        "area": "the Elk Mountains and Roaring Fork Valley near Snowmass and Aspen",
+        "ignore": ["San Juan", "Four Corners", "southeast Utah", "southwest Colorado", "southern foothills", "Pagosa Springs", "NM border"]
+      },
+      "snowpack": { "type": "awdb", "id": "1101:CO:SNTL", "name": "Chapman Tunnel SNOTEL", "elevFt": 10090 },
+      "links": {
+        "website": "https://www.aspensnowmass.com/four-mountains/snowmass",
+        "webcams": "https://www.aspensnowmass.com/four-mountains/snowmass/mountain-cams",
+        "radar": "https://radar.weather.gov/station/KGJX/standard",
+        "report": "https://www.aspensnowmass.com/four-mountains/snow-report",
+        "roads": "https://www.cotrip.org/",
+        "avalanche": "https://avalanche.state.co.us/"
+      }
+    },
+    {
+      "id": "crystal",
+      "name": "Crystal Mountain",
+      "shortName": "Crystal",
+      "region": "Pacific Northwest",
+      "defaultFavorite": false,
+      "lat": 46.9357,
+      "lon": -121.4749,
+      "baseFt": 4400,
+      "summitFt": 6872,
+      "summit": { "lat": 46.9356, "lon": -121.5006 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-11-27",
+        "notes": ["Base 4,400 ft, top of the Mt. Rainier Gondola 6,872 ft, Silver King peak 7,012 ft; about 2,600 acres, 2,300 of them lift-served.", "Average snowfall depends on the source: the resort's own snow-report feed lists 480 inches a year, while SnowBrains counts 348 inches over 2001-2022.", "Highway 410 is the road in. In December 2025 storm damage closed it and the resort did not fully open until December 24, after a start with extreme weather and damaged roads.", "The earliest opening on record is October 1, 2013."],
+        "sources": ["https://www.crystalmountainresort.com/media/mountain-stats-and-facts", "https://snowbrains.com/first-snowfall-of-the-year-at-crystal-mountain-wa/", "https://www.mtnpowder.com/feed?resortId=80", "https://visitrainier.com/crystal-opening-day/", "https://www.ikonpass.com/en/opening-closing-dates"]
+      },
+      "nws": {
+        "area": "the Washington Cascades near Crystal Mountain and Mt. Rainier",
+        "ignore": ["Puget Sound", "Olympic", "coast"]
+      },
+      "snowpack": { "type": "awdb", "id": "642:WA:SNTL", "name": "Morse Lake SNOTEL", "elevFt": 5400 },
+      "avalanche": { "center": "NWAC", "zoneId": 3023 },
+      "report": {
+        "adapter": "mtnpowder",
+        "resortId": 80,
+        "stations": ["BaseArea", "MidMountainArea", "SummitArea"]
+      },
+      "roads": [
+        { "provider": "wsdot", "label": "Crystal to Greenwater SR 410", "route": "SR-410", "pass": "Crystal to Greenwater SR 410" }
+      ],
+      "roadCams": [],
+      "links": {
+        "website": "https://www.crystalmountainresort.com/",
+        "webcams": "https://www.crystalmountainresort.com/the-mountain/mountain-report-and-webcams/webcams",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KATX/standard",
+        "report": "https://www.crystalmountainresort.com/the-mountain/mountain-report-and-webcams"
+      }
+    },
+    {
+      "id": "stevens",
+      "name": "Stevens Pass",
+      "shortName": "Stevens",
+      "region": "Pacific Northwest",
+      "defaultFavorite": false,
+      "lat": 47.7447,
+      "lon": -121.089,
+      "baseFt": 4061,
+      "summitFt": 5845,
+      "summit": { "lat": 47.731, "lon": -121.102 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-12-04",
+        "notes": ["Base 4,061 ft, highest elevation 5,845 ft; average snowfall 460 inches a year on 1,125 acres with 13 lifts.", "Puget Sound Convergence Zones form when low-level winds off the Pacific have a strong westerly component, and they often bring narrow bands of intense snowfall to Stevens and Snoqualmie passes.", "The convergence zone comes from southwesterly winds through the Strait of Juan de Fuca meeting northerly winds coming south through the Strait of Georgia."],
+        "sources": ["https://www.stevenspass.com/the-mountain/about-the-mountain/mountain-info.aspx", "https://opensnow.com/news/post/puget-sound-convergence-zone-explained", "https://coloradobiz.com/vail-resorts-2026-27-ski-season-opening-dates-colorado/"]
+      },
+      "nws": {
+        "area": "the Washington Cascades near Stevens Pass",
+        "ignore": ["Puget Sound", "Olympic", "coast"]
+      },
+      "snowpack": { "type": "awdb", "id": "791:WA:SNTL", "name": "Stevens Pass SNOTEL", "elevFt": 3940 },
+      "avalanche": { "center": "NWAC", "zoneId": 3024 },
+      "roads": [
+        { "provider": "wsdot", "label": "Stevens Pass US 2", "route": "US-2", "pass": "Stevens Pass US 2" }
+      ],
+      "roadCams": [
+        { "label": "US 2 East Stevens Pass Summit", "url": "https://images.wsdot.wa.gov/nc/002vc06458.jpg" },
+        { "label": "US 2 West Stevens Pass - Ski Lodge", "url": "https://images.wsdot.wa.gov/nc/002vc06430.jpg" },
+        { "label": "US 2 Old Faithful Avalanche Zone", "url": "https://images.wsdot.wa.gov/nc/002vc06190.jpg" }
+      ],
+      "links": {
+        "website": "https://www.stevenspass.com/",
+        "webcams": "https://www.stevenspass.com/the-mountain/mountain-conditions/mountain-cams.aspx",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KATX/standard",
+        "report": "https://www.stevenspass.com/the-mountain/mountain-conditions/lift-and-terrain-status.aspx"
+      }
+    },
+    {
+      "id": "baker",
+      "name": "Mt. Baker",
+      "shortName": "Baker",
+      "region": "Pacific Northwest",
+      "defaultFavorite": false,
+      "lat": 48.8621,
+      "lon": -121.6798,
+      "baseFt": 4300,
+      "summitFt": 5089,
+      "summit": { "lat": 48.8483, "lon": -121.6652 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-12-18",
+        "notes": ["Heather Meadows base area is 4,300 ft and White Salmon base area is 3,500 ft; Panorama Dome is 5,000 ft and the top of Chair 8 is 5,089 ft.", "Average snowfall is 688 inches a year (15-year average); the 1998-99 season set the world record at 1,140 inches.", "Recent seasons: 502 inches in 2025-26, 585 in 2024-25, 508 in 2023-24, 617 in 2022-23, and only 303 in 2014-15.", "In December 2025 atmospheric rivers and landslides closed Highway 542 east of Glacier; passholders were let in December 21 and the public December 22."],
+        "sources": ["https://www.mtbaker.us/the-mountain/mountain-stats/", "https://www.mtbaker.us/the-mountain/snowfall-statistics/", "https://www.cascadiadaily.com/2025/dec/17/mt-baker-ski-area-will-likely-open-this-weekend/", "https://www.onthesnow.com/pacific-northwest/projected-openings"]
+      },
+      "nws": {
+        "area": "the North Cascades near Mt. Baker",
+        "ignore": ["Puget Sound", "Olympic", "coast"]
+      },
+      "snowpack": { "type": "awdb", "id": "909:WA:SNTL", "name": "Wells Creek SNOTEL", "elevFt": 4040 },
+      "avalanche": { "center": "NWAC", "zoneId": 3021 },
+      "roads": [
+        { "provider": "wsdot", "label": "Mt. Baker Hwy SR 542", "route": "SR-542", "pass": "Mt. Baker Hwy SR 542" }
+      ],
+      "roadCams": [],
+      "links": {
+        "website": "https://www.mtbaker.us/",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KATX/standard",
+        "report": "https://www.mtbaker.us/snow-report/"
+      }
+    },
+    {
+      "id": "bachelor",
+      "name": "Mt. Bachelor",
+      "shortName": "Bachelor",
+      "region": "Pacific Northwest",
+      "defaultFavorite": false,
+      "lat": 43.9996,
+      "lon": -121.7172,
+      "baseFt": 5700,
+      "summitFt": 9065,
+      "summit": { "lat": 43.9776, "lon": -121.6859 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-12-04",
+        "notes": ["Top elevation 9,065 ft, lowest elevation 5,700 ft, vertical drop 3,365 ft; 4,323 skiable acres. Average snowfall is 410 inches a year.", "Over the last 16 seasons the resort counted an average of 462 inches in nine La Nina seasons, 355 in four El Nino seasons and 373 in three neutral seasons.", "High gusts regularly close lifts for hours, according to the resort's mountain operations director; storms often close other parts of the mountain.", "Opening day is scheduled for December 4, 2026, conditions permitting; in 1982-83 the resort opened November 12 after a 536-inch season."],
+        "sources": ["https://www.mtbachelor.com/the-mountain/resort-policies-safety/mountain-stats/", "https://www.mtbachelor.com/culture/blog/super-el-nino-2627/", "https://www.bendsource.com/news/mt-bachelor-upgrades-ahead-of-the-ski-season-20088239/", "https://www.mtbachelor.com/the-mountain/mountain-report/"]
+      },
+      "nws": {
+        "area": "the Oregon Cascades near Mt. Bachelor",
+        "ignore": ["Columbia Basin", "Yakima Valley", "Washington Cascades", "Columbia River Gorge", "northern Blue Mountains", "Blue Mountain foothills", "across the Blue Mountains"]
+      },
+      "snowpack": { "type": "awdb", "id": "815:OR:SNTL", "name": "Three Creeks Meadow SNOTEL", "elevFt": 5680 },
+      "avalanche": { "center": "COAA", "zoneId": 2470 },
+      "roadCams": [],
+      "links": {
+        "website": "https://www.mtbachelor.com/",
+        "webcams": "https://www.mtbachelor.com/the-mountain/webcams/",
+        "cams": [
+          { "label": "The Cone", "url": "https://api.mtbachelor.com/api/v1/cams/mtn/3" },
+          { "label": "Pine Marten Lodge", "url": "https://api.mtbachelor.com/api/v1/cams/mtn/9" },
+          { "label": "West Village Base", "url": "https://api.mtbachelor.com/api/v1/cams/mtn/13" }
+        ],
+        "radar": "https://radar.weather.gov/station/KRTX/standard",
+        "report": "https://www.mtbachelor.com/the-mountain/mountain-report/",
+        "roads": "https://www.tripcheck.com/"
+      }
+    },
+    {
+      "id": "hoodmeadows",
+      "name": "Mt. Hood Meadows",
+      "shortName": "Meadows",
+      "region": "Pacific Northwest",
+      "defaultFavorite": false,
+      "lat": 45.3331,
+      "lon": -121.6652,
+      "baseFt": 5366,
+      "summitFt": 7305,
+      "summit": { "lat": 45.3494, "lon": -121.6818 },
+      "tz": "America/Los_Angeles",
+      "local": {
+        "openingDate": "2026-12-18",
+        "notes": ["The main base is about 5,366 ft, the top of Cascade Express is 7,305 ft and the lowest lift (Hood River Express) starts at 4,528 ft; vertical rise 2,777 ft over 2,150 skiable acres.", "The resort lists 430 inches of snow a season, rising to an average of 493 inches in La Nina winters; the 2022-23 La Nina season brought 531 inches.", "Meadows usually opens around Thanksgiving; most seasons since 1994 opened between November 18 and December 3. The earliest was October 21, 1996.", "2025-26 opened December 23 after an unseasonably warm fall, the latest opening on record; the previous latest was December 22, 2014."],
+        "sources": ["https://archive.skihood.com/en/the-mountain/hours-of-operations/mountain-statistics", "https://www.skihood.com/explore/about-meadows", "https://digital-release.koin.com/news/oregon/slow-start-to-ski-season-every-mt-hood-meadows-opening-dates-since-1994/", "https://www.kptv.com/2025/12/24/mount-hood-meadows-opens-with-record-late-start-after-snow-finally-arrives", "https://www.onthesnow.com/pacific-northwest/projected-openings"]
+      },
+      "nws": {
+        "area": "the Oregon Cascades near Mt. Hood",
+        "ignore": ["Willamette", "Vernonia", "Grand Ronde", "Hood River Valley", "inland valleys", "sheltered valleys", "south Washington coast", "KPDX"]
+      },
+      "snowpack": { "type": "awdb", "id": "651:OR:SNTL", "name": "Mt Hood Test Site SNOTEL", "elevFt": 5380 },
+      "avalanche": { "center": "NWAC", "zoneId": 3032 },
+      "roadCams": [],
+      "links": {
+        "website": "https://www.skihood.com/",
+        "webcams": "https://www.skihood.com/explore/live-web-cams",
+        "cams": [],
+        "radar": "https://radar.weather.gov/station/KRTX/standard",
+        "report": "https://www.skihood.com/mountain-report",
+        "roads": "https://www.tripcheck.com/"
+      }
     }
   ]
 }
