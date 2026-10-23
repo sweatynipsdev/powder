@@ -44,6 +44,23 @@ Environment variables (all optional):
 - `POWDER_OUT_DIR`: where to write the JSON. Default: `public/data`.
 - `PREVIOUS_DATA_URL`: the deployed site's `/data/` URL. The previous run is read from here, for stale fallbacks. Without it, the pipeline reads whatever is already in `POWDER_OUT_DIR`.
 
+## The app
+
+Svelte 5 + Vite, with no framework router. It's a static PWA that reads only `data/data.json` and `data/resorts/<id>.json`.
+
+```bash
+npm run pipeline && npm run analyze   # put fresh data in public/data
+npm run dev                           # http://localhost:5173, also on your LAN (open it on the phone)
+npm run build && npm run preview      # the production build, with the service worker
+npm run e2e                           # browser checks + screenshots (needs `npm run build` first)
+```
+
+- **Offline:** the service worker precaches the app shell. Forecast JSON is network-first with a 4-second timeout, then falls back to the last cached copy. Offline, a banner shows how old that copy is; if data is over 14h old even when online, a banner says updates may have stopped.
+- **Add to Home Screen** (iPhone, Safari): open the site, then Share → Add to Home Screen. It launches full-screen with its own icon. Icons come from `public/favicon.svg` via `npx pwa-assets-generator`.
+- **Charts** follow a validated colorblind-safe palette. Blue is always "our blend"; the models take the next four slots in fixed order. Every chart has hover, tap and arrow-key readouts, plus a Table view with every value. Temperature, snow level and wind are three small charts sharing one time axis, never one chart with two y-axes.
+- **Summit/Base** toggle switches every snow number and chart. The choice is remembered on the device.
+- `npm run e2e` checks with WebKit at iPhone size (no page errors, no sideways scrolling, chart tooltip on tap) and then checks offline loading in Chromium. Screenshots go to `screens/`. To debug one route at iPhone size, run `npx tsx scripts/debug-page.ts '#/r/palisades'`.
+
 ## Data sources
 
 All are free and need no key or account.

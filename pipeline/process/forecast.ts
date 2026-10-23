@@ -95,8 +95,11 @@ function prepareElev(input: ForecastInput, elev: Elev, nowIdx: number): ElevWork
   };
 }
 
-function snowBoth(work: Record<Elev, ElevWork>, idx: number[]): Record<Elev, SnowAmount> {
-  return { summit: snowAmount(idx, work.summit.ctx), base: snowAmount(idx, work.base.ctx) };
+/** Running totals only count a model or member that covers essentially the whole span. */
+export const CUMULATIVE_COVERAGE = 0.95;
+
+function snowBoth(work: Record<Elev, ElevWork>, idx: number[], minCoverage?: number): Record<Elev, SnowAmount> {
+  return { summit: snowAmount(idx, work.summit.ctx, minCoverage), base: snowAmount(idx, work.base.ctx, minCoverage) };
 }
 
 function temps(work: Record<Elev, ElevWork>, idx: number[]) {
@@ -165,6 +168,7 @@ export function buildForecast(input: ForecastInput): ForecastData {
 
   const nowStamp = times[nowIdx];
   const bucketHours = (from: number, to: number) => slots.filter((s) => s.dayIndex >= from && s.dayIndex <= to).flatMap((s) => s.hours);
+  const cumulative = dayList.map((d, i) => ({ date: d.date, ...snowBoth(work, bucketHours(0, i), CUMULATIVE_COVERAGE) }));
 
   return {
     startsAt: slots[0].start,
@@ -173,6 +177,7 @@ export function buildForecast(input: ForecastInput): ForecastData {
     ensembles: input.ens?.ensembles ?? [],
     periods,
     days: dayList,
+    cumulative,
     windows: {
       next24h: snowBoth(work, windowHours(times, nowStamp, 24)),
       next72h: snowBoth(work, windowHours(times, nowStamp, 72)),

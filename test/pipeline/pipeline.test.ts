@@ -65,6 +65,20 @@ describe('pipeline replay', () => {
     }
   });
 
+  it('builds running totals that never shrink and drop models that stop early', () => {
+    for (const r of result.resorts) {
+      const c = r.forecast.data!.cumulative;
+      expect(c).toHaveLength(16);
+      const blends = c.map((d) => d.summit.blend).filter((v): v is number => v !== null);
+      for (let i = 1; i < blends.length; i++) expect(blends[i]).toBeGreaterThanOrEqual(blends[i - 1] - 0.1);
+      const sum5 = r.forecast.data!.days.slice(0, 5).reduce((s, d) => s + (d.snow.summit.blend ?? 0), 0);
+      expect(c[4].summit.blend!).toBeCloseTo(sum5, 0);
+      // ICON runs about 7 days, so it has no 10-day running total.
+      expect(c[2].summit.models.icon).toBeDefined();
+      expect(c[9].summit.models.icon).toBeUndefined();
+    }
+  });
+
   it('keeps the summit at least as snowy as the base', () => {
     for (const r of result.resorts) {
       const w = r.forecast.data!.windows.next7d;

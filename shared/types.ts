@@ -97,6 +97,8 @@ export interface ForecastData {
   ensembles: EnsembleInfo[];
   periods: Period[];
   days: DaySummary[];
+  /** Running total from the first period through the end of each day (the model "plume"). */
+  cumulative: ({ date: string } & Record<Elev, SnowAmount>)[];
   windows: {
     next24h: Record<Elev, SnowAmount>;
     next72h: Record<Elev, SnowAmount>;

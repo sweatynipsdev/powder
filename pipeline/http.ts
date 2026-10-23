@@ -134,6 +134,12 @@ function writeFixture(key: string, method: string, url: string, body: string | u
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/**
+ * Most 4xx won't fix themselves, but rate limits (429) do, and government firewalls (NRCS
+ * did this on 2026-10-23) sometimes return a 403 that clears seconds later.
+ */
+const retryable = (status: number) => status >= 500 || status === 429 || status === 403;
+
 async function liveFetch(url: string, opts: RequestOptions): Promise<Response> {
   let lastError: unknown;
   const attempts = cfg.retryDelaysMs.length + 1;
@@ -148,15 +154,14 @@ async function liveFetch(url: string, opts: RequestOptions): Promise<Response> {
       });
       const bytes = new Uint8Array(await res.arrayBuffer());
       if (!res.ok) {
-        // 4xx won't fix itself on retry (except rate limits).
         const err = new HttpError(`HTTP ${res.status} for ${url}`, res.status, url);
-        if (res.status < 500 && res.status !== 429) throw err;
+        if (!retryable(res.status)) throw err;
         lastError = err;
         continue;
       }
       return { status: res.status, contentType: res.headers.get('content-type') ?? '', bytes };
     } catch (e) {
-      if (e instanceof HttpError && e.status !== null && e.status < 500 && e.status !== 429) throw e;
+      if (e instanceof HttpError && e.status !== null && !retryable(e.status)) throw e;
       lastError = e;
     }
   }

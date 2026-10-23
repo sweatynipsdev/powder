@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "target": "ES2023",
-    "lib": ["ES2023"],
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "types": ["node"],
+    "types": ["node", "vite/client", "vite-plugin-pwa/client"],
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
@@ -15,5 +15,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["shared", "pipeline", "analysis", "test"]
+  "include": ["shared", "pipeline", "analysis", "test", "src", "scripts", "vite.config.ts", "pwa-assets.config.ts"]
 }

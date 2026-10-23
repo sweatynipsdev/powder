@@ -147,17 +147,21 @@ export interface ElevSnowContext {
   shortRangeEnd: number;
 }
 
-export function snowAmount(idx: number[], ctx: ElevSnowContext): SnowAmount {
-  const blend = windowSum(ctx.blendSnow, idx);
-  const raw = windowSum(ctx.blendRaw, idx);
+/**
+ * `minCoverage` is raised for running totals, where a model or member that stops partway
+ * through the window would otherwise show up as a too-low total.
+ */
+export function snowAmount(idx: number[], ctx: ElevSnowContext, minCoverage = MIN_COVERAGE): SnowAmount {
+  const blend = windowSum(ctx.blendSnow, idx, minCoverage);
+  const raw = windowSum(ctx.blendRaw, idx, minCoverage);
 
   const models: Partial<Record<ModelId, number>> = {};
   for (const [id, arr] of Object.entries(ctx.modelSnow) as [ModelId, Hourly][]) {
-    const total = windowSum(arr, idx);
+    const total = windowSum(arr, idx, minCoverage);
     if (total !== null) models[id] = round1(total);
   }
 
-  const memberTotals = ctx.memberSnow.map((m) => windowSum(m, idx)).filter((v): v is number => v !== null);
+  const memberTotals = ctx.memberSnow.map((m) => windowSum(m, idx, minCoverage)).filter((v): v is number => v !== null);
 
   let range: SnowAmount['range'] = null;
   let rangeSource: SnowAmount['rangeSource'] = null;
