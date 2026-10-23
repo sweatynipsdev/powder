@@ -24,6 +24,11 @@ describe('loading saved favorites', () => {
     expect(loadFavorites('["mtbaldy","gone","palisades"]', resorts)).toEqual({ ids: ['palisades', 'mtbaldy'], chosen: true });
   });
 
+  it('starts with every resort when the data predates default favorites', () => {
+    const old = resorts.map(({ id }) => ({ id, defaultFavorite: undefined as unknown as boolean }));
+    expect(loadFavorites(null, old)).toEqual({ ids: order, chosen: false });
+  });
+
   it('keeps an empty list empty instead of bringing the defaults back', () => {
     expect(loadFavorites('[]', resorts)).toEqual({ ids: [], chosen: true });
   });

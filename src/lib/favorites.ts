@@ -11,7 +11,10 @@ export interface Favorites {
 
 /** A saved list in resorts.json order with removed resorts dropped; the defaults if nothing valid is saved. */
 export function loadFavorites(raw: string | null, resorts: { id: string; defaultFavorite: boolean }[]): Favorites {
-  const defaults = { ids: resorts.filter((r) => r.defaultFavorite).map((r) => r.id), chosen: false };
+  // Data written before default favorites existed (an old cached data.json) flags none:
+  // start with every resort rather than an empty Favorites tab.
+  const flagged = resorts.filter((r) => r.defaultFavorite);
+  const defaults = { ids: (flagged.length ? flagged : resorts).map((r) => r.id), chosen: false };
   if (raw === null) return defaults;
   let saved: unknown;
   try {

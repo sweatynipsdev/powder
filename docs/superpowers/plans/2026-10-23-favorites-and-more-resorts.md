@@ -192,20 +192,20 @@
 
 **Files:** modify `scripts/e2e.ts` and `README.md`.
 
-- [ ] e2e (WebKit iPhone):
+- [x] e2e (WebKit iPhone):
   - Unstar Big Bear on `#/r/bigbear`, then go to `#/`: Big Bear is absent.
   - Reload: still absent.
   - On `#/resorts`, tap Big Bear's star, then go to `#/`: it's present.
   - Searching "mam" on `#/resorts` shows Mammoth and not Palisades.
   - Screenshot `resorts.png`.
-- [ ] README:
+- [x] README:
   - Favorites, and `defaultFavorite`.
   - The Resorts tab.
   - Open-Meteo budget math.
   - Reuse-on-push.
-- [ ] `npm run build && npm run e2e`.
-- [ ] Look at the screenshots.
-- [ ] Commit.
+- [x] `npm run build && npm run e2e`.
+- [x] Look at the screenshots.
+- [x] Commit.
 
 ---
 
@@ -243,4 +243,5 @@
 - Ruling: the ranking card on Forecasts and the best-bet card both use the ranking's per-entry `day` and `reason`, and drop `bestDay`/`bestResort`/`summary` entirely. Why: those name the overall winner, which may not be a favorite. Cost if wrong: the AI's one-sentence overview is no longer shown anywhere; it's easy to bring back for phones whose favorites include the winner.
 - Ruling: when a write-up fails, `analyze` keeps the input resort object (with the previous analysis) at its original index, rather than pushing it after the successful ones. Why: the output order must match the input order. Cost if wrong: none; the behavior matches the old sequential loop.
 - Ruling: `package.json`/lockfile changes take the reuse path, not a full run. Why: dependency bumps are mostly app-side, and the next scheduled run (≤ 12h) picks up pipeline-side effects. Cost if wrong: a pipeline-affecting dependency bump isn't exercised until the next scheduled run, so run it manually from Actions when that matters.
+- Ruling: when no resort in the index has `defaultFavorite` (data written before the flag existed: an old cached `data.json`, or live data reused right after deploy), a new phone starts with every resort. Why: e2e against live data showed an empty Favorites tab otherwise. Cost if wrong: once there are 21+ resorts, a phone holding old cached data briefly shows them all, until the next data load.
 - Ruling: the background prefetch loads every favorite's file on each app open (about 60 KB each). Why: offline should cover all favorites, not just visited ones. Cost if wrong: with 10+ favorites on a slow connection, the first open does extra downloads; it can be limited to the first N if that ever shows up.

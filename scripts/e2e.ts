@@ -45,8 +45,14 @@ try {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
 
+  // A fresh phone starts on the default resorts, with a nudge to pick its own.
+  await page.goto(URL);
+  await page.waitForSelector(HOME);
+  check(await page.locator('.hint').isVisible(), 'a new phone sees the "pick your resorts" banner');
+
   const screens: [string, string, string][] = [
     ['home', '#/', HOME],
+    ['resorts', '#/resorts', '.search'],
     ['forecasts', '#/forecasts', '.post, .card'],
     ['roads', '#/roads', '.section-title'],
     ['palisades-summary', '#/r/palisades', SUMMARY],
@@ -93,6 +99,32 @@ try {
   await page.waitForTimeout(200);
   check(await page.locator('.tip').isVisible(), 'model chart tooltip appears on tap');
   await plume.screenshot({ path: join(out, 'tooltip.png') });
+
+  // Favorites: unstar Big Bear on its page, it leaves Favorites and stays gone after a
+  // reload; star it again from the Resorts tab and it's back.
+  const bigBearOnHome = () => page.locator(`${HOME}[href="#/r/bigbear"]`).count();
+  await page.goto(URL + '#/r/bigbear');
+  await page.waitForSelector(SUMMARY);
+  await page.getByRole('button', { name: /^Remove .* from favorites$/ }).tap();
+  await page.goto(URL + '#/');
+  await page.waitForSelector(HOME);
+  check((await bigBearOnHome()) === 0, 'an unstarred resort leaves Favorites');
+  await page.reload();
+  await page.waitForSelector(HOME);
+  check((await bigBearOnHome()) === 0, 'it stays unstarred after a reload');
+  check((await page.locator('.hint').count()) === 0, 'the "pick your resorts" banner goes once you pick');
+  await page.goto(URL + '#/resorts');
+  await page.waitForSelector('.search');
+  await page.locator('li:has(a[href="#/r/bigbear"]) button.star').tap();
+  await page.goto(URL + '#/');
+  await page.waitForSelector(HOME);
+  check((await bigBearOnHome()) === 1, 'starring from the Resorts tab adds it back');
+
+  // Search ignores case and punctuation and filters the list.
+  await page.goto(URL + '#/resorts');
+  await page.fill('.search', 'MAM');
+  const listed = await page.locator('li .name').allTextContents();
+  check(listed.some((n) => /Mammoth/.test(n)) && !listed.some((n) => /Palisades/.test(n)), `resort search filters the list (${listed.join(', ')})`);
 
   check(errors.length === 0, `no page errors${errors.length ? `: ${errors.join('; ')}` : ''}`);
   await ctx.close();

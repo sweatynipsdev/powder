@@ -39,6 +39,7 @@ Without a key, `npm run analyze` keeps the previous write-ups and exits cleanly,
 | `npm run analyze -- --force` | Rewrites everything regardless of schedule or change detection. |
 | `npm run analyze:sample` | `--force`, and also writes `samples/analysis-sample.md` for reading the write-ups side by side. |
 | `npm run calibrate` | Learns each mountain's per-model bias from `history/` and writes `history/calibration.json`, which the next pipeline run applies. See [The local edge](#the-local-edge). |
+| `npm run reuse-data` | Copies the live site's data (`PREVIOUS_DATA_URL`) into `POWDER_OUT_DIR` without fetching anything. The workflow uses it for app-only pushes. It's also the quickest way to get real data for local UI work. |
 
 Environment variables (all optional):
 
@@ -60,7 +61,15 @@ npm run e2e                           # browser checks + screenshots (needs `npm
 
 The layout follows OpenSnow's app, always in a dark theme:
 
-- **Bottom tabs:** Favorites (every resort with its status, last 24 hours, the next 1–5 and 6–10 days, a 10-day bar strip and the AI headline, under a "best bet this week" card), Forecasts (every write-up plus the local experts), and Roads (chain controls and highway cams for each drive).
+- **Bottom tabs:**
+  - **Favorites:** each starred resort with its status, last 24 hours, the next 1–5 and 6–10 days, a 10-day bar strip and the AI headline. A "best bet this week" card sits on top.
+  - **Resorts:** every resort grouped by region, with search and a star to add or remove it.
+  - **Forecasts:** your favorites' write-ups and local experts, with the other resorts collapsed below.
+  - **Roads:** chain controls and highway cams for the drive to each favorite.
+- **Favorites are per phone,** kept in `localStorage` (`powder.favorites`) with no account.
+  - A phone that hasn't picked any starts with the resorts marked `"defaultFavorite": true` and sees a "pick yours" banner.
+  - The best bet is the highest-ranked of your favorites in the AI ranking, which covers every resort.
+  - All favorites are fetched in the background, so they all work offline, not just the ones you've opened.
 - **Resort page tabs:**
   - **Weather:** right now, hourly table (72h), daily day/night table, and the temperature / snow level / wind charts.
   - **Snow Summary:** the snow timeline (previous 5 days observed, the last 24 hours, then the next 16 days grouped 1–5 / 6–10 / 11–16; tap a day for details), cams, the AI and local-expert forecasts, the model comparison chart, and the CPC outlook.
@@ -91,6 +100,11 @@ All are free and need no key or account.
 
 When a source fails, the last good value is carried forward and marked stale, and the app shows its age. A run never fails because one source is down.
 
+**Open-Meteo's free tier** allows 600 calls a minute and 10,000 a day, counted by size: `locations × days/14 × variables/10`, where every model or ensemble member counts its variables. A resort's two requests weigh about 54 calls (16.5 deterministic plus 37.5 ensemble), so 35 resorts are about 1,900 per run.
+- `pipeline/sources/omBudget.ts` paces requests to 450 a minute, and the run summary prints the total.
+- A push that changes only the app doesn't refetch anything: the workflow rebuilds against the live data (`npm run reuse-data`). It falls back to a full run if that data is incomplete.
+- Scheduled runs, manual runs, and pushes touching `pipeline/`, `analysis/`, `shared/`, `resorts.json`, `scripts/calibrate.ts` or the update workflow always do a full update.
+
 ## How the snow numbers are made
 
 - **Snowfall comes from liquid precipitation and temperature at each elevation.** It doesn't use Open-Meteo's fixed ~7:1 snowfall. The ratio runs from about 8:1 at 32°F to about 17:1 in very cold air, with rain and snow mixing between 32°F and 35°F. See `pipeline/process/slr.ts`.
@@ -117,7 +131,7 @@ OpenSnow's best feature is local knowledge: forecasters who know each mountain, 
 - **Local input:** the brief also carries the resort's `local.notes` and, when it's under 4 days old, the local expert's discussion. The writer must say whether that call agrees with the models and credit it by name and site.
 - **No invented numbers:** the prompt says to use only numbers in the brief. `analysis/grounding.ts` then checks every unit-tagged number in the output against brief numbers of the same unit. A snow claim must match a snow number; it can't borrow a temperature. Any miss, or a mention of "the brief" or a field name, triggers one retry that names the problem. If it still fails, the text is published with the offending numbers listed in `ungrounded`.
 - **Cost control:**
-  - The static system prompt is cached, so calls 2–4 of a run read it from cache.
+  - The static system prompt is cached. The first write-up runs alone to write the cache, and the rest run 4 at a time reading it, so 35 resorts finish well inside the job's 30-minute limit.
   - Morning runs rewrite everything; afternoon runs rewrite only resorts whose forecast materially changed (`analysis/fingerprint.ts`).
   - A failed or declined call keeps the previous write-up.
   - Token usage and cost for every run go to `logs/usage.csv`.
@@ -139,6 +153,8 @@ Add an object to `resorts.json`. Only the core fields are required:
   "nws": { "afdOffice": "REV" }     // NWS office whose forecast discussion covers it
 }
 ```
+
+Add `"defaultFavorite": true` to put a resort on the Favorites tab of phones that haven't picked their own yet.
 
 `nws.area` (e.g. `"Lake Tahoe and the Sierra crest near I-80"`) tells the write-up which part of the office's discussion applies. `nws.ignore` drops discussion sentences that mention other places (e.g. `"Oregon border"`). Both are optional but worth setting.
 
