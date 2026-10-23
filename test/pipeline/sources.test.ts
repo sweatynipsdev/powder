@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { type CaltransSegmentConfig, loadConfig } from '../../pipeline/config';
+import { type CaltransSegmentConfig, loadConfig, type WsdotSegmentConfig } from '../../pipeline/config';
 import { parseAvalanche } from '../../pipeline/sources/avalanche';
 import { buildSegment, normalizeChainStatus, parseCc, parseRoadsText } from '../../pipeline/sources/caltrans';
 import { worse } from '../../pipeline/sources/roadStatus';
+import { buildWsdotSegment, parseWsdot, wsdotStatus } from '../../pipeline/sources/wsdot';
 import { kmlPoint, normalizeCategory, parseArcPoint, parseEnso, parseKml, pointInRing } from '../../pipeline/sources/cpc';
 import { parseDateline, parseExpertPage } from '../../pipeline/sources/expert';
 import { afdSections, fetchOffice, filterAfd, parseAfd, parseAlerts, unwrap } from '../../pipeline/sources/nws';
@@ -323,5 +324,67 @@ describe('local expert page', () => {
     const post = parseExpertPage(cfg, { modified_gmt: '2026-10-22T17:36:03', content: { rendered: '<p>Snow likely.</p>' } }, tz);
     expect(post.publishedAt).toBe('2026-10-22T17:36:03Z');
     expect(() => parseExpertPage(cfg, {}, tz)).toThrow(/no content/);
+  });
+});
+
+describe('WSDOT pass reports', () => {
+  // Rows shaped like the live feed on 2026-10-23 (off-season), for the passes we use.
+  const OFF_SEASON = 'Reports have ended for this season. Traditionally weather and road conditions are reported on this page from November 1 to April 1.';
+  const row = (PassName: string, m1: string | null, m2: string | null, extra: Record<string, unknown> = {}) => ({
+    attributes: { PassName, Weather: '', RoadCondition: OFF_SEASON, DisplayDate: null, TravelDirection1: 'Eastbound', PublicMessage1: m1, TravelDirection2: 'Westbound', PublicMessage2: m2, ...extra },
+  });
+  const feed = (...rows: unknown[]) => ({ features: rows });
+  const live = feed(
+    row('Stevens Pass US 2', 'No restrictions', 'No restrictions'),
+    row('Snoqualmie Pass I-90', 'No restrictions', 'No restrictions', { Weather: 'Travel impacts will be updated here if conditions cause delays of an hour or more.' }),
+    row('Crystal to Greenwater SR 410', 'No restrictions', 'No restrictions'),
+    row('Mt. Baker Hwy SR 542', 'No restrictions', 'No restrictions'),
+  );
+  const cfg = (pass: string): WsdotSegmentConfig => ({ provider: 'wsdot', label: pass, route: 'US-2', pass });
+
+  it('maps every restriction tier by what it asks of a passenger car', () => {
+    expect(wsdotStatus('')).toBeNull();
+    expect(wsdotStatus('No restrictions')).toBe('clear');
+    expect(wsdotStatus('Traction tires advised.')).toBe('advisory');
+    expect(wsdotStatus('Traction tires required.')).toBe('R-1');
+    expect(wsdotStatus('Chains required on all vehicles except all wheel drive.')).toBe('R-2');
+    expect(wsdotStatus('Chains are required on all vehicles.')).toBe('R-3');
+    expect(wsdotStatus('Pass closed.')).toBe('closed');
+    // Chains for heavy vehicles don't make it R-3 for a car.
+    expect(wsdotStatus('Traction tires required. Chains required on vehicles towing and over 10,000 GVW.')).toBe('R-1');
+  });
+
+  it('never reads wording it does not know as clear', () => {
+    expect(wsdotStatus('Oversize vehicles prohibited.')).toBe('unknown');
+    const seg = buildWsdotSegment(cfg('Stevens Pass US 2'), parseWsdot(feed(row('Stevens Pass US 2', 'Use extreme caution', 'Use extreme caution'))));
+    expect(seg.status).toBe('unknown');
+    expect(seg.restriction).toBe('Use extreme caution');
+  });
+
+  it('reads the off-season feed as clear, with the report text kept as notes', () => {
+    const seg = buildWsdotSegment(cfg('Snoqualmie Pass I-90'), parseWsdot(live));
+    expect(seg).toMatchObject({ status: 'clear', restriction: 'No restrictions', stations: 0, closures: [] });
+    expect(seg.notes).toEqual([OFF_SEASON, 'Travel impacts will be updated here if conditions cause delays of an hour or more.']);
+    expect(seg.worst).toMatchObject({ name: 'Snoqualmie Pass I-90', since: null });
+  });
+
+  it('takes the worse direction and says which one', () => {
+    const winter = row('Stevens Pass US 2', 'Traction tires required.', 'No restrictions', { DisplayDate: Date.UTC(2026, 11, 2, 15, 30) });
+    const seg = buildWsdotSegment(cfg('Stevens Pass US 2'), parseWsdot(feed(winter)));
+    expect(seg.status).toBe('R-1');
+    expect(seg.restriction).toBe('Eastbound: Traction tires required.');
+    expect(seg.worst?.since).toBe('2026-12-02T07:30');
+  });
+
+  it('gets its status from the restrictions, not the road report (Mt. Baker closes above the ski area)', () => {
+    const report = 'SR 542 is closed at milepost 55 above the Mt. Baker Ski Area for the winter.';
+    const seg = buildWsdotSegment(cfg('Mt. Baker Hwy SR 542'), parseWsdot(feed(row('Mt. Baker Hwy SR 542', 'No restrictions', 'No restrictions', { RoadCondition: report }))));
+    expect(seg.status).toBe('clear');
+    expect(seg.notes).toContain(report);
+  });
+
+  it('fails loudly when a configured pass is not in the feed', () => {
+    expect(() => buildWsdotSegment(cfg('Stevens Pass US 99'), parseWsdot(live))).toThrow(/Stevens Pass US 99/);
+    expect(() => parseWsdot({ error: { code: 400 } })).toThrow();
   });
 });

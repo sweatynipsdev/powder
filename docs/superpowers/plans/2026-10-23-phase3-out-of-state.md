@@ -150,20 +150,20 @@ export async function fetchWsdot(segments: WsdotSegmentConfig[]): Promise<RoadSe
 | 7 | `/^no restrictions\.?$/` | `clear` |
 | 8 | anything else | `unknown` |
 
-- [ ] **Tests first.** An inline sample built from the live 2026-10-23 response (Stevens, Snoqualmie, Crystal to Greenwater, Mt. Baker rows, off-season text) plus made-up winter rows. They cover risky inputs 1–5:
+- [x] **Tests first.** An inline sample built from the live 2026-10-23 response (Stevens, Snoqualmie, Crystal to Greenwater, Mt. Baker rows, off-season text) plus made-up winter rows. They cover risky inputs 1–5:
   - each tier;
   - `"Oversize vehicles prohibited."` → `unknown`;
   - a missing pass throws;
   - `notes` holds `RoadCondition` and `Weather`, empty strings dropped;
   - `stations` is 0 and `closures` is `[]`.
-- [ ] `parseWsdot` reads `features[].attributes`, with `TravelDirection1/2` and `PublicMessage1/2` into `directions`. Empty or null messages are skipped.
-- [ ] `buildWsdotSegment`:
+- [x] `parseWsdot` reads `features[].attributes`, with `TravelDirection1/2` and `PublicMessage1/2` into `directions`. Empty or null messages are skipped.
+- [x] `buildWsdotSegment`:
   - Status is the worst `wsdotStatus` over the directions, or `unknown` when none.
   - `restriction` is the worst direction's message, prefixed "<Direction>: " when the two directions' statuses differ.
   - `worst`: `{ name: PassName, status: message, description: RoadCondition, since: DisplayDate }`.
-- [ ] `fetchWsdot` makes one `fetchJson(WSDOT_PASSES_URL)` (the in-run cache shares it), then maps the segments.
-- [ ] `roads.ts` wires the `wsdot` branch.
-- [ ] Run `npm test`, then commit "T2: WSDOT mountain pass reports".
+- [x] `fetchWsdot` makes one `fetchJson(WSDOT_PASSES_URL)` (the in-run cache shares it), then maps the segments.
+- [x] `roads.ts` wires the `wsdot` branch.
+- [x] Run `npm test`, then commit "T2: WSDOT mountain pass reports".
 
 ## T3. Avalanche link where we can't read the center
 
