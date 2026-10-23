@@ -22,7 +22,8 @@
           <span class="status {tone(a)}"><span class="dot"></span>{a.event}</span>
         </summary>
         <p class="small secondary">{a.headline}</p>
-        {#if full?.description}<p class="small secondary">{full.description}</p>{/if}
+        <!-- ECCC alerts are shown exactly as issued (their licence), paragraph breaks included. -->
+        {#if full?.description}<p class="small secondary text">{full.description}</p>{/if}
       </details>
     {/each}
   </section>
@@ -32,6 +33,9 @@
   .alerts {
     display: grid;
     gap: 6px;
+  }
+  .text {
+    white-space: pre-line;
   }
   .alert {
     background: var(--card);

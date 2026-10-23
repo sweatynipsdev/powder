@@ -353,17 +353,17 @@ export function parseEcccAlerts(json: unknown, now: Date): Alert[];
 export async function fetchEcccAlerts(r: ResortConfig): Promise<Alert[]>;
 ```
 
-- [ ] **Tests first:**
+- [x] **Tests first:**
   - The URL puts the bbox in `w,s,e,n` order.
   - An empty FeatureCollection → `[]`.
   - A made-up feature set (one active snowfall warning in two zones, one ended, one expired) → one alert (risky input 14). Its `description` is byte-identical to `alert_text_en`, `winter` is true, and `source` is `'ECCC'`.
-- [ ] Mapping:
+- [x] Mapping:
   - `id`: `${alert_code}|${alert_name_en}|${publication_datetime}`, which is also the dedupe key.
   - `event`: `alert_name_en`. `headline`: `${alert_name_en} · ${feature_name_en}`.
   - `severity`: `risk_colour_en`. `onset`: `validity_datetime`. `ends`: `event_end_datetime`.
   - `url`: `https://weather.gc.ca/warnings/index_e.html?prov=bc`.
   - `winter`: true when `alert_short_name_en` (lowercased) matches snowfall, winter storm, blizzard, snow squall, freezing rain, freezing drizzle, extreme cold, wind chill, arctic outflow or wind.
-- [ ] Wire it into `run.ts` for `'CA'`. Commit "T10: ECCC weather alerts".
+- [x] Wire it into `run.ts` for `'CA'`. Commit "T10: ECCC weather alerts".
 
 ## T11. Avalanche Canada (`pipeline/sources/avcan.ts`)
 
@@ -428,3 +428,4 @@ It confirmed all eight rulings above.
 - Ruling: in WSDOT segments only, `unknown` outranks `clear`; Caltrans keeps `unknown` lowest — for Caltrans, unknown means "no stations matched the segment", while for WSDOT it means wording we couldn't read, which must not hide behind "No restrictions" the other way — cost if wrong: a pass shows "unknown" where "clear" was right, until its wording is added.
 - Ruling: station times without an offset (SNOTEL, CDEC, CoCoRaHS) take the zone's standard offset all year — the old `-08:00` was that rule hard-coded to Pacific, and SNOTEL and CDEC keep standard time — cost if wrong: CoCoRaHS's 7am readings show an hour off in summer, as they did before.
 - Ruling: outside the US, `cpc` stays a source carrying ENSO only (`outlooks: []`) instead of becoming `null` as the spec says — the spec also says ENSO is global and stays, and ENSO arrives inside the CPC record, so `null` would drop it from the writer's brief and the app; keeping the type non-null also avoids churn — cost if wrong: none visible; the CPC strip says NOAA's outlooks cover the US only and shows the ENSO line.
+- Ruling: ECCC alerts are deduped on the feature id before "_" (the alert's own id; the part after is the forecast zone), not the planned `code|name|published` key — the live collection shows one feature per zone sharing that prefix, so it identifies the alert exactly — cost if wrong: two different alerts with the same id would show once; ECCC ids are unique per alert.

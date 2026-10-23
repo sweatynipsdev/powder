@@ -4,6 +4,7 @@ import { parseAvalanche } from '../../pipeline/sources/avalanche';
 import { buildSegment, normalizeChainStatus, parseCc, parseRoadsText } from '../../pipeline/sources/caltrans';
 import { worse } from '../../pipeline/sources/roadStatus';
 import { buildWsdotSegment, parseWsdot, wsdotStatus } from '../../pipeline/sources/wsdot';
+import { ecccAlertsUrl, parseEcccAlerts } from '../../pipeline/sources/eccc';
 import { kmlPoint, normalizeCategory, parseArcPoint, parseEnso, parseKml, pointInRing } from '../../pipeline/sources/cpc';
 import { parseDateline, parseExpertPage } from '../../pipeline/sources/expert';
 import { afdSections, fetchOffice, filterAfd, parseAfd, parseAlerts, unwrap } from '../../pipeline/sources/nws';
@@ -407,5 +408,47 @@ describe('WSDOT pass reports', () => {
   it('fails loudly when a configured pass is not in the feed', () => {
     expect(() => buildWsdotSegment(cfg('Stevens Pass US 99'), parseWsdot(live))).toThrow(/Stevens Pass US 99/);
     expect(() => parseWsdot({ error: { code: 400 } })).toThrow();
+  });
+});
+
+describe('ECCC alerts', () => {
+  const now = new Date('2026-12-02T18:00:00Z');
+  // Shaped like the live weather-alerts collection: one feature per alert per forecast zone.
+  const TEXT = 'Heavy snow is expected.\n\nTotal snowfall: 25 to 35 cm.\n\nVisibility may be suddenly reduced.';
+  const feature = (alertId: string, zone: string, over: Record<string, unknown> = {}) => ({
+    id: `${alertId}_${zone}`,
+    properties: {
+      alert_code: 'WS', alert_type: 'warning', alert_name_en: 'snowfall warning', alert_short_name_en: 'Snowfall',
+      publication_datetime: '2026-12-02T15:00:00.000Z', validity_datetime: '2026-12-02T18:00:00.000Z', event_end_datetime: '2026-12-03T18:00:00.000Z',
+      expiration_datetime: '2026-12-03T03:00:00.000Z', alert_text_en: TEXT, risk_colour_en: 'yellow', feature_name_en: zone === 'fea1-2325' ? 'Whistler' : 'Howe Sound',
+      status_en: 'issued', feature_id: zone, ...over,
+    },
+  });
+
+  it('asks for alerts in the box west,south,east,north', () => {
+    expect(ecccAlertsUrl([50.05, -123.0, 50.15, -122.9])).toBe('https://api.weather.gc.ca/collections/weather-alerts/items?f=json&bbox=-123,50.05,-122.9,50.15&limit=50');
+  });
+
+  it('keeps one copy of each active alert, its text unaltered', () => {
+    const alerts = parseEcccAlerts(
+      {
+        type: 'FeatureCollection',
+        features: [
+          feature('1001', 'fea1-2325'),
+          feature('1001', 'fea1-2290'),
+          feature('1002', 'fea1-2325', { alert_name_en: 'wind warning', alert_short_name_en: 'Wind', status_en: 'ended' }),
+          feature('1003', 'fea1-2325', { alert_name_en: 'special weather statement', alert_short_name_en: 'Special weather', expiration_datetime: '2026-12-02T12:00:00.000Z' }),
+        ],
+      },
+      now,
+    );
+    expect(alerts).toHaveLength(1);
+    expect(alerts[0]).toMatchObject({ id: '1001', event: 'snowfall warning', headline: 'snowfall warning · Whistler', severity: 'yellow', winter: true, source: 'ECCC' });
+    expect(alerts[0].description).toBe(TEXT);
+  });
+
+  it('reads an empty collection as no alerts, and rejects anything else', () => {
+    expect(parseEcccAlerts({ type: 'FeatureCollection', features: [] }, now)).toEqual([]);
+    expect(() => parseEcccAlerts({ code: 'InvalidParameterValue' }, now)).toThrow();
   });
 });
