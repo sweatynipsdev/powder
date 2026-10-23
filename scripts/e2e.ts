@@ -168,6 +168,18 @@ try {
   await page.waitForSelector('.search');
   await page.locator('li:has(a[href="#/r/crystal"]) button.star').tap();
 
+  // Whistler: no NWS and no NOAA outlooks (ENSO stays), and Avalanche Canada's rating
+  // without its text, which their terms keep out of the app.
+  await shoot(page, 'whistler-summary', '#/r/whistler', SUMMARY);
+  check((await page.getByText("NOAA's outlooks cover the US only.").count()) === 1, 'Whistler shows no NOAA outlooks, and says why');
+  await shoot(page, 'whistler-weather', '#/r/whistler/weather', '.section-title');
+  check((await page.locator('h2.section-title', { hasText: 'National Weather Service' }).count()) === 0, 'Whistler has no NWS section');
+  await shoot(page, 'whistler-report', '#/r/whistler/report', '.section-title');
+  check(
+    (await page.locator('section', { hasText: 'Avalanche Canada' }).count()) >= 1 && (await page.getByText('hazard may exist').count()) === 0,
+    "Whistler's avalanche card shows Avalanche Canada's rating but not its text",
+  );
+
   check(errors.length === 0, `no page errors${errors.length ? `: ${errors.join('; ')}` : ''}`);
   await ctx.close();
 

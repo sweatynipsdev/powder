@@ -383,17 +383,17 @@ export async function fetchAvcan(r: ResortConfig): Promise<AvalancheData>;  // s
 
 ## T12. Whistler config, fixtures, checks
 
-- [ ] The controller researches Whistler itself (one resort):
+- [x] The controller researches Whistler itself (one resort):
   - Base and summit from the resort, checked against Open-Meteo elevation.
   - `country: 'CA'`, `eccc.bbox: [50.05, -123.0, 50.15, -122.9]`, `avalanche: { provider: 'avcan' }`.
   - 2026-27 `openingDate`, cited. 3–5 cited local notes.
   - `links`: website, webcams, `https://www.drivebc.ca/`, and the ECCC radar page.
   - Resort cams only as direct keyless JPGs.
   - Add the evidence to the T6 evidence file.
-- [ ] Run `npm run record-fixtures` again (about 2,250 calls) and read the table. Then `npm test` green, and commit.
-- [ ] Add an e2e check: `#/resort/whistler` renders, has no NWS panel and no CPC strip, and its avalanche card shows a rating and link but no bottom-line text. Then `npm run build && npm run e2e`.
-- [ ] Run `npm run analyze:sample`, read Whistler's write-up (no NWS mentions, numbers grounded), then `git checkout -- logs/usage.csv`.
-- [ ] Commit "T12: Whistler".
+- [x] Run `npm run record-fixtures` again (about 2,250 calls) and read the table. Then `npm test` green, and commit.
+- [x] Add an e2e check: `#/resort/whistler` renders, has no NWS panel and no CPC strip, and its avalanche card shows a rating and link but no bottom-line text. Then `npm run build && npm run e2e`.
+- [x] Run `npm run analyze:sample`, read Whistler's write-up (no NWS mentions, numbers grounded), then `git checkout -- logs/usage.csv`.
+- [x] Commit "T12: Whistler".
 
 ## Finish
 
@@ -429,3 +429,5 @@ It confirmed all eight rulings above.
 - Ruling: station times without an offset (SNOTEL, CDEC, CoCoRaHS) take the zone's standard offset all year — the old `-08:00` was that rule hard-coded to Pacific, and SNOTEL and CDEC keep standard time — cost if wrong: CoCoRaHS's 7am readings show an hour off in summer, as they did before.
 - Ruling: outside the US, `cpc` stays a source carrying ENSO only (`outlooks: []`) instead of becoming `null` as the spec says — the spec also says ENSO is global and stays, and ENSO arrives inside the CPC record, so `null` would drop it from the writer's brief and the app; keeping the type non-null also avoids churn — cost if wrong: none visible; the CPC strip says NOAA's outlooks cover the US only and shows the ENSO line.
 - Ruling: ECCC alerts are deduped on the feature id before "_" (the alert's own id; the part after is the forecast zone), not the planned `code|name|published` key — the live collection shows one feature per zone sharing that prefix, so it identifies the alert exactly — cost if wrong: two different alerts with the same id would show once; ECCC ids are unique per alert.
+- Ruling: T12 recorded fixtures for Whistler alone (`record-one.mts`, 54 Open-Meteo calls) and wrote only Whistler's forecast with the real writer (`write-one.mts`, $0.005), instead of the planned full `record-fixtures` (~2,300 calls) and `analyze:sample` (~$0.10) — nothing else changed since T7's full recording and sample, and the plan's checks (Whistler's sources live, its write-up read) are the same — cost if wrong: Whistler's fixtures are about an hour newer than the rest; replay freezes the clock at T7's recording time, and all tests pass.
+- Ruling: Whistler's summit point is approximate (DEM grid search, 7,336 ft vs the 7,347 ft lift top) — it only drives the Avalanche Canada point lookup, which resolves to a whole region — cost if wrong: none while the lookup returns the Sea-to-Sky or province-wide product.

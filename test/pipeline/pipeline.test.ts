@@ -93,9 +93,13 @@ describe('pipeline replay', () => {
     }
   });
 
-  it("adds the NWS forecasters' grid as its own model", () => {
+  it("adds the NWS forecasters' grid as its own model, except outside the US", () => {
     for (const r of result.resorts) {
       const f = r.forecast.data!;
+      if (r.nws === null) {
+        expect(f.models.find((m) => m.id === 'nws')).toBeUndefined();
+        continue;
+      }
       expect(f.models.find((m) => m.id === 'nws')?.label).toBe('NWS forecasters');
       expect(f.nwsGridFt!.summit).toBeGreaterThan(f.nwsGridFt!.base! - 1);
       expect(f.days[0].snow.summit.models.nws).toBeDefined();
@@ -144,7 +148,8 @@ describe('a source outage', () => {
     setNow(recordedAt);
     const first = await runPipeline(config, EMPTY_PREVIOUS, recordedAt);
 
-    configureHttp({ mode: 'replay', dir: FIXTURE_DIR, failPattern: /mtnpowder\.com|api\.weather\.gov\/alerts/, retryDelaysMs: [] });
+    // An alerts outage everywhere: the NWS for US resorts, ECCC for Whistler.
+    configureHttp({ mode: 'replay', dir: FIXTURE_DIR, failPattern: /mtnpowder\.com|api\.weather\.gov\/alerts|api\.weather\.gc\.ca\/collections\/weather-alerts/, retryDelaysMs: [] });
     const previous = { index: first.index, resorts: new Map(first.resorts.map((r) => [r.id, r])) };
     const later = new Date(recordedAt.getTime() + 12 * 3600_000);
     const second = await runPipeline(config, previous, later);

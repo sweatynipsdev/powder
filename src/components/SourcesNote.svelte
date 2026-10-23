@@ -27,6 +27,7 @@
   const label = (k: SourceKey) => {
     if (k === 'roads' && r.roads?.data) return (r.roads.data.agencies ?? ['Caltrans']).join(' + ');
     if (k === 'alerts' && r.nws === null) return 'ECCC alerts';
+    if (k === 'cpc' && r.nws === null) return 'ENSO (NOAA)';
     if (k === 'avalanche' && r.avalanche?.data) return r.avalanche.data.center === 'Avalanche Canada' ? 'Avalanche Canada' : 'avalanche.org';
     return LABELS[k];
   };

@@ -1519,6 +1519,35 @@
         "report": "https://www.skihood.com/mountain-report",
         "roads": "https://www.tripcheck.com/"
       }
+    },
+    {
+      "id": "whistler",
+      "name": "Whistler Blackcomb",
+      "shortName": "Whistler",
+      "region": "British Columbia",
+      "country": "CA",
+      "defaultFavorite": false,
+      "lat": 50.1146,
+      "lon": -122.9547,
+      "baseFt": 2214,
+      "summitFt": 7347,
+      "summit": { "lat": 50.0875, "lon": -122.875 },
+      "tz": "America/Vancouver",
+      "local": {
+        "openingDate": "2026-11-20",
+        "notes": ["Base 2,214 ft (675 m) at Whistler Village; the highest lift-served point is 7,347 ft (2,240 m), the top of Blackcomb's 7th Heaven chair. Two mountains with 8,171 skiable acres and about 5,000 ft of vertical on each.", "Pacific storms often bring rain or a rain-snow mix to the village while the alpine builds a base: in December 2018 the upper mountain got about 2.5 metres of snow in two weeks while the village saw a mix of rain and snow.", "Opening day is scheduled for November 20, 2026, conditions permitting (Vail Resorts' announced date)."],
+        "sources": ["https://en.wikipedia.org/wiki/Whistler_Blackcomb", "https://www.mountainwatch.com/Snow-news/storm-journal-whistler-backcombs-upper-mountain-receives-2-5-metres-in-two-weeks/", "https://snowbrains.com/vail-resorts-announces-2026-27-opening-dates-for-11-resorts/"]
+      },
+      "eccc": { "bbox": [50.05, -123, 50.15, -122.9] },
+      "avalanche": { "provider": "avcan" },
+      "links": {
+        "website": "https://www.whistlerblackcomb.com/",
+        "webcams": "https://www.whistlerblackcomb.com/the-mountain/mountain-conditions/mountain-cams.aspx",
+        "cams": [],
+        "radar": "https://weather.gc.ca/index_e.html?layers=,radar&center=50.12,-122.95&zoom=8",
+        "report": "https://www.whistlerblackcomb.com/the-mountain/mountain-conditions/snow-and-weather-report.aspx",
+        "roads": "https://www.drivebc.ca/"
+      }
     }
   ]
 }

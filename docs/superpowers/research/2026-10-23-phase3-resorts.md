@@ -302,3 +302,27 @@ Entries: `/private/tmp/claude-501/-Users-paigeschmitt-Projects-powder--claude-wo
 9. **NWS ignore lists** come from an October dry-spell discussion; winter AFDs name passes and snow levels and may need new terms. Sentence-level filtering will drop mixed sentences (SEW: any sentence with "coast", "Puget Sound" or "Olympic").
 10. Stevens `summit` is the ridge (5,725 ft DEM), not a lift top (7th Heaven top is about 5,450 ft).
 11. Two baseFt choices differ from "lowest lift": Baker 4,300 (White Salmon is 3,500) and Meadows 5,366 (Hood River Express is 4,528); Bachelor 5,700 is the Northwest Express base, not West Village.
+
+---
+
+## Whistler Blackcomb (controller, 2026-10-23)
+
+Researched by the controller (one resort). The source-level evidence for ECCC alerts, Avalanche Canada, and Open-Meteo coverage at Whistler is in `2026-10-23-phase3-sources.md`.
+
+- **Elevations** (Wikipedia infobox, en.wikipedia.org/wiki/Whistler_Blackcomb):
+  - Base 675 m (2,214 ft) at Whistler Village.
+  - The highest lift-served point is 2,240 m (7,347 ft), the top of Blackcomb's 7th Heaven chair. Whistler Peak is 2,182 m. The unserviced Blackcomb Peak is 2,440 m.
+  - The infobox snowfall figure contradicts itself (11.7 m but "415 in"), and whistler.com returns 403 to fetches, so no snowfall average was used.
+- **Points** (Open-Meteo elevation API):
+  - Base 50.1146, −122.9547 (village gondola) reads 2,228 ft.
+  - Summit 50.0875, −122.875 reads 7,336 ft. It was found by a 0.0075° DEM grid search over Blackcomb for the point nearest 7,347 ft. It's approximate. It only drives the Avalanche Canada point lookup: Open-Meteo uses the base lat/lon for both elevations, and there's no NWS grid.
+- **Opening day** 2026-11-20 (Vail Resorts' announced date, via SnowBrains: "Whistler Blackcomb: November 20").
+- **Local note on village rain:** Mountainwatch storm journal, 2018-12-27: "with a mix of rain and snow in the village, but the upper alpine received a huge amount of base-building snow".
+- **Links**, each checked with a browser User-Agent:
+  - whistlerblackcomb.com home, mountain cams and the snow and weather report all returned 200.
+  - drivebc.ca returned 200.
+  - ECCC radar `weather.gc.ca/index_e.html?layers=,radar` returned 200. The older `radar/index_e.html?id=…` URLs all 404 now.
+- **Sources recorded live** (scratchpad `record-one.mts`, 54 Open-Meteo calls): forecast ✓, CPC (ENSO only) ✓, ECCC alerts ✓ (none active), Avalanche Canada ✓ (the province-wide off-season product, "early season" ratings → no rating).
+- **Write-up check:**
+  - One Haiku write-up for Whistler alone, $0.0051. It made no NWS mentions and used the ENSO and village-rain notes.
+  - One number ("gusts under 15 mph") was still flagged as ungrounded after the retry, which is the existing handling for every resort.
