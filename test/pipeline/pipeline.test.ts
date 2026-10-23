@@ -6,7 +6,7 @@ import { setNow } from '../../pipeline/clock';
 import { loadConfig, parseConfig } from '../../pipeline/config';
 import { configureHttp } from '../../pipeline/http';
 import { EMPTY_PREVIOUS } from '../../pipeline/previous';
-import { runPipeline, type PipelineResult } from '../../pipeline/run';
+import { buildResort, runPipeline, type PipelineResult } from '../../pipeline/run';
 import type { SnowAmount } from '../../shared/types';
 import { FIXTURE_DIR, recordedAt } from '../helpers';
 
@@ -204,5 +204,14 @@ describe('resorts.json validation', () => {
     const parsed = parseConfig({ resorts: [minimal] });
     expect(parsed.resorts[0].roads).toEqual([]);
     expect(parsed.resorts[0].links.cams).toEqual([]);
+  });
+
+  it('links to an avalanche center that has no feed we may read', async () => {
+    const vail = { id: 'vail', name: 'Vail', shortName: 'Vail', region: 'Colorado', lat: 39.64, lon: -106.37, baseFt: 8120, summitFt: 11570, tz: 'America/Denver', nws: {}, links: { avalanche: 'https://avalanche.state.co.us/' } };
+    const [cfg] = parseConfig({ resorts: [vail] }).resorts;
+    configureHttp({ mode: 'replay', dir: FIXTURE_DIR, failPattern: /./, retryDelaysMs: [] });
+    const r = await buildResort(cfg, recordedAt, undefined);
+    expect(r.links.avalanche).toBe('https://avalanche.state.co.us/');
+    expect(r.avalanche).toBeNull();
   });
 });

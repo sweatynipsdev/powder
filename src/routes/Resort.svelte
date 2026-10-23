@@ -166,6 +166,10 @@
     {#if r.avalanche}
       <h2 class="section-title">Avalanche Forecast</h2>
       <AvalanchePanel avalanche={r.avalanche.data} status={r.avalanche.status} />
+    {:else if r.links.avalanche}
+      <!-- A center with no feed we may read (Colorado's CAIC): link to its forecast instead. -->
+      <h2 class="section-title">Avalanche Forecast</h2>
+      <a class="card sitelink" href={r.links.avalanche} target="_blank" rel="noopener">Avalanche forecast at {new URL(r.links.avalanche).host} →</a>
     {/if}
     {#if r.roads}
       <h2 class="section-title">Getting There</h2>

@@ -396,6 +396,8 @@ export interface ResortData {
     /** The resort's snow-report page, and a road-conditions page where Caltrans doesn't reach. */
     report?: string | null;
     roads?: string | null;
+    /** The avalanche center's forecast page, where it has no feed we may read (Colorado's CAIC). */
+    avalanche?: string | null;
   };
   analysis: ResortAnalysis | null;
 }

@@ -117,6 +117,7 @@ export async function buildResort(
       roadCams: r.roadCams,
       report: r.links.report ?? null,
       roads: r.links.roads ?? null,
+      avalanche: r.links.avalanche ?? null,
     },
     // The analysis step fills this in; keep the last one until then.
     analysis: prev?.analysis ?? null,

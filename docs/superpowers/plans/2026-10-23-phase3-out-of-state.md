@@ -171,9 +171,9 @@ export async function fetchWsdot(segments: WsdotSegmentConfig[]): Promise<RoadSe
 - Modify: `pipeline/config.ts` (`links.avalanche: z.url().optional()`), `shared/types.ts` (`links.avalanche?: string | null`), `pipeline/run.ts`, `src/routes/Resort.svelte`
 - Test: `test/pipeline/pipeline.test.ts`
 
-- [ ] **Test first:** a config with `links.avalanche` validates, and `buildResort` copies it into `links.avalanche`.
-- [ ] In `Resort.svelte`, where `AvalanchePanel` renders: when `r.avalanche?.data` is absent and `r.links.avalanche` is set, render a card reading "Avalanche forecast" with a link "<host> ↗". The host is from the URL, e.g. "avalanche.state.co.us".
-- [ ] Run `npm test` and `npm run typecheck`, then commit "T3: avalanche center link where there is no feed".
+- [x] **Test first:** a config with `links.avalanche` validates, and `buildResort` copies it into `links.avalanche`.
+- [x] In `Resort.svelte`, where `AvalanchePanel` renders: when `r.avalanche?.data` is absent and `r.links.avalanche` is set, render a card reading "Avalanche forecast" with a link "<host> ↗". The host is from the URL, e.g. "avalanche.state.co.us".
+- [x] Run `npm test` and `npm run typecheck`, then commit "T3: avalanche center link where there is no feed".
 
 ## T4. Open-Meteo budget guard
 

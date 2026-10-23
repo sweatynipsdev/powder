@@ -112,8 +112,10 @@ const resort = z.object({
       radar: z.url().optional(),
       /** The resort's own snow-report page. */
       report: z.url().optional(),
-      /** Road conditions where Caltrans doesn't cover the drive (e.g. Nevada 511). */
+      /** Road conditions where no agency we read covers the drive (e.g. Nevada or Utah 511). */
       roads: z.url().optional(),
+      /** The avalanche center's forecast page, where it has no documented feed (Colorado's CAIC). */
+      avalanche: z.url().optional(),
     })
     .default({ cams: [] }),
 });
