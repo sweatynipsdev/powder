@@ -6,6 +6,7 @@ import type { Elev, EnsembleInfo, ModelId, ModelInfo } from '../../shared/types'
 import type { ResortConfig } from '../config';
 import { fetchJson, qs } from '../http';
 import type { Hourly, MemberSeries, ModelSeries } from '../process/blend';
+import { omPacer, omWeight } from './omBudget';
 
 export const FORECAST_DAYS = 16;
 const FT_TO_M = 0.3048;
@@ -23,10 +24,12 @@ export const MODELS: { id: ModelId; om: string; label: string }[] = [
   { id: 'nbm', om: 'ncep_nbm_conus', label: 'NBM' },
 ];
 
-export const ENSEMBLES: { id: string; om: string; suffix: string; label: string }[] = [
-  { id: 'gefs', om: 'gfs025', suffix: 'ncep_gefs025', label: 'GEFS' },
-  { id: 'ecmwf-ens', om: 'ecmwf_ifs025', suffix: 'ecmwf_ifs025_ensemble', label: 'ECMWF ENS' },
+export const ENSEMBLES: { id: string; om: string; suffix: string; label: string; members: number }[] = [
+  { id: 'gefs', om: 'gfs025', suffix: 'ncep_gefs025', label: 'GEFS', members: 31 },
+  { id: 'ecmwf-ens', om: 'ecmwf_ifs025', suffix: 'ecmwf_ifs025_ensemble', label: 'ECMWF ENS', members: 51 },
 ];
+
+const ENS_VARS = ['precipitation', 'temperature_2m'];
 
 const DET_VARS = [
   'precipitation',
@@ -39,6 +42,14 @@ const DET_VARS = [
   'cloud_cover',
   'precipitation_probability',
 ];
+
+/** What each request costs against Open-Meteo's free limits (both elevations). */
+export const DET_WEIGHT = omWeight({ locations: 2, days: FORECAST_DAYS, variables: DET_VARS.length * MODELS.length });
+export const ENS_WEIGHT = omWeight({
+  locations: 2,
+  days: FORECAST_DAYS,
+  variables: ENS_VARS.length * ENSEMBLES.reduce((n, e) => n + e.members, 0),
+});
 
 interface OmLocation {
   elevation: number;
@@ -113,6 +124,7 @@ export function parseDeterministic(json: unknown): DeterministicResult {
 }
 
 export async function fetchDeterministic(r: ResortConfig): Promise<DeterministicResult> {
+  await omPacer.take(DET_WEIGHT);
   return parseDeterministic(await fetchJson(deterministicUrl(r), { timeoutMs: 45_000 }));
 }
 
@@ -125,7 +137,7 @@ export interface EnsembleResult {
 export function ensembleUrl(r: ResortConfig): string {
   return `https://ensemble-api.open-meteo.com/v1/ensemble?${qs({
     ...locationParams(r),
-    hourly: ['precipitation', 'temperature_2m'],
+    hourly: ENS_VARS,
     models: ENSEMBLES.map((e) => e.om),
   })}`;
 }
@@ -160,5 +172,6 @@ export function parseEnsemble(json: unknown): EnsembleResult {
 }
 
 export async function fetchEnsemble(r: ResortConfig): Promise<EnsembleResult> {
+  await omPacer.take(ENS_WEIGHT);
   return parseEnsemble(await fetchJson(ensembleUrl(r), { timeoutMs: 60_000 }));
 }

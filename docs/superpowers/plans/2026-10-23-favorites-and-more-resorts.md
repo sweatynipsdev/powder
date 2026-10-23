@@ -140,15 +140,15 @@
 - `export const omPacer: OmPacer`, with `perMinute` 450. `take` resolves immediately when the HTTP mode is `replay`.
 
 **Steps:**
-- [ ] Tests:
+- [x] Tests:
   - The deterministic shape (2 locations, 16 days, 9×8 variables) ≈ 16.46.
   - The ensemble shape (2, 16, 2×82) ≈ 37.49.
   - A fake clock: three `take(200)` calls → the third waits until the first is 60 s old.
   - `total` sums the weights.
-- [ ] Implement a rolling window (a queue of `[time, weight]`).
-- [ ] The fetchers call `await omPacer.take(omWeight(...))` before `fetchJson`, using `MODELS.length`, `DET_VARS.length`, `FORECAST_DAYS` and the ensemble member total (31 + 51) as constants beside `ENSEMBLES`.
-- [ ] `run.ts`: `Open-Meteo: N weighted calls this run` under the status table.
-- [ ] `npm test`, then commit.
+- [x] Implement a rolling window (a queue of `[time, weight]`).
+- [x] The fetchers call `await omPacer.take(omWeight(...))` before `fetchJson`, using `MODELS.length`, `DET_VARS.length`, `FORECAST_DAYS` and the ensemble member total (31 + 51) as constants beside `ENSEMBLES`.
+- [x] `run.ts`: `Open-Meteo: N weighted calls this run` under the status table.
+- [x] `npm test`, then commit.
 
 ### T7 — concurrent write-ups
 

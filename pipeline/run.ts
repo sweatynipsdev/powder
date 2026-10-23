@@ -24,6 +24,7 @@ import { fetchCpc } from './sources/cpc';
 import { fetchAfd, fetchAlerts, fetchNwsForecast, filterAfd } from './sources/nws';
 import { fetchNwsGrid } from './sources/nwsGrid';
 import { FORECAST_DAYS, fetchDeterministic, fetchEnsemble } from './sources/openMeteo';
+import { omPacer } from './sources/omBudget';
 import { fetchExpert } from './sources/expert';
 import { fetchReport } from './sources/report';
 import { fetchSnowpack } from './sources/snowpack';
@@ -166,8 +167,9 @@ async function main(): Promise<void> {
   if (httpMode() === 'record') writeRecordingMeta(at);
 
   const table = statusTable(result.resorts);
-  console.log(`Powder pipeline (${httpMode()}) at ${at.toISOString()} → ${outDir}\n\n${table}\n`);
-  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## Data sources\n\n${table}\n`);
+  const om = `Open-Meteo: ${Math.round(omPacer.total).toLocaleString('en-US')} weighted calls this run (free limits: 600/min, 10,000/day).`;
+  console.log(`Powder pipeline (${httpMode()}) at ${at.toISOString()} → ${outDir}\n\n${table}\n\n${om}\n`);
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## Data sources\n\n${table}\n\n${om}\n`);
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
