@@ -68,10 +68,10 @@
 - `isFavorite(id: string): boolean`.
 
 **Steps:**
-- [ ] Tests for every rule above and the risky inputs listed for T2.
-- [ ] Implement `favorites.ts`, then `favorites.svelte.ts`.
-- [ ] `vitest.config.ts` already includes `test/**`; the tests import `src/lib/favorites.ts` directly.
-- [ ] Commit.
+- [x] Tests for every rule above and the risky inputs listed for T2.
+- [x] Implement `favorites.ts`, then `favorites.svelte.ts`.
+- [x] `vitest.config.ts` already includes `test/**`; the tests import `src/lib/favorites.ts` directly.
+- [x] Commit.
 
 ### T3 — Resorts tab, star button, back behavior
 
