@@ -52,6 +52,18 @@ export function resortOpenStatus(report: ReportData | null | undefined, now: Dat
     : { state: 'not-open', text: 'Not open yet' };
 }
 
+/**
+ * Snow stations (SNOTEL, CDEC) keep local standard time all year, so a time with no offset
+ * from one gets the zone's standard (January) offset: -08:00 in California, -07:00 in Utah.
+ */
+export function stationTimeIso(local: string, tz: string): string {
+  if (local.length > 16) return local;
+  const zone = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'longOffset' })
+    .formatToParts(new Date(Date.UTC(2026, 0, 15)))
+    .find((p) => p.type === 'timeZoneName')!.value; // "GMT-07:00", or "GMT" for UTC
+  return `${local}:00${zone.replace('GMT', '') || '+00:00'}`;
+}
+
 export function last24(report: ReportData | null | undefined, snowpack: SnowpackData | null | undefined): Last24 {
   if (report?.fresh && report.h24 !== null) return { inches: report.h24, source: 'reported', at: report.updatedAt };
   if (snowpack?.newSnow?.h24 !== null && snowpack?.newSnow?.h24 !== undefined)

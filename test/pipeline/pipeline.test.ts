@@ -43,6 +43,12 @@ describe('pipeline replay', () => {
     expect(result.resorts.find((r) => r.id === 'bigbear')!.avalanche).toBeNull();
   });
 
+  it("gives the home screen WSDOT's own wording for the worst road, and Caltrans none", () => {
+    const summary = (id: string) => result.index.resorts.find((r) => r.id === id)!;
+    expect(summary('crystal').roadsText).toBe('No restrictions');
+    expect(summary('palisades').roadsText).toBeNull();
+  });
+
   it('credits Caltrans for its roads and leaves its wording to the app', () => {
     const roads = result.resorts.find((r) => r.id === 'palisades')!.roads!.data!;
     expect(roads.agencies).toEqual(['Caltrans']);

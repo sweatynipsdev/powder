@@ -37,6 +37,7 @@ export function summarize(r: ResortData, at: Date): ResortSummary {
     alerts: (r.alerts.data ?? []).map((a) => ({ event: a.event, headline: a.headline, winter: a.winter })),
     avalanche: r.avalanche?.data ? { overall: r.avalanche.data.overall, text: r.avalanche.data.overallText } : null,
     roads: r.roads?.data?.worst ?? null,
+    roadsText: r.roads?.data?.segments.find((s) => s.status === r.roads!.data!.worst)?.restriction ?? null,
     headline: r.analysis?.headline ?? null,
     staleSources: (Object.entries(statuses) as [SourceKey, SourceStatus][]).filter(([, s]) => !s.ok).map(([k]) => k),
   };

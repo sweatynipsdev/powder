@@ -361,6 +361,17 @@ describe('WSDOT pass reports', () => {
     expect(wsdotStatus('Pass closed.')).toBe('closed');
     // Chains for heavy vehicles don't make it R-3 for a car.
     expect(wsdotStatus('Traction tires required. Chains required on vehicles towing and over 10,000 GVW.')).toBe('R-1');
+    expect(wsdotStatus('Traction tires required. Chains required on all vehicles over 10,000 GVW.')).toBe('R-1');
+    // A closure for trucks isn't a closed pass, and "None" means no restrictions.
+    expect(wsdotStatus('Closed to oversize vehicles.')).toBe('unknown');
+    expect(wsdotStatus('Pass closed to all traffic.')).toBe('closed');
+    expect(wsdotStatus('None')).toBe('clear');
+  });
+
+  it('lets unknown wording one way outrank "No restrictions" the other way', () => {
+    const seg = buildWsdotSegment(cfg('Stevens Pass US 2'), parseWsdot(feed(row('Stevens Pass US 2', 'Use extreme caution.', 'No restrictions'))));
+    expect(seg.status).toBe('unknown');
+    expect(seg.restriction).toBe('Eastbound: Use extreme caution.');
   });
 
   it('never reads wording it does not know as clear', () => {
@@ -374,7 +385,8 @@ describe('WSDOT pass reports', () => {
     const seg = buildWsdotSegment(cfg('Snoqualmie Pass I-90'), parseWsdot(live));
     expect(seg).toMatchObject({ status: 'clear', restriction: 'No restrictions', stations: 0, closures: [] });
     expect(seg.notes).toEqual([OFF_SEASON, 'Travel impacts will be updated here if conditions cause delays of an hour or more.']);
-    expect(seg.worst).toMatchObject({ name: 'Snoqualmie Pass I-90', since: null });
+    // The worst line says what the restriction is; the report stays in the notes, not both.
+    expect(seg.worst).toEqual({ name: 'Snoqualmie Pass I-90', status: 'No restrictions', description: 'No restrictions', since: null });
   });
 
   it('takes the worse direction and says which one', () => {

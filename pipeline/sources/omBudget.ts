@@ -92,8 +92,6 @@ export const omPacer = new OmPacer({ perMinute: 450, maxInFlight: 4, enabled: ()
 // --- Daily budget across runs -----------------------------------------------------
 
 export const OM_LOG_HEADER = 'timestamp,trigger,weighted_calls';
-/** One resort's deterministic plus ensemble request. */
-export const PER_RESORT_WEIGHT = 54;
 /** Retries added 15% on the 2026-10-23 21:49 run (178 of 1,311). */
 export const RETRY_MARGIN = 1.15;
 /** Under the free 10,000/day and 5,000/hour, with room for a run that retries more than usual. */
@@ -122,11 +120,15 @@ export function appendOmLog(path: string, at: Date, trigger: string, weight: num
   appendFileSync(path, `${omLogLine(at, trigger, weight)}\n`);
 }
 
-/** Whether a full run now would push the last 24 hours or 60 minutes over budget. */
-export function budgetCheck(rows: OmLogRow[], now: Date, resorts: number): { day: number; hour: number; estimate: number; defer: boolean } {
+/**
+ * Whether a full run now would push the last 24 hours or 60 minutes over budget. `runWeight`
+ * is the run's weight before retries (resorts × DET_WEIGHT + ENS_WEIGHT; the caller passes
+ * it, since openMeteo.ts imports this module).
+ */
+export function budgetCheck(rows: OmLogRow[], now: Date, runWeight: number): { day: number; hour: number; estimate: number; defer: boolean } {
   const since = (ms: number) => rows.filter((r) => now.getTime() - r.at.getTime() < ms).reduce((s, r) => s + r.weight, 0);
   const day = since(86_400_000);
   const hour = since(3_600_000);
-  const estimate = Math.round(resorts * PER_RESORT_WEIGHT * RETRY_MARGIN);
+  const estimate = Math.round(runWeight * RETRY_MARGIN);
   return { day, hour, estimate, defer: day + estimate > DAY_LIMIT || hour + estimate > HOUR_LIMIT };
 }

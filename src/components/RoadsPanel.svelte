@@ -38,8 +38,7 @@
           {#each s.closures as c (c.description)}
             <p class="small secondary">⛔ {c.description}{c.start ? ` · ${clockTime(c.start)}` : ''}{c.end ? `–${clockTime(c.end)}` : ''}</p>
           {/each}
-          <!-- WSDOT's road report is both the worst line and a note (the note is for the writer). -->
-          {#each s.notes.filter((n) => n !== s.worst?.description) as n (n)}<p class="small muted">{n}</p>{/each}
+          {#each s.notes as n (n)}<p class="small muted">{n}</p>{/each}
         </li>
       {/each}
     </ul>

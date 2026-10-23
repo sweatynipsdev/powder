@@ -436,6 +436,8 @@ export interface ResortSummary {
   alerts: { event: string; headline: string; winter: boolean }[];
   avalanche: { overall: number; text: string } | null;
   roads: RoadStatus | null;
+  /** The agency's own words for that worst status (WSDOT); absent for Caltrans and older data. */
+  roadsText?: string | null;
   headline: string | null;
   staleSources: SourceKey[];
 }

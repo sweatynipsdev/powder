@@ -94,6 +94,12 @@ describe('brief', () => {
     expect(roadStatusText(seg('R-1', 'Traction tires required'))).toBe('Traction tires required');
   });
 
+  it("dates the brief in the resort's own time zone", () => {
+    const vail = resorts.find((r) => r.id === 'vail')!;
+    expect(JSON.parse(buildBrief(vail, recordedAt).json).writtenFor).toMatch(/ M[DS]T$/);
+    expect(JSON.parse(buildBrief(palisades, recordedAt).json).writtenFor).toMatch(/ P[DS]T$/);
+  });
+
   it('states whether the resort is open', () => {
     // An old report plus an announced opening date: the date settles it.
     expect(resortStatus(palisades, recordedAt)).toMatch(/^not open yet: scheduled to open \w+ Nov 25$/);

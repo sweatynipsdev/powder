@@ -411,3 +411,19 @@ export async function fetchAvcan(r: ResortConfig): Promise<AvalancheData>;  // s
 - Ruling: Alta's summit point moved to the top of the Supreme lift (grid cell 10,000 ft) — the agent's point fell in a lower NWS grid cell than the base, which inverted the "NWS forecasters" line and failed the summit ≥ base invariant — cost if wrong: none found; the point is 64 ft from the stated summit on the DEM.
 - Ruling: only Alta's fixtures were re-recorded after its fix (scratchpad `record-one.mts`, 54 Open-Meteo calls), not the full set — a full re-record is about 2,230 calls — cost if wrong: Alta's fixtures are about 40 minutes newer than the rest; replay freezes the clock at the original recording time, and all tests pass.
 - Ruling: the ranking call gets its own `max_tokens` of 16,000 (write-ups keep 8,000) — at 40 resorts the ranking used 6,868 output tokens including thinking, and at 8,000 it was cut off mid-JSON in the forced sample — cost if wrong: at most about $0.004 more per ranking at Haiku's output price.
+
+### Batch A review (2026-10-23)
+
+A whole-branch review (code-review, high) on `origin/main...HEAD` found 10 issues; all 10 checked out against the code and were fixed in one batch:
+- The budget check reads main's current log.
+- The usage-log commit runs whenever the fetch ran.
+- WSDOT: unknown outranks clear, heavy-vehicle rules don't count as car-wide, "None" means clear, and the worst line carries the restriction rather than repeating the report.
+- `writtenFor` and station times use the resort's own zone.
+- Favorites row and ranking brief: agency wording.
+- The run weight comes from `openMeteo.ts`.
+- `roads.ts` interleaves with counters.
+
+It confirmed all eight rulings above.
+
+- Ruling: in WSDOT segments only, `unknown` outranks `clear`; Caltrans keeps `unknown` lowest — for Caltrans, unknown means "no stations matched the segment", while for WSDOT it means wording we couldn't read, which must not hide behind "No restrictions" the other way — cost if wrong: a pass shows "unknown" where "clear" was right, until its wording is added.
+- Ruling: station times without an offset (SNOTEL, CDEC, CoCoRaHS) take the zone's standard offset all year — the old `-08:00` was that rule hard-coded to Pacific, and SNOTEL and CDEC keep standard time — cost if wrong: CoCoRaHS's 7am readings show an hour off in summer, as they did before.

@@ -14,10 +14,10 @@ export async function fetchRoads(r: ResortConfig): Promise<RoadsData> {
   const wsdot = r.roads.filter((s): s is WsdotSegmentConfig => s.provider === 'wsdot');
   const [ct, wa] = await Promise.all([caltrans.length ? fetchCaltrans(caltrans) : null, wsdot.length ? fetchWsdot(wsdot) : []]);
 
-  const built = new Map<object, RoadSegment>();
-  caltrans.forEach((cfg, i) => built.set(cfg, ct!.segments[i]));
-  wsdot.forEach((cfg, i) => built.set(cfg, wa[i]));
-  const segments = r.roads.map((cfg) => built.get(cfg)!);
+  // Each agency returns its segments in the order given; interleave them back into config order.
+  let c = 0;
+  let w = 0;
+  const segments: RoadSegment[] = r.roads.map((cfg) => (cfg.provider === 'caltrans' ? ct!.segments[c++] : wa[w++]));
   return {
     segments,
     worst: segments.reduce<RoadStatus>((w, s) => worse(w, s.status), 'unknown'),

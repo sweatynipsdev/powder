@@ -6,7 +6,7 @@ import type { RoadSegment, RoadStatus } from '../../shared/types';
 import { localIso } from '../clock';
 import type { WsdotSegmentConfig } from '../config';
 import { fetchJson } from '../http';
-import { SEVERITY, worse } from './roadStatus';
+import { SEVERITY } from './roadStatus';
 
 export const WSDOT_PASSES_URL =
   'https://data.wsdot.wa.gov/arcgis/rest/services/TravelInformation/TravelInfoMtPassReports/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&f=json';
@@ -41,42 +41,50 @@ export function parseWsdot(json: unknown): WsdotPass[] {
   }));
 }
 
+/** Rules aimed at trucks and trailers, not at a passenger car. */
+const HEAVY = String.raw`(?:over|towing|pulling|weighing|with|oversize|commercial|trucks?|vehicles over|vehicles towing|high[- ]profile)`;
+
 /**
- * What a direction's restriction asks of a passenger car. The car-wide wording is checked
- * before "traction tires", so "chains required on vehicles towing" stays R-1 for a car.
- * Wording we haven't seen is unknown, never clear.
+ * What a direction's restriction asks of a passenger car. Rules for heavy vehicles ("chains
+ * required on all vehicles over 10,000 GVW", "closed to oversize vehicles") don't count, so
+ * a car under those is still on "traction tires required". Wording we haven't seen is
+ * unknown, never clear.
  */
 export function wsdotStatus(message: string): RoadStatus | null {
   const m = message.trim().toLowerCase();
   if (!m) return null;
-  if (/\bclosed\b/.test(m)) return 'closed';
+  if (new RegExp(String.raw`\bclosed\b(?!\s+to\s+${HEAVY})`).test(m)) return 'closed';
   if (/chains? (?:are )?required on all vehicles except/.test(m)) return 'R-2';
-  if (/chains? (?:are )?required on all vehicles/.test(m)) return 'R-3';
+  if (new RegExp(String.raw`chains? (?:are )?required on all vehicles\b(?!\s+${HEAVY})`).test(m)) return 'R-3';
   if (/traction tires (?:are )?required/.test(m)) return 'R-1';
   if (/traction tires (?:are )?advised/.test(m)) return 'advisory';
-  if (/^no restrictions\.?$/.test(m)) return 'clear';
+  if (/^(?:no restrictions|none)\.?$/.test(m)) return 'clear';
   return 'unknown';
 }
+
+/** Unrecognized wording outranks "clear": a "No restrictions" the other way mustn't hide it. */
+const rank = (s: RoadStatus) => (s === 'unknown' ? SEVERITY.indexOf('clear') + 0.5 : SEVERITY.indexOf(s));
 
 export function buildWsdotSegment(cfg: WsdotSegmentConfig, passes: WsdotPass[]): RoadSegment {
   const pass = passes.find((p) => p.name === cfg.pass);
   if (!pass) throw new Error(`WSDOT has no pass report named "${cfg.pass}"`);
 
   const rated = pass.directions.map((d) => ({ ...d, status: wsdotStatus(d.message) ?? 'unknown' }));
-  const worst = rated.reduce<(typeof rated)[number] | null>((w, d) => (!w || SEVERITY.indexOf(d.status) > SEVERITY.indexOf(w.status) ? d : w), null);
-  const status = rated.reduce<RoadStatus>((s, d) => worse(s, d.status), 'unknown');
+  const worst = rated.reduce<(typeof rated)[number] | null>((w, d) => (!w || rank(d.status) > rank(w.status) ? d : w), null);
   const directionsDiffer = new Set(rated.map((d) => d.status)).size > 1;
+  const restriction = worst ? (directionsDiffer && worst.direction ? `${worst.direction}: ${worst.message}` : worst.message) : null;
 
   return {
     label: cfg.label,
     route: cfg.route,
-    status,
-    restriction: worst ? (directionsDiffer && worst.direction ? `${worst.direction}: ${worst.message}` : worst.message) : null,
+    status: worst?.status ?? 'unknown',
+    restriction,
     stations: 0,
-    worst: worst && { name: pass.name, status: worst.message, description: pass.roadCondition, since: pass.displayDate },
+    // Like Caltrans's worst station: who says so, what it says, since when.
+    worst: worst && restriction ? { name: pass.name, status: worst.message, description: restriction, since: pass.displayDate } : null,
     closures: [],
-    // Shown, never parsed for status: Mt. Baker's report says the road is closed above the
-    // ski area all winter while the road to it is open.
+    // Shown and given to the writer, never parsed for status: Mt. Baker's report says the
+    // road is closed above the ski area all winter while the road to it is open.
     notes: [pass.roadCondition, pass.weather].filter(Boolean),
   };
 }

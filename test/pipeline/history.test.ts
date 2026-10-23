@@ -17,7 +17,7 @@ import {
 } from '../../pipeline/history';
 import { addDays } from '../../pipeline/clock';
 import { refreshCaption, UPDATE_TIMES_UTC } from '../../shared/schedule';
-import { resortOpenStatus } from '../../shared/status';
+import { resortOpenStatus, stationTimeIso } from '../../shared/status';
 import type { ReportData } from '../../shared/types';
 
 /** A morning run on `date` forecasting `snow` for each model for the day before it observes. */
@@ -138,6 +138,12 @@ describe('update times', () => {
     expect(refreshCaption('America/Denver', new Date('2026-12-01T12:00:00Z'))).toBe('about 6:20am and 5:20pm MST');
     expect(refreshCaption('America/Denver', new Date('2026-07-01T12:00:00Z'))).toBe('about 7:20am and 6:20pm MDT');
     expect(refreshCaption('America/Los_Angeles', new Date('2026-12-01T12:00:00Z'))).toBe('about 5:20am and 4:20pm PST');
+  });
+
+  it("reads a snow station's clock as local standard time, all year", () => {
+    expect(stationTimeIso('2026-12-02T07:00', 'America/Denver')).toBe('2026-12-02T07:00:00-07:00');
+    expect(stationTimeIso('2026-07-02T07:00', 'America/Los_Angeles')).toBe('2026-07-02T07:00:00-08:00');
+    expect(stationTimeIso('2026-12-02T15:00:00Z', 'America/Denver')).toBe('2026-12-02T15:00:00Z');
   });
 
   it('matches the cron lines in the update workflow', () => {

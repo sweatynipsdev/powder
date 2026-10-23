@@ -1,6 +1,7 @@
 <script lang="ts">
   // The snow summary strip: what fell, the last 24 hours, then the next 16 days in
   // groups, scrolled so "Last 24 Hours" leads. Tap a day for its details.
+  import { stationTimeIso } from '../../shared/status';
   import type { Elev, ForecastData, Last24, SnowAmount, SnowQuality } from '../../shared/types';
   import {
     BIG_DAY_IN,
@@ -128,7 +129,7 @@
     <div class="now" bind:this={nowBox}>
       <span class="nowlabel">Last 24 Hours</span>
       <div class="nowval">{last24.inches === null ? '—' : `${fmtSnow(last24.inches)}"`}</div>
-      <span class="small muted">{last24.at ? clockTime(last24.at.length <= 16 ? `${last24.at}:00-08:00` : last24.at, tz) : ''}</span>
+      <span class="small muted">{last24.at ? clockTime(stationTimeIso(last24.at, tz), tz) : ''}</span>
       {#if last24.source === 'estimated'}<span class="badge">Estimated</span>{:else if last24.source === 'reported'}<span class="badge reported">Reported</span>{/if}
     </div>
 

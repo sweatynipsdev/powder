@@ -56,7 +56,7 @@
       {#each winter as a (a.headline)}
         <span class="status-pill critical"><span class="d"></span>{a.event}</span>
       {/each}
-      {#if road}<span class="status-pill {road.tone}"><span class="d"></span>Roads: {road.label}</span>{/if}
+      {#if road}<span class="status-pill {road.tone}"><span class="d"></span>Roads: {r.roadsText ?? road.label}</span>{/if}
       {#if r.avalanche && r.avalanche.overall > 0}
         <span class="status-pill {avalancheTone(r.avalanche.overall)}"><span class="d"></span>Avalanche: {r.avalanche.text}</span>
       {/if}

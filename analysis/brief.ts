@@ -140,6 +140,13 @@ export function roadStatusText(s: RoadSegment): string {
   return `chain control ${s.status}`;
 }
 
+/** The drive's worst segment, in the same words as the resort brief. */
+function worstRoadText(r: ResortData): string {
+  const roads = r.roads?.data;
+  const seg = roads?.segments.find((s) => s.status === roads.worst);
+  return seg ? roadStatusText(seg) : 'n/a';
+}
+
 function ago(iso: string | null, now: Date): string {
   if (!iso) return 'unknown time';
   const h = Math.round((now.getTime() - Date.parse(iso)) / 3_600_000);
@@ -181,7 +188,7 @@ export function buildBrief(r: ResortData, now: Date): Brief {
 
   const brief = {
     resort: { name: r.name, region: r.region, baseFt: fmtFt(r.baseFt), summitFt: fmtFt(r.summitFt) },
-    writtenFor: `${fmtDay(now.toLocaleDateString('en-CA', { timeZone: r.tz }))}, ${now.toLocaleTimeString('en-US', { timeZone: r.tz, hour: 'numeric', minute: '2-digit' })} Pacific`,
+    writtenFor: `${fmtDay(now.toLocaleDateString('en-CA', { timeZone: r.tz }))}, ${now.toLocaleTimeString('en-US', { timeZone: r.tz, hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}`,
     howToRead:
       'Snow in inches. "X (A-B)" means best estimate X, likely range A to B (middle half of ensemble members, or the spread of models when ensembles are missing). "<1" means a dusting under an inch. Daytime is 5am-5pm, overnight is 5pm-5am the next morning. "models" are single runs of each forecast model (GFS, ECMWF, ICON, GEM, ECMWF AI, and the short-range HRRR, NAM 3km and NBM); "NWS forecasters" is the hand-edited forecast from the local National Weather Service office. The ensembles are separate and only feed the ranges. Gusts and temperatures are forecasts, not measurements.',
     resortStatus: resortStatus(r, now),
@@ -291,7 +298,7 @@ export function buildRankingBrief(resorts: ResortData[], now: Date): string {
         : 'unavailable',
       days6to10Summit: f ? `${fmtSnowAmount(f.buckets.d6_10.summit)}, confidence ${confidenceLabel(f.buckets.d6_10.summit)}` : 'unavailable',
       resortStatus: resortStatus(r, now),
-      roads: r.roads?.data?.worst ?? 'n/a',
+      roads: worstRoadText(r),
       avalanche: r.avalanche?.data ? r.avalanche.data.overallText : 'n/a',
       headline: r.analysis?.headline ?? null,
     };

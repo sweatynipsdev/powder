@@ -104,21 +104,21 @@ describe('daily budget across runs', () => {
   });
 
   it('counts only the last 24 hours and the last hour', () => {
-    const c = budgetCheck([row(24 * 60, 5000), row(23 * 60, 1000), row(59, 200)], now, 41);
+    const c = budgetCheck([row(24 * 60, 5000), row(23 * 60, 1000), row(59, 200)], now, 41 * 54);
     expect(c.day).toBe(1200);
     expect(c.hour).toBe(200);
     expect(c.estimate).toBe(2546);
   });
 
   it('defers when the day or the hour would go over', () => {
-    expect(budgetCheck([row(600, 6900)], now, 41).defer).toBe(false);
-    expect(budgetCheck([row(600, 7000)], now, 41).defer).toBe(true);
-    expect(budgetCheck([row(30, 2400)], now, 41).defer).toBe(true);
-    expect(budgetCheck([row(90, 2400)], now, 41).defer).toBe(false);
+    expect(budgetCheck([row(600, 6900)], now, 41 * 54).defer).toBe(false);
+    expect(budgetCheck([row(600, 7000)], now, 41 * 54).defer).toBe(true);
+    expect(budgetCheck([row(30, 2400)], now, 41 * 54).defer).toBe(true);
+    expect(budgetCheck([row(90, 2400)], now, 41 * 54).defer).toBe(false);
   });
 
   it('never defers on an empty log (the first run after this ships)', () => {
-    expect(budgetCheck([], now, 41)).toEqual({ day: 0, hour: 0, estimate: 2546, defer: false });
+    expect(budgetCheck([], now, 41 * 54)).toEqual({ day: 0, hour: 0, estimate: 2546, defer: false });
   });
 
   it('writes the header once, then one line per run', () => {

@@ -70,11 +70,17 @@ jobs:
       # Open-Meteo's free tier is 10,000 weighted calls a day; the two scheduled runs use about
       # half. A push whose full update would take the last 24 hours (or hour) over budget is
       # deferred: nothing below runs, and the next scheduled run deploys it. Scheduled and
-      # manual runs never defer.
+      # manual runs never defer. The log is read from main as it is now, not this push's
+      # checkout: a scheduled run that finished while this push waited in the queue has
+      # committed its row since.
       - name: Check the Open-Meteo budget
         id: budget
         if: github.event_name == 'push' && steps.mode.outputs.mode == 'full'
-        run: npm run --silent om-budget
+        run: |
+          if ! { git fetch --quiet --depth=1 origin main && git show FETCH_HEAD:logs/openmeteo.csv > "$RUNNER_TEMP/openmeteo.csv"; }; then
+            cp logs/openmeteo.csv "$RUNNER_TEMP/openmeteo.csv"
+          fi
+          npm run --silent om-budget -- "$RUNNER_TEMP/openmeteo.csv"
 
       # Falls back to a full update if the live data is missing anything.
       - name: Reuse the live data
@@ -90,6 +96,7 @@ jobs:
         run: npm run calibrate
 
       - name: Fetch and process forecast data
+        id: fetch
         if: (steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure') && steps.budget.outputs.defer != 'true'
         run: npm run pipeline
         env:
@@ -118,9 +125,11 @@ jobs:
 
       # One line per run: a cost history plus the forecast/observation log the local model
       # learns from. The commit also keeps GitHub from switching off this schedule (it does
-      # that after 60 days without repository activity).
+      # that after 60 days without repository activity). It runs whenever the fetch did, even
+      # if the analysis or deploy failed after it, so the budget guard never loses a run's
+      # Open-Meteo usage.
       - name: Commit the usage log and forecast history
-        if: (steps.mode.outputs.mode == 'full' || steps.reuse.outcome == 'failure') && steps.budget.outputs.defer != 'true'
+        if: ${{ !cancelled() && steps.fetch.outcome != 'skipped' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
