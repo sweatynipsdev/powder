@@ -155,6 +155,30 @@ export function parseAfd(office: string, productText: string, issuedAt: string, 
   };
 }
 
+/**
+ * Drops sentences about other parts of the office's region (e.g. the Oregon border in a Reno
+ * discussion used for Tahoe), so they can't leak into the resort's write-up.
+ */
+export function filterAfd(afd: AfdData, ignore: string[]): AfdData {
+  if (ignore.length === 0) return afd;
+  const patterns = ignore.map((s) => s.toLowerCase());
+  const keep = (sentence: string) => !patterns.some((p) => sentence.toLowerCase().includes(p));
+  const filter = (text: string | null) => {
+    if (!text) return text;
+    const out = text
+      .split('\n\n')
+      .map((para) => {
+        const bullet = para.startsWith('* ');
+        const sentences = (bullet ? para.slice(2) : para).split(/(?<=[.!?])\s+(?=[A-Z])/).filter(keep);
+        return sentences.length ? (bullet ? '* ' : '') + sentences.join(' ') : '';
+      })
+      .filter(Boolean)
+      .join('\n\n');
+    return out || null;
+  };
+  return { ...afd, keyMessages: filter(afd.keyMessages), discussion: filter(afd.discussion) };
+}
+
 interface ProductList {
   '@graph': { '@id': string; issuanceTime: string }[];
 }

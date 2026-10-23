@@ -3,7 +3,7 @@ import { loadConfig } from '../../pipeline/config';
 import { parseAvalanche } from '../../pipeline/sources/avalanche';
 import { buildSegment, normalizeChainStatus, parseCc, parseRoadsText, worse } from '../../pipeline/sources/caltrans';
 import { kmlPoint, normalizeCategory, parseArcPoint, parseEnso, parseKml, pointInRing } from '../../pipeline/sources/cpc';
-import { afdSections, parseAfd, parseAlerts, unwrap } from '../../pipeline/sources/nws';
+import { afdSections, filterAfd, parseAfd, parseAlerts, unwrap } from '../../pipeline/sources/nws';
 import { parseDeterministic, parseEnsemble } from '../../pipeline/sources/openMeteo';
 import { normalizeTimestamp, num, parseMtnpowder } from '../../pipeline/sources/report';
 import { cdecDate, cocorahsStation, parseAcis, parseAwdb, parseCdec } from '../../pipeline/sources/snowpack';
@@ -124,6 +124,20 @@ describe('NWS', () => {
     expect(unwrap(s.get('KEY MESSAGES')!)).toBe('* Snow tonight above 7000 ft.');
     const afd = parseAfd('REV', text, '2026-10-23T09:40:00Z', 'https://example');
     expect(afd.discussion).toBe('A cold front moves in.');
+  });
+
+  it('drops forecast-discussion sentences about other parts of the region', () => {
+    const afd = {
+      office: 'REV',
+      issuedAt: 'x',
+      url: 'u',
+      keyMessages: '* Dry weekend. Showers near the Oregon border Monday.\n\n* Showers in northeast CA only.',
+      discussion: 'A ridge builds over the Sierra. Breezy near Pyramid Lake. Snow returns early November.',
+    };
+    const out = filterAfd(afd, ['Oregon border', 'northeast CA', 'Pyramid Lake']);
+    expect(out.keyMessages).toBe('* Dry weekend.');
+    expect(out.discussion).toBe('A ridge builds over the Sierra. Snow returns early November.');
+    expect(filterAfd(afd, [])).toBe(afd);
   });
 
   it('parses alerts and flags winter products', () => {

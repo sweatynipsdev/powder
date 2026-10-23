@@ -10,10 +10,22 @@ Requires Node 22 or newer.
 
 ```bash
 npm install
+cp .env.example .env    # then put your Anthropic API key in .env (gitignored)
 npm run pipeline        # fetch everything live → public/data/
+npm run analyze         # write the daily analysis into public/data/
 npm test                # offline tests against recorded fixtures
 npm run typecheck
 ```
+
+### Secrets
+
+The only secret is `ANTHROPIC_API_KEY`, and it's used only by the analysis step.
+
+- **Locally** it lives in `.env`, which is gitignored.
+- **In GitHub** it's an Actions secret: Settings → Secrets and variables → Actions → `ANTHROPIC_API_KEY`.
+- **The app never sees it.** It reads only the static JSON.
+
+Without a key, `npm run analyze` keeps the previous write-ups and exits cleanly, so the data still updates.
 
 ## Commands
 
@@ -23,6 +35,9 @@ npm run typecheck
 | `npm run record-fixtures` | Same as `pipeline`, but also saves every HTTP response to `test/fixtures/http/`. Re-run it when a source changes format. |
 | `npm run pipeline:replay` | Runs the pipeline with no network, replaying the saved fixtures, with the clock frozen to the recording time. |
 | `npm test` | Unit tests plus a full offline replay of the pipeline, including a simulated outage. |
+| `npm run analyze` | Writes each resort's daily analysis and the cross-resort ranking into the JSON. Appends a line to `logs/usage.csv`. |
+| `npm run analyze -- --force` | Rewrites everything regardless of schedule or change detection. |
+| `npm run analyze:sample` | `--force`, and also writes `samples/analysis-sample.md` for reading the write-ups side by side. |
 
 Environment variables (all optional):
 
@@ -53,6 +68,19 @@ When a source fails, the last good value is carried forward and marked stale, an
 - **Blend:** the mean of the models covering each hour, with HRRR and NBM counted only in the first 48h. Past 72h it leans on the ensemble mean, up to 70% by day 7. Every total is a sum of the same hourly blend, so days, buckets and windows always add up.
 - **Range:** ensemble P25–P75, widened to include the blend. Without ensembles, it's the spread of the deterministic models. **Confidence** comes from how wide that range is.
 
+## The daily analysis
+
+`analysis/` writes an OpenSnow-style post per resort: headline, next 5 days, days 6–16, model agreement with a confidence level, and what to watch. It also writes one "best day / best resort this week" ranking.
+
+- **Model:** `claude-haiku-5-5` at effort `medium`. Override with `POWDER_MODEL` / `POWDER_EFFORT`. A run costs about $0.005–0.01, so the season costs well under $1/month. `high` effort cost about 3× more in testing without clearly better writing.
+- **Input:** a compact brief (`analysis/brief.ts`) with every number pre-formatted the way the app shows it. It spells out conclusions like "snow level above the summit: rain on the whole mountain" and "not open yet: 0 of 25 lifts" rather than leaving them to inference. The NWS forecast discussion is included, minus sentences about other parts of the office's region (`nws.ignore`).
+- **No invented numbers:** the prompt says to use only numbers in the brief. `analysis/grounding.ts` then checks every unit-tagged number in the output against brief numbers of the same unit. A snow claim must match a snow number; it can't borrow a temperature. Any miss, or a mention of "the brief" or a field name, triggers one retry that names the problem. If it still fails, the text is published with the offending numbers listed in `ungrounded`.
+- **Cost control:**
+  - The static system prompt is cached, so calls 2–4 of a run read it from cache.
+  - Morning runs rewrite everything; afternoon runs rewrite only resorts whose forecast materially changed (`analysis/fingerprint.ts`).
+  - A failed or declined call keeps the previous write-up.
+  - Token usage and cost for every run go to `logs/usage.csv`.
+
 ## Adding a resort
 
 Add an object to `resorts.json`. Only the core fields are required:
@@ -69,6 +97,8 @@ Add an object to `resorts.json`. Only the core fields are required:
   "nws": { "afdOffice": "REV" }     // NWS office whose forecast discussion covers it
 }
 ```
+
+`nws.area` (e.g. `"Lake Tahoe and the Sierra crest near I-80"`) tells the write-up which part of the office's discussion applies. `nws.ignore` drops discussion sentences that mention other places (e.g. `"Oregon border"`). Both are optional but worth setting.
 
 Optional blocks turn on more panels. Each panel hides when its block is missing:
 

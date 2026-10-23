@@ -20,7 +20,7 @@ import { attempt, carryForward, errorMessage } from './process/stale';
 import { fetchAvalanche } from './sources/avalanche';
 import { fetchRoads } from './sources/caltrans';
 import { fetchCpc } from './sources/cpc';
-import { fetchAfd, fetchAlerts, fetchNwsForecast } from './sources/nws';
+import { fetchAfd, fetchAlerts, fetchNwsForecast, filterAfd } from './sources/nws';
 import { FORECAST_DAYS, fetchDeterministic, fetchEnsemble } from './sources/openMeteo';
 import { fetchReport } from './sources/report';
 import { fetchSnowpack } from './sources/snowpack';
@@ -52,7 +52,7 @@ export async function buildResort(r: ResortConfig, at: Date, prev: ResortData | 
     optional(!!r.snowpack, () => fetchSnowpack(r), at),
     attempt(() => fetchNwsForecast(r), at),
     attempt(() => fetchAlerts(r), at),
-    attempt(() => fetchAfd(r.nws.afdOffice), at),
+    attempt(async () => filterAfd(await fetchAfd(r.nws.afdOffice), r.nws.ignore), at),
     optional(!!r.avalanche, () => fetchAvalanche(r), at),
     optional(r.roads.length > 0, () => fetchRoads(r), at),
     optional(!!r.report, () => fetchReport(r), at),
@@ -68,6 +68,7 @@ export async function buildResort(r: ResortConfig, at: Date, prev: ResortData | 
     lon: r.lon,
     baseFt: r.baseFt,
     summitFt: r.summitFt,
+    nwsArea: r.nws.area ?? r.region,
     generatedAt: at.toISOString(),
     forecast: carryForward(forecast, prev?.forecast),
     cpc: carryForward(cpc, prev?.cpc),

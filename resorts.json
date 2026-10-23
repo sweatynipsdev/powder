@@ -10,7 +10,11 @@
       "baseFt": 6200,
       "summitFt": 9050,
       "tz": "America/Los_Angeles",
-      "nws": { "afdOffice": "REV" },
+      "nws": {
+        "afdOffice": "REV",
+        "area": "Lake Tahoe and the Sierra crest near I-80",
+        "ignore": ["Oregon border", "northeast CA", "northeast California", "northwest NV", "northwest Nevada", "far northeast", "Lassen", "Plumas", "Pershing", "Churchill", "Pyramid Lake", "Mineral", "Mono", "Surprise Valley"]
+      },
       "snowpack": { "type": "awdb", "id": "784:CA:SNTL", "name": "Palisades Tahoe SNOTEL", "elevFt": 8010 },
       "avalanche": { "center": "SAC", "zoneId": 2458 },
       "report": {
@@ -48,7 +52,11 @@
       "baseFt": 6835,
       "summitFt": 8637,
       "tz": "America/Los_Angeles",
-      "nws": { "afdOffice": "REV" },
+      "nws": {
+        "afdOffice": "REV",
+        "area": "Lake Tahoe and the Sierra crest near I-80",
+        "ignore": ["Oregon border", "northeast CA", "northeast California", "northwest NV", "northwest Nevada", "far northeast", "Lassen", "Plumas", "Pershing", "Churchill", "Pyramid Lake", "Mineral", "Mono", "Surprise Valley"]
+      },
       "snowpack": { "type": "awdb", "id": "784:CA:SNTL", "name": "Palisades Tahoe SNOTEL", "elevFt": 8010 },
       "avalanche": { "center": "SAC", "zoneId": 2458 },
       "report": {
@@ -86,7 +94,11 @@
       "baseFt": 7953,
       "summitFt": 11053,
       "tz": "America/Los_Angeles",
-      "nws": { "afdOffice": "REV" },
+      "nws": {
+        "afdOffice": "REV",
+        "area": "Mono County and the Eastern Sierra around Mammoth Lakes",
+        "ignore": ["Oregon border", "northeast CA", "northeast California", "northwest NV", "northwest Nevada", "far northeast", "Lassen", "Plumas", "Pershing", "Churchill", "Pyramid Lake", "Tahoe", "I-80", "Surprise Valley"]
+      },
       "snowpack": { "type": "cdec", "id": "MHP", "name": "Mammoth Pass", "elevFt": 9400 },
       "avalanche": { "center": "ESAC", "zoneId": 128 },
       "report": { "adapter": "mtnpowder", "resortId": 60, "stations": ["BaseArea", "MidMountainArea", "SummitArea"] },
@@ -119,7 +131,11 @@
       "baseFt": 7140,
       "summitFt": 8805,
       "tz": "America/Los_Angeles",
-      "nws": { "afdOffice": "SGX" },
+      "nws": {
+        "afdOffice": "SGX",
+        "area": "the San Bernardino Mountains",
+        "ignore": ["marine layer", "coastal", "beaches", "surf", "San Diego", "Orange County", "Coachella", "low desert"]
+      },
       "snowpack": { "type": "acis", "id": "US1CASR0098", "name": "Big Bear City 0.4 W (CoCoRaHS)", "elevFt": 6777 },
       "report": { "adapter": "mtnpowder", "resortId": 57, "stations": ["BaseArea", "MidMountainArea", "SummitArea"], "extraResortIds": [58] },
       "roads": [

@@ -15,5 +15,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["shared", "pipeline", "test"]
+  "include": ["shared", "pipeline", "analysis", "test"]
 }

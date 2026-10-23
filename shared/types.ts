@@ -300,6 +300,8 @@ export interface ResortData {
   lon: number;
   baseFt: number;
   summitFt: number;
+  /** The part of the NWS office's region this resort is in. */
+  nwsArea: string;
   generatedAt: string;
   forecast: Sourced<ForecastData>;
   cpc: Sourced<CpcData>;

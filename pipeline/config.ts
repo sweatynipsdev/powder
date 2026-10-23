@@ -29,7 +29,13 @@ const resort = z.object({
   baseFt: z.number().positive(),
   summitFt: z.number().positive(),
   tz: z.string(),
-  nws: z.object({ afdOffice: z.string().length(3) }),
+  nws: z.object({
+    afdOffice: z.string().length(3),
+    /** The part of the office's region this resort sits in, so the write-up ignores the rest. */
+    area: z.string().optional(),
+    /** Forecast-discussion sentences mentioning any of these (other parts of the region) are dropped. */
+    ignore: z.array(z.string()).default([]),
+  }),
   snowpack: z
     .object({
       type: z.enum(['awdb', 'cdec', 'acis']),

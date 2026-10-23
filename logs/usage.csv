@@ -1,0 +1,7 @@
+timestamp,model,mode,calls,regenerated,input_tokens,cache_read_tokens,cache_write_tokens,output_tokens,cost_usd
+2026-10-23T17:10:36.780Z,claude-haiku-5-5,force,5,palisades;alpine;mammoth;bigbear,25909,5622,2966,4618,0.00533
+2026-10-23T17:14:50.546Z,claude-haiku-5-5,force,5,palisades;alpine;mammoth;bigbear,29217,6192,3194,4097,0.00543
+2026-10-23T17:15:42.219Z,claude-haiku-5-5,force,6,palisades;alpine;mammoth;bigbear,35622,11450,0,25611,0.01648
+2026-10-23T17:18:25.542Z,claude-haiku-5-5,force,5,palisades;alpine;mammoth;bigbear,29324,7514,2128,6735,0.00664
+2026-10-23T17:19:18.936Z,claude-haiku-5-5,force,6,palisades;alpine;mammoth;bigbear,35735,8452,3275,12343,0.01024
+2026-10-23T17:22:22.001Z,claude-haiku-5-5,force,5,palisades;alpine;mammoth;bigbear,27786,9614,0,6844,0.00630
