@@ -28,7 +28,7 @@
     <h1>Favorites</h1>
     <ElevationToggle />
   </div>
-  <p class="updated small muted">Updated {timeAgo(index.generatedAt)} · refreshes about 5am and 4pm</p>
+  <p class="updated small muted">Updated {timeAgo(index.generatedAt)} · refreshes early morning and evening</p>
 
   <AlertsBanner {alerts} />
 

@@ -135,9 +135,9 @@ describe('resort open status', () => {
 
 describe('update times', () => {
   it("says when data refreshes in the resort's own time, through daylight saving", () => {
-    expect(refreshCaption('America/Denver', new Date('2026-12-01T12:00:00Z'))).toBe('about 6:20am and 5:20pm MST');
-    expect(refreshCaption('America/Denver', new Date('2026-07-01T12:00:00Z'))).toBe('about 7:20am and 6:20pm MDT');
-    expect(refreshCaption('America/Los_Angeles', new Date('2026-12-01T12:00:00Z'))).toBe('about 5:20am and 4:20pm PST');
+    expect(refreshCaption('America/Denver', new Date('2026-12-01T12:00:00Z'))).toBe('2:20am and 5:20pm MST');
+    expect(refreshCaption('America/Denver', new Date('2026-07-01T12:00:00Z'))).toBe('3:20am and 6:20pm MDT');
+    expect(refreshCaption('America/Los_Angeles', new Date('2026-12-01T12:00:00Z'))).toBe('1:20am and 4:20pm PST');
   });
 
   it("reads a snow station's clock as local standard time, all year", () => {

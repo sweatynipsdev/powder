@@ -4,9 +4,10 @@ name: Update forecasts
 
 on:
   schedule:
-    # GitHub cron is UTC and ignores daylight saving. These land at 5:20am / 4:20pm PST
-    # (6:20am / 5:20pm PDT); off the top of the hour, when GitHub's scheduler is busiest.
-    - cron: '20 13 * * *'
+    # GitHub cron is UTC and ignores daylight saving: 1:20am / 4:20pm PST (2:20am / 5:20pm PDT),
+    # off the top of the hour, when GitHub's scheduler is busiest. GitHub has been starting
+    # these 3-4.5 hours late (Oct 2026), so the morning run is set early to land by about 5-6am.
+    - cron: '20 9 * * *'
     - cron: '20 0 * * *'
   push:
     branches: [main]

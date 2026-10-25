@@ -10,8 +10,9 @@
   import Resorts from './routes/Resorts.svelte';
   import Roads from './routes/Roads.svelte';
 
-  /** Data older than this means scheduled updates have stopped. */
-  const STALE_HOURS = 14;
+  /** Data older than this means scheduled updates have stopped. The runs are 9 and 15 hours
+   *  apart, and GitHub starts them a few hours late by varying amounts. */
+  const STALE_HOURS = 24;
 
   let online = $state(navigator.onLine);
   window.addEventListener('online', () => (online = true));
@@ -71,7 +72,7 @@
   {#if !online}
     <p class="banner">Offline · showing data from {clockTime(generatedAt)}</p>
   {:else if ageHours > STALE_HOURS}
-    <p class="banner">Data is {timeAgo(generatedAt)} old. Updates may have stopped.</p>
+    <p class="banner">Last update was {timeAgo(generatedAt)}. Updates may have stopped.</p>
   {/if}
 
   {#if router.route.name === 'resort'}

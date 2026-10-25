@@ -42,7 +42,7 @@
 </script>
 
 <footer class="card small">
-  <p>Updated <strong>{clockTime(r.generatedAt, r.tz)}</strong> ({timeAgo(r.generatedAt)}). Data refreshes {refreshCaption(r.tz, new Date())}.</p>
+  <p>Updated <strong>{clockTime(r.generatedAt, r.tz)}</strong> ({timeAgo(r.generatedAt)}). Updates are scheduled for {refreshCaption(r.tz, new Date())} and often start a few hours late.</p>
   <ul>
     {#each rows as { k, s } (k)}
       <li>
