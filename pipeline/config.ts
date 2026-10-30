@@ -4,6 +4,17 @@ import { z } from 'zod';
 
 const link = z.object({ label: z.string(), url: z.url() });
 
+/** `url` is the still image. `video` is an HLS playlist; `player` is the camera host's embed page. */
+const cam = link
+  .extend({
+    video: z
+      .url()
+      .refine((u) => new URL(u).pathname.endsWith('.m3u8'), 'video must be an HLS playlist (.m3u8)')
+      .optional(),
+    player: z.url().optional(),
+  })
+  .refine((c) => !(c.video && c.player), 'a cam has video or player, not both');
+
 const caltransSegment = z.object({
   /** The default, so California entries don't have to say it. */
   provider: z.literal('caltrans').default('caltrans'),
@@ -110,12 +121,12 @@ const resort = z.object({
     })
     .optional(),
   roads: z.array(roadSegment).default([]),
-  roadCams: z.array(link).default([]),
+  roadCams: z.array(cam).default([]),
   links: z
     .object({
       website: z.url().optional(),
       webcams: z.url().optional(),
-      cams: z.array(link).default([]),
+      cams: z.array(cam).default([]),
       radar: z.url().optional(),
       /** The resort's own snow-report page. */
       report: z.url().optional(),

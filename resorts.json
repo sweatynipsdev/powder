@@ -52,15 +52,15 @@
         { "label": "SR-89 Truckee → Tahoe City", "route": "SR-89", "district": 3, "bbox": [39.15, -120.22, 39.33, -120.13], "textRoute": "SR 89", "textMatch": ["Truckee", "Tahoe City", "Olympic", "Squaw", "Palisades", "Alpine Meadows", "Placer"] }
       ],
       "roadCams": [
-        { "label": "Hwy 89 at Olympic Valley", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy89atolympicvalley/hwy89atolympicvalley.jpg" },
+        { "label": "Hwy 89 at Olympic Valley", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy89atolympicvalley/hwy89atolympicvalley.jpg", "video": "https://wzmedia.dot.ca.gov/D3/89_Olympic_Valley_Rd_PLA89_NB.stream/playlist.m3u8" },
         { "label": "I-80 at Donner Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atdonnersummit/hwy80atdonnersummit.jpg" }
       ],
       "links": {
         "website": "https://www.palisadestahoe.com/",
         "webcams": "https://www.palisadestahoe.com/mountain-information/webcams",
         "cams": [
-          { "label": "Palisades Base", "url": "https://relay.ozolio.com/pub.api?cmd=poster&oid=EMB_ZIGI00000147" },
-          { "label": "High Camp", "url": "https://relay.ozolio.com/pub.api?cmd=poster&oid=EMB_EIFC0000015B" }
+          { "label": "Palisades Base", "url": "https://relay.ozolio.com/pub.api?cmd=poster&oid=EMB_ZIGI00000147", "player": "https://relay.ozolio.com/pub.api?cmd=embed&oid=EMB_ZIGI00000147" },
+          { "label": "High Camp", "url": "https://relay.ozolio.com/pub.api?cmd=poster&oid=EMB_EIFC0000015B", "player": "https://relay.ozolio.com/pub.api?cmd=embed&oid=EMB_EIFC0000015B" }
         ],
         "radar": "https://radar.weather.gov/station/KRGX/standard"
       }
@@ -109,15 +109,15 @@
         { "label": "SR-89 Truckee → Tahoe City", "route": "SR-89", "district": 3, "bbox": [39.15, -120.22, 39.33, -120.13], "textRoute": "SR 89", "textMatch": ["Truckee", "Tahoe City", "Olympic", "Squaw", "Palisades", "Alpine Meadows", "Placer"] }
       ],
       "roadCams": [
-        { "label": "Hwy 89 at Alpine Meadows", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy89atalpinemeadows/hwy89atalpinemeadows.jpg" },
+        { "label": "Hwy 89 at Alpine Meadows", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy89atalpinemeadows/hwy89atalpinemeadows.jpg", "video": "https://wzmedia.dot.ca.gov/D3/89_Alpine_Meadows_PLA89_NB.stream/playlist.m3u8" },
         { "label": "I-80 at Donner Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy80atdonnersummit/hwy80atdonnersummit.jpg" }
       ],
       "links": {
         "website": "https://www.palisadestahoe.com/",
         "webcams": "https://www.palisadestahoe.com/mountain-information/webcams",
         "cams": [
-          { "label": "Alpine Lodge Base", "url": "https://relay.ozolio.com/pub.api?cmd=poster&oid=EMB_VPAY0000014C" },
-          { "label": "Alpine Chalet", "url": "https://relay.ozolio.com/pub.api?cmd=poster&oid=EMB_FPOI000010AB" }
+          { "label": "Alpine Lodge Base", "url": "https://relay.ozolio.com/pub.api?cmd=poster&oid=EMB_VPAY0000014C", "player": "https://relay.ozolio.com/pub.api?cmd=embed&oid=EMB_VPAY0000014C" },
+          { "label": "Alpine Chalet", "url": "https://relay.ozolio.com/pub.api?cmd=poster&oid=EMB_FPOI000010AB", "player": "https://relay.ozolio.com/pub.api?cmd=embed&oid=EMB_FPOI000010AB" }
         ],
         "radar": "https://radar.weather.gov/station/KRGX/standard"
       }
@@ -150,8 +150,8 @@
         { "label": "SR-267 Truckee → Kings Beach (Brockway Summit)", "route": "SR-267", "district": 3, "bbox": [39.24, -120.18, 39.34, -120.03], "textRoute": "SR 267", "textMatch": ["Truckee", "Northstar", "Brockway", "Kings Beach", "Placer", "Nevada Co"] }
       ],
       "roadCams": [
-        { "label": "Hwy 267 at Northstar", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy267atnorthstar/hwy267atnorthstar.jpg" },
-        { "label": "Hwy 267 at Brockway Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy267atbrockwaysummit/hwy267atbrockwaysummit.jpg" }
+        { "label": "Hwy 267 at Northstar", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy267atnorthstar/hwy267atnorthstar.jpg", "video": "https://wzmedia.dot.ca.gov/D3/267_Northstar_PLA267_WB.stream/playlist.m3u8" },
+        { "label": "Hwy 267 at Brockway Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy267atbrockwaysummit/hwy267atbrockwaysummit.jpg", "video": "https://wzmedia.dot.ca.gov/D3/267_Brockway_Summit_PLA267_EB.stream/playlist.m3u8" }
       ],
       "links": {
         "website": "https://www.northstarcalifornia.com/",
@@ -265,8 +265,8 @@
         { "label": "SR-89 Tahoe City → Emerald Bay (West Shore)", "route": "SR-89", "district": 3, "bbox": [38.93, -120.16, 39.18, -120.06], "textRoute": "SR 89", "textMatch": ["El Dorado", "Placer", "Tahoma", "Homewood", "Emerald Bay", "Tahoe City", "Meeks", "Lake Tahoe"] }
       ],
       "roadCams": [
-        { "label": "Hwy 89 at Hwy 28 (Tahoe City)", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy89athwy28/hwy89athwy28.jpg" },
-        { "label": "Hwy 89 at Granlibakken", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy89atgranlibakken/hwy89atgranlibakken.jpg" }
+        { "label": "Hwy 89 at Hwy 28 (Tahoe City)", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy89athwy28/hwy89athwy28.jpg", "video": "https://wzmedia.dot.ca.gov/D3/89_JCT28_PLA89_NB.stream/playlist.m3u8" },
+        { "label": "Hwy 89 at Granlibakken", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy89atgranlibakken/hwy89atgranlibakken.jpg", "video": "https://wzmedia.dot.ca.gov/D3/89_Granlibakken_Rd_JNO_PLA89_NB.stream/playlist.m3u8" }
       ],
       "links": {
         "website": "https://skihomewood.com/",
@@ -303,8 +303,8 @@
         { "label": "US-50 Placerville → South Lake Tahoe (Echo Summit)", "route": "US-50", "district": 3, "bbox": [38.7, -120.8, 38.87, -120], "textRoute": "US 50", "textMatch": ["El Dorado", "Placerville", "Pollock Pines", "Kyburz", "Strawberry", "Twin Bridges", "Echo", "Meyers", "South Lake Tahoe", "Lake Tahoe Basin", "Wrights Lake"] }
       ],
       "roadCams": [
-        { "label": "Hwy 50 at Echo Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atechosummit/hwy50atechosummit.jpg" },
-        { "label": "Hwy 50 at Ski Run", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atskirun/hwy50atskirun.jpg" }
+        { "label": "Hwy 50 at Echo Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atechosummit/hwy50atechosummit.jpg", "video": "https://wzmedia.dot.ca.gov/D3/50_Echo_Summit_ED50_EB.stream/playlist.m3u8" },
+        { "label": "Hwy 50 at Ski Run", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atskirun/hwy50atskirun.jpg", "video": "https://wzmedia.dot.ca.gov/D3/50_Ski_Run_Blvd_ED50_EB.stream/playlist.m3u8" }
       ],
       "links": {
         "website": "https://www.skiheavenly.com/",
@@ -371,8 +371,8 @@
         { "label": "US-50 Placerville → South Lake Tahoe (Echo Summit)", "route": "US-50", "district": 3, "bbox": [38.7, -120.8, 38.87, -120], "textRoute": "US 50", "textMatch": ["El Dorado", "Placerville", "Pollock Pines", "Kyburz", "Strawberry", "Twin Bridges", "Echo", "Meyers", "South Lake Tahoe", "Lake Tahoe Basin", "Wrights Lake"] }
       ],
       "roadCams": [
-        { "label": "Hwy 50 at Echo Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atechosummit/hwy50atechosummit.jpg" },
-        { "label": "Hwy 50 at Meyers", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atmeyers/hwy50atmeyers.jpg" }
+        { "label": "Hwy 50 at Echo Summit", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atechosummit/hwy50atechosummit.jpg", "video": "https://wzmedia.dot.ca.gov/D3/50_Echo_Summit_ED50_EB.stream/playlist.m3u8" },
+        { "label": "Hwy 50 at Meyers", "url": "https://cwwp2.dot.ca.gov/data/d3/cctv/image/hwy50atmeyers/hwy50atmeyers.jpg", "video": "https://wzmedia.dot.ca.gov/D3/50_Meyers_ED50_WB.stream/playlist.m3u8" }
       ],
       "links": {
         "website": "https://sierraattahoe.com/",
@@ -413,9 +413,9 @@
         "website": "https://skirose.com/",
         "webcams": "https://skirose.com/the-mountain-web-cams/",
         "cams": [
-          { "label": "Main Lodge", "url": "https://player.brownrice.com/snapshot/mtrosecam" },
-          { "label": "Summit", "url": "https://player.brownrice.com/snapshot/mtrosesummit" },
-          { "label": "Slide Bowl", "url": "https://player.brownrice.com/snapshot/mtroseslidebowl" }
+          { "label": "Main Lodge", "url": "https://player.brownrice.com/snapshot/mtrosecam", "player": "https://player.brownrice.com/embed/mtrosecam" },
+          { "label": "Summit", "url": "https://player.brownrice.com/snapshot/mtrosesummit", "player": "https://player.brownrice.com/embed/mtrosesummit" },
+          { "label": "Slide Bowl", "url": "https://player.brownrice.com/snapshot/mtroseslidebowl", "player": "https://player.brownrice.com/embed/mtroseslidebowl" }
         ],
         "radar": "https://radar.weather.gov/station/KRGX/standard",
         "roads": "https://www.nvroads.com/",

@@ -338,6 +338,13 @@ export interface Link {
   url: string;
 }
 
+/** A webcam. `url` is its still image. A cam with live video has `video` (an HLS stream, which
+ *  iPhone Safari plays natively) or `player` (the camera host's own embeddable player). */
+export interface Cam extends Link {
+  video?: string;
+  player?: string;
+}
+
 /** The latest post from a local human forecaster (e.g. the Mammoth Snowman). */
 export interface ExpertPost {
   source: string;
@@ -402,9 +409,9 @@ export interface ResortData {
   links: {
     website: string | null;
     webcams: string | null;
-    cams: Link[];
+    cams: Cam[];
     radar: string | null;
-    roadCams: Link[];
+    roadCams: Cam[];
     /** The resort's snow-report page, and a road-conditions page where Caltrans doesn't reach. */
     report?: string | null;
     roads?: string | null;

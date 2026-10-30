@@ -35,12 +35,15 @@ export default defineConfig({
         navigateFallback: 'index.html',
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.pathname.includes('/data/'),
+            // Same origin only: Caltrans cam stills also live under a /data/ path, and the cam
+            // viewer reloads them every minute, which would push resort data out of the cache.
+            urlPattern: ({ url, sameOrigin }) => sameOrigin && url.pathname.includes('/data/'),
             handler: 'NetworkFirst',
             options: {
               cacheName: 'powder-data',
               networkTimeoutSeconds: 4,
-              expiration: { maxEntries: 40 },
+              // data.json plus one file per resort (41), with room to grow.
+              expiration: { maxEntries: 60 },
             },
           },
         ],

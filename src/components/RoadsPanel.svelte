@@ -1,15 +1,18 @@
 <script lang="ts">
-  import type { Link, RoadsData, SourceStatus } from '../../shared/types';
+  import type { Cam, RoadsData, SourceStatus } from '../../shared/types';
   import { clockTime, ROAD_STATUS } from '../lib/display';
+  import CamViewer from './CamViewer.svelte';
   import StaleChip from './StaleChip.svelte';
 
   interface Props {
     roads: RoadsData | null;
     status: SourceStatus;
-    cams: Link[];
+    cams: Cam[];
   }
 
   let { roads, status, cams }: Props = $props();
+
+  let open = $state<number | null>(null);
 
   // Data cached on a phone before WSDOT was added has no agencies: it was all Caltrans.
   const AGENCIES: Record<string, { caption: string; link: { label: string; url: string } }> = {
@@ -46,13 +49,19 @@
   {/if}
   {#if cams.length}
     <div class="cams">
-      {#each cams as c (c.url)}
-        <a href={c.url} target="_blank" rel="noopener">
-          <img src={c.url} alt={c.label} loading="lazy" />
+      {#each cams as c, i (c.url)}
+        <button type="button" onclick={() => (open = i)}>
+          <span class="frame">
+            <img src={c.url} alt={c.label} loading="lazy" />
+            {#if c.video || c.player}<span class="live">LIVE</span>{/if}
+          </span>
           <span class="small secondary">{c.label}</span>
-        </a>
+        </button>
       {/each}
     </div>
+    {#if open !== null}
+      <CamViewer {cams} start={open} onclose={() => (open = null)} />
+    {/if}
   {/if}
   {#each agencies as a (a.link.url)}
     <p class="small"><a href={a.link.url} target="_blank" rel="noopener">{a.link.label} ↗</a></p>
@@ -87,16 +96,36 @@
     gap: 8px;
     margin-top: 12px;
   }
-  .cams a {
+  .cams button {
     display: grid;
     gap: 4px;
-    text-decoration: none;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+  }
+  .frame {
+    position: relative;
   }
   .cams img {
+    display: block;
     width: 100%;
     aspect-ratio: 16 / 10;
     object-fit: cover;
     border-radius: 8px;
     background: var(--card-2);
+  }
+  .live {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: var(--closed);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
   }
 </style>

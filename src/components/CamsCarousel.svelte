@@ -1,12 +1,15 @@
 <script lang="ts">
-  import type { Link } from '../../shared/types';
+  import type { Cam } from '../../shared/types';
+  import CamViewer from './CamViewer.svelte';
 
   interface Props {
-    cams: Link[];
+    cams: Cam[];
     more: string | null;
   }
 
   let { cams, more }: Props = $props();
+
+  let open = $state<number | null>(null);
 </script>
 
 {#if cams.length || more}
@@ -16,14 +19,21 @@
   </div>
   {#if cams.length}
     <div class="carousel hscroll">
-      {#each cams as c (c.url)}
-        <a href={c.url} target="_blank" rel="noopener" class="cam">
-          <img src={c.url} alt={c.label} loading="lazy" />
+      {#each cams as c, i (c.url)}
+        <button type="button" class="cam" onclick={() => (open = i)}>
+          <span class="frame">
+            <img src={c.url} alt={c.label} loading="lazy" />
+            {#if c.video || c.player}<span class="live">LIVE</span>{/if}
+          </span>
           <span class="small">{c.label}</span>
-        </a>
+        </button>
       {/each}
     </div>
   {/if}
+{/if}
+
+{#if open !== null}
+  <CamViewer {cams} start={open} onclose={() => (open = null)} />
 {/if}
 
 <style>
@@ -45,13 +55,34 @@
     scroll-snap-align: start;
     display: grid;
     gap: 5px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
     color: var(--text-2);
   }
+  .frame {
+    position: relative;
+  }
   img {
+    display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
     border-radius: 14px;
     background: var(--card-2);
+  }
+  .live {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: var(--closed);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
   }
 </style>

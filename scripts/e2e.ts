@@ -91,6 +91,42 @@ try {
   check(await cam.evaluate((img: HTMLImageElement) => img.naturalWidth > 0), 'resort cam image loads');
   await page.locator('.carousel').screenshot({ path: join(out, 'mammoth-cams.png') });
 
+  // Cam viewer. Palisades has two resort cams with their own players, then a Caltrans cam with
+  // live video, then a Caltrans still.
+  await page.goto(URL + '#/r/palisades');
+  await page.waitForSelector(SUMMARY);
+  await page.locator('.cam').first().scrollIntoViewIfNeeded();
+  check((await page.locator('.cam .live').count()) === 3, 'live cams carry a LIVE badge, stills don\'t');
+  await page.waitForFunction(() => (document.querySelector('.cam img') as HTMLImageElement | null)?.naturalWidth, null, { timeout: 10_000 }).catch(() => null);
+  await page.locator('.carousel').screenshot({ path: join(out, 'palisades-cams.png') });
+  await page.locator('.cam').first().click();
+  const viewer = page.locator('[role="dialog"]');
+  await viewer.waitFor({ timeout: 5_000 });
+  check(await viewer.locator('iframe[src*="relay.ozolio.com/pub.api?cmd=embed"]').isVisible(), 'a resort cam opens full screen in its own live player');
+  await page.waitForTimeout(1_500);
+  await page.screenshot({ path: join(out, 'cam-viewer-player.png') });
+  await viewer.getByRole('button', { name: 'Next cam' }).click();
+  await viewer.getByRole('button', { name: 'Next cam' }).click();
+  const hls = await page.evaluate(() => document.createElement('video').canPlayType('application/vnd.apple.mpegurl') !== '');
+  check(await viewer.locator(hls ? 'video[src$=".m3u8"]' : 'img').isVisible(), `a Caltrans live cam opens as ${hls ? 'video' : 'its still (no native HLS in this browser)'}`);
+  await page.waitForTimeout(1_500);
+  await page.screenshot({ path: join(out, 'cam-viewer-video.png') });
+  await viewer.getByRole('button', { name: 'Next cam' }).click();
+  const big = viewer.locator('img[src*="t="]');
+  await page.waitForFunction(() => (document.querySelector('[role="dialog"] img') as HTMLImageElement | null)?.naturalWidth, null, { timeout: 10_000 }).catch(() => null);
+  check(await big.evaluate((img: HTMLImageElement) => img.naturalWidth > 0).catch(() => false), 'a still cam opens large and loads, with a refreshing URL');
+  await page.screenshot({ path: join(out, 'cam-viewer-still.png') });
+  await viewer.getByRole('button', { name: 'Close' }).click();
+  check((await viewer.count()) === 0 && (await page.evaluate(() => document.documentElement.style.overflow)) === '', 'closing the viewer returns to the page, scrollable again');
+
+  await page.goto(URL + '#/roads');
+  await page.waitForSelector('.cams button');
+  await page.locator('.cams button').first().click();
+  check(await viewer.isVisible(), 'a road cam on the Roads screen opens the viewer');
+  await viewer.getByRole('button', { name: 'Close' }).click();
+  await page.goto(URL + '#/r/mammoth');
+  await page.waitForSelector(SUMMARY);
+
   // Model chart: tap for the tooltip.
   const plume = page.locator('[aria-label="Running snowfall totals by model"]');
   await plume.scrollIntoViewIfNeeded();
@@ -163,7 +199,9 @@ try {
   await shoot(page, 'roads-crystal', '#/roads', 'section[aria-label="Roads"]');
   const crystalRoads = page.locator('section[aria-label="Roads"]', { hasText: 'Crystal to Greenwater SR 410' });
   check((await crystalRoads.count()) === 1 && (await crystalRoads.getByText('WSDOT mountain pass reports').count()) === 1, 'a starred Washington resort shows its WSDOT pass report');
-  check((await crystalRoads.locator('p', { hasText: 'Traditionally weather and road conditions' }).count()) === 1, "WSDOT's road report is shown once, not repeated as a note");
+  // WSDOT's wording changes with the season, so read it from the data rather than hardcoding it.
+  const restriction: string = await page.evaluate(async () => (await (await fetch('./data/resorts/crystal.json')).json()).roads.data.segments[0].restriction);
+  check((await crystalRoads.locator('p', { hasText: restriction }).count()) <= 1, `WSDOT's road report ("${restriction.slice(0, 40)}") isn't repeated as a note`);
   await page.goto(URL + '#/resorts');
   await page.waitForSelector('.search');
   await page.locator('li:has(a[href="#/r/crystal"]) button.star').tap();

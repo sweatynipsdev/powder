@@ -80,7 +80,7 @@ The layout follows OpenSnow's app, always in a dark theme:
 - **Add to Home Screen** (iPhone, Safari): open the site, then Share → Add to Home Screen. It launches full-screen with its own icon. Icons come from `public/favicon.svg` via `npx pwa-assets-generator`.
 - **Charts** follow a validated colorblind-safe palette. Blue is always "our blend"; the models take the next four slots in fixed order. Every chart has hover, tap and arrow-key readouts, plus a Table view with every value. Temperature, snow level and wind are three small charts sharing one time axis, never one chart with two y-axes.
 - **Summit/Base** toggle switches every snow number and chart. The choice is remembered on the device.
-- `npm run e2e` checks every screen with WebKit at iPhone size (no page errors, no sideways scrolling, dark even in light mode, a timeline tap opens a day, a chart tap shows its tooltip, a cam loads) and then checks offline loading in Chromium. Screenshots go to `screens/`. To debug one route at iPhone size, run `npx tsx scripts/debug-page.ts '#/r/palisades'`.
+- `npm run e2e` checks every screen with WebKit at iPhone size (no page errors, no sideways scrolling, dark even in light mode, a timeline tap opens a day, a chart tap shows its tooltip, a cam loads, the cam viewer opens live players, video and stills) and then checks offline loading in Chromium. Screenshots go to `screens/`. To debug one route at iPhone size, run `npx tsx scripts/debug-page.ts '#/r/palisades'`.
 
 ## Data sources
 
@@ -175,7 +175,7 @@ Optional blocks turn on more panels. Each panel hides when its block is missing:
   - `textMatch` picks the relevant lines from Caltrans' highway-conditions text.
 - `local`: `{ "notes": ["…"], "sources": [{ "label", "url" }], "openingDate": "2026-11-13" }`. The notes feed the writer and the Snow Report tab. Until `openingDate`, the status reads "Opening Nov 13".
 - `expert`: `{ "adapter": "wordpress-page", "source": "The Mammoth Snowman", "author": "Steve Taylor", "api": "https://…/wp-json/wp/v2/pages/<id>?_fields=modified_gmt,link,title,content", "url": "<page link>", "cutAt": "<heading where the forecast ends>" }`. Works for any forecaster whose site runs WordPress. The post time comes from their dateline ("Wednesday, October 21st, 2026 @ 2 PM"), falling back to the page's edit time.
-- `roadCams`, `links.cams`: `[{ "label", "url" }]` still images.
+- `roadCams`, `links.cams`: `[{ "label", "url" }]`, where `url` is the still image. A cam with live video adds either `"video"`, an HLS playlist (`.m3u8`, e.g. a Caltrans stream from its CCTV feed's `streamingVideoURL`), or `"player"`, the camera host's embed page (e.g. Ozolio `pub.api?cmd=embed&oid=…`, Brownrice `/embed/<id>`). Check the stream answers before adding it. Tapping a cam opens it full screen: the video plays natively on iPhone, a player loads in a frame, and a still reloads every minute.
 - `links.webcams`, `links.radar`, `links.website`: page links.
 
 Then run `npm run pipeline` and check the status table. Run `npm run record-fixtures` afterwards so the tests cover the new resort.

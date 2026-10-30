@@ -31,6 +31,13 @@ describe('pipeline replay', () => {
     result = await runPipeline(config, EMPTY_PREVIOUS, recordedAt);
   });
 
+  it("carries each cam's live video or player into the resort data", () => {
+    const palisades = result.resorts.find((r) => r.id === 'palisades')!;
+    const cams = [...palisades.links.cams, ...palisades.links.roadCams];
+    expect(cams.find((c) => c.player)?.player).toMatch(/ozolio\.com\/pub\.api\?cmd=embed/);
+    expect(cams.find((c) => c.video)?.video).toMatch(/^https:\/\/wzmedia\.dot\.ca\.gov\/.+\.m3u8$/);
+  });
+
   it('gets every configured source for every resort', () => {
     for (const r of result.resorts) {
       for (const key of ['forecast', 'cpc', 'snowpack', 'nws', 'alerts', 'afd', 'avalanche', 'roads', 'report', 'expert'] as const) {
@@ -204,6 +211,16 @@ describe('resorts.json validation', () => {
     const bad = structuredClone(base);
     bad.resorts[0].roads = [{ provider: 'wsdot', label: 'US-2', route: 'US-2' }];
     expect(() => parseConfig(bad)).toThrow();
+  });
+
+  it('rejects a cam video that is not an HLS playlist, and a cam with both video and a player', () => {
+    const still = { label: 'Base', url: 'https://example.com/cam.jpg' };
+    const notHls = structuredClone(base);
+    notHls.resorts[0].links.cams = [{ ...still, video: 'https://example.com/cam.mp4' }];
+    expect(() => parseConfig(notHls)).toThrow(/m3u8/);
+    const both = structuredClone(base);
+    both.resorts[0].links.cams = [{ ...still, video: 'https://example.com/live.m3u8', player: 'https://example.com/embed' }];
+    expect(() => parseConfig(both)).toThrow(/not both/);
   });
 
   it('rejects duplicate ids', () => {
