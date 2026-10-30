@@ -124,8 +124,16 @@ try {
   await page.locator('.cams button').first().click();
   check(await viewer.isVisible(), 'a road cam on the Roads screen opens the viewer');
   await viewer.getByRole('button', { name: 'Close' }).click();
+
+  // Mammoth's cams are YouTube live streams.
   await page.goto(URL + '#/r/mammoth');
   await page.waitForSelector(SUMMARY);
+  await page.locator('.cam').first().scrollIntoViewIfNeeded();
+  await page.locator('.cam').first().click();
+  check(await viewer.locator('iframe[src^="https://www.youtube-nocookie.com/embed/"]').isVisible(), "Mammoth's summit cam opens its YouTube live stream");
+  await page.waitForTimeout(2_000);
+  await page.screenshot({ path: join(out, 'cam-viewer-youtube.png') });
+  await viewer.getByRole('button', { name: 'Close' }).click();
 
   // Model chart: tap for the tooltip.
   const plume = page.locator('[aria-label="Running snowfall totals by model"]');

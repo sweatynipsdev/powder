@@ -516,8 +516,13 @@
         "website": "https://www.mammothmountain.com/",
         "webcams": "https://www.mammothmountain.com/on-the-mountain/mammoth-webcam/the-summit",
         "cams": [
-          { "label": "Top of the Sierra", "url": "https://media.mammothresorts.com/mmsa/mammoth/cams/Top_Of_Sierra_1_1280x720.jpg" },
-          { "label": "Main Lodge", "url": "https://media.mammothresorts.com/mmsa/mammoth/cams/Main_Broadway_1280x720.jpg" }
+          { "label": "Top of the Sierra", "url": "https://media.mammothresorts.com/mmsa/mammoth/cams/Top_Of_Sierra_1_1280x720.jpg", "player": "https://www.youtube-nocookie.com/embed/awxz_oIlJE0?autoplay=1&mute=1&playsinline=1" },
+          { "label": "McCoy Station", "url": "https://media.mammothresorts.com/mmsa/mammoth/cams/McCoy_Chair_23_Top_1280x720.jpg", "player": "https://www.youtube-nocookie.com/embed/jFK8bVYad0M?autoplay=1&mute=1&playsinline=1" },
+          { "label": "Main Lodge", "url": "https://media.mammothresorts.com/mmsa/mammoth/cams/Main_Broadway_1280x720.jpg", "player": "https://www.youtube-nocookie.com/embed/m4u2kGpkYD4?autoplay=1&mute=1&playsinline=1" },
+          { "label": "Canyon Lodge", "url": "https://media.mammothresorts.com/mmsa/mammoth/cams/Canyon_Lincoln_Mountain_1280x720.jpg", "player": "https://www.youtube-nocookie.com/embed/9--ZgYEZBhk?autoplay=1&mute=1&playsinline=1" },
+          { "label": "Eagle Lodge", "url": "https://media.mammothresorts.com/mmsa/mammoth/cams/Eagle_Home_1280x720.jpg", "player": "https://www.youtube-nocookie.com/embed/BH-9QONvk1A?autoplay=1&mute=1&playsinline=1" },
+          { "label": "Chair 14 Outpost", "url": "https://media.mammothresorts.com/mmsa/mammoth/cams/Outpost_Arriba_1280x720.jpg", "player": "https://www.youtube-nocookie.com/embed/xaf6OzA-i6M?autoplay=1&mute=1&playsinline=1" },
+          { "label": "Unbound Main Park", "url": "https://media.mammothresorts.com/mmsa/mammoth/cams/Unbound_Main_Park_1_1280x720.jpg", "player": "https://www.youtube-nocookie.com/embed/gelXqzE1Xi0?autoplay=1&mute=1&playsinline=1" }
         ],
         "radar": "https://radar.weather.gov/station/KHNX/standard"
       }
