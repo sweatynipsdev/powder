@@ -131,6 +131,9 @@ try {
   await page.locator('.cam').first().scrollIntoViewIfNeeded();
   await page.locator('.cam').first().click();
   check(await viewer.locator('iframe[src^="https://www.youtube-nocookie.com/embed/"]').isVisible(), "Mammoth's summit cam opens its YouTube live stream");
+  const ytId = (await viewer.locator('iframe').getAttribute('src'))?.match(/embed\/([\w-]+)/)?.[1];
+  const ytLink = await viewer.getByRole('link', { name: /Open in YouTube/ }).getAttribute('href');
+  check(!!ytId && ytLink === `https://www.youtube.com/watch?v=${ytId}`, 'a YouTube cam links to its watch page, for when the player asks for a sign-in');
   await page.waitForTimeout(2_000);
   await page.screenshot({ path: join(out, 'cam-viewer-youtube.png') });
   await viewer.getByRole('button', { name: 'Close' }).click();

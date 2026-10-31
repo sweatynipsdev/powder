@@ -1,6 +1,6 @@
 <script lang="ts">
   // The nearest snow station: what it measures now, recent change, and the last week by day.
-  import { stationDailySnow } from '../../shared/status';
+  import { stationDailySnow, stationNewSnow } from '../../shared/status';
   import type { SnowpackData, SourceStatus } from '../../shared/types';
   import { dayNum, fmtFt, num, signed, weekdayOf } from '../lib/display';
   import Sparkline from './charts/Sparkline.svelte';
@@ -29,8 +29,8 @@
     <div class="stats">
       <div><span class="small muted">Depth</span><strong>{s.depthIn === null ? '—' : `${num(s.depthIn, 0)}"`}</strong></div>
       <div><span class="small muted">Snow water</span><strong>{s.sweIn === null ? '—' : `${num(s.sweIn)}"`}</strong></div>
-      <div><span class="small muted">24h</span><strong>{signed(s.newSnow?.h24 ?? s.change.h24.depthIn ?? s.change.h24.sweIn)}"</strong></div>
-      <div><span class="small muted">7 days</span><strong>{signed(s.newSnow?.d7 ?? s.change.d7.depthIn ?? s.change.d7.sweIn)}"</strong></div>
+      <div><span class="small muted">24h</span><strong>{signed(stationNewSnow(s, 'h24'))}"</strong></div>
+      <div><span class="small muted">7 days</span><strong>{signed(stationNewSnow(s, 'd7'))}"</strong></div>
     </div>
 
     <div class="week" aria-label="New snow by day, last 7 days">

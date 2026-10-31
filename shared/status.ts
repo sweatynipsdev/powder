@@ -73,6 +73,12 @@ export function last24(report: ReportData | null | undefined, snowpack: Snowpack
   return { inches: null, source: null, at: null };
 }
 
+/** New snow at a station over 24h or 7 days. A depth loss is settling or melt, not snowfall, so it counts as 0. */
+export function stationNewSnow(snowpack: SnowpackData, span: 'h24' | 'd7'): number | null {
+  const v = snowpack.newSnow?.[span] ?? snowpack.change[span].depthIn ?? snowpack.change[span].sweIn;
+  return v === null ? null : Math.max(0, v);
+}
+
 /** New snow by day from a station: measured by an observer, or estimated from depth gains. */
 export function stationDailySnow(snowpack: SnowpackData | null | undefined): { date: string; inches: number | null }[] {
   const s = snowpack?.series ?? [];

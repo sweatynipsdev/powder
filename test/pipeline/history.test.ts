@@ -17,8 +17,8 @@ import {
 } from '../../pipeline/history';
 import { addDays } from '../../pipeline/clock';
 import { refreshCaption, UPDATE_TIMES_UTC } from '../../shared/schedule';
-import { resortOpenStatus, stationTimeIso } from '../../shared/status';
-import type { ReportData } from '../../shared/types';
+import { resortOpenStatus, stationNewSnow, stationTimeIso } from '../../shared/status';
+import type { ReportData, SnowpackData } from '../../shared/types';
 
 /** A morning run on `date` forecasting `snow` for each model for the day before it observes. */
 const snap = (date: string, models: Record<string, number>, resort = 'mammoth'): ForecastSnapshot => ({
@@ -130,6 +130,26 @@ describe('resort open status', () => {
 
   it('calls an off-season report closed', () => {
     expect(resortOpenStatus(report({ fresh: false, updatedAt: '2026-06-08T17:00:00Z' }), now, { tz }).text).toBe('Closed · last report Jun 8');
+  });
+});
+
+describe('station new snow', () => {
+  const station = (over: Partial<SnowpackData>): SnowpackData => ({
+    station: { id: 'x', name: 'x', network: 'SNOTEL', elevFt: 8000, url: 'https://example.com' },
+    observedAt: null, depthIn: 20, sweIn: 5, tempF: null, newSnow: null, series: [], note: null,
+    change: { h24: { depthIn: -1, sweIn: 0 }, h48: { depthIn: null, sweIn: null }, d7: { depthIn: 4, sweIn: 0.4 } },
+    ...over,
+  });
+
+  it('counts settling as no new snow, not negative snow', () => {
+    expect(stationNewSnow(station({}), 'h24')).toBe(0);
+    expect(stationNewSnow(station({}), 'd7')).toBe(4);
+  });
+
+  it("prefers an observer's measurement, then depth, then water", () => {
+    expect(stationNewSnow(station({ newSnow: { h24: 6, h48: null, d7: null } }), 'h24')).toBe(6);
+    expect(stationNewSnow(station({ change: { h24: { depthIn: null, sweIn: 0.3 }, h48: { depthIn: null, sweIn: null }, d7: { depthIn: null, sweIn: null } } }), 'h24')).toBe(0.3);
+    expect(stationNewSnow(station({ change: { h24: { depthIn: null, sweIn: null }, h48: { depthIn: null, sweIn: null }, d7: { depthIn: null, sweIn: null } } }), 'd7')).toBeNull();
   });
 });
 

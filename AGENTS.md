@@ -1,6 +1,6 @@
 # Powder
 
-Mikey's personal OpenSnow replacement: an installable, always-dark PWA covering 21 California/Nevada resorts. Each phone stars its own favorites, with no accounts.
+Mikey's personal OpenSnow replacement: an installable, always-dark PWA covering 41 resorts in California, Nevada, Utah, Colorado, Washington, Oregon and British Columbia (Whistler). Each phone stars its own favorites, with no accounts.
 - **Update job:** GitHub Actions runs twice a day. It fetches free, no-key sources, builds snow forecasts, has Claude Haiku write a forecast per resort plus a ranking, then deploys static JSON plus the app to GitHub Pages.
 - **Links:** live at https://sweatynipsdev.github.io/powder/ · repo `sweatynipsdev/powder` (public) · vault note `~/Documents/mikey-brain/projects/powder.md` (read its CURRENT STATE first).
 
@@ -23,7 +23,7 @@ Mikey's personal OpenSnow replacement: an installable, always-dark PWA covering 
 - `npm test` (vitest, offline replay of recorded fixtures) · `npm run typecheck` (tsc + svelte-check, must be 0 errors and 0 warnings).
 - `npm run pipeline`: live fetch into `public/data/` and print a status table. `npm run pipeline:replay`: the same from fixtures, no network.
 - `npm run record-fixtures`: re-record every HTTP response into `test/fixtures/http/`. Run it after adding a resort or when a source changes. It is a full live run.
-- `npm run analyze` / `npm run analyze:sample -- --force`: write the forecasts. Needs `ANTHROPIC_API_KEY` in `.env`. A forced run of all 21 resorts costs about $0.05.
+- `npm run analyze` / `npm run analyze:sample -- --force`: write the forecasts. Needs `ANTHROPIC_API_KEY` in `.env`. A forced run of all 41 resorts costs about $0.11.
 - `npm run reuse-data`: copy the live site's data into `public/data/`. This is the cheapest way to get real data for UI work.
 - `npm run build && npm run e2e`: browser checks plus screenshots in `screens/`. Set `E2E_URL=https://sweatynipsdev.github.io/powder/` to check the live site.
 - `npm run calibrate`: rebuild `history/calibration.json`. The workflow runs it before every update.
@@ -34,7 +34,7 @@ Mikey's personal OpenSnow replacement: an installable, always-dark PWA covering 
 - **No scraping.** Not OpenSnow, and not resort websites. Resort snow reports come only from the no-key MtnPowder feed.
 - **Local forecasters' text is input for the writer only.** The app shows who wrote it, when, and a link, never their words.
 - **A failing source marks that source stale and carries its last value forward.** It never fails the run. No resort data is hardcoded in components.
-- **Open-Meteo's free tier is 10,000 calls a day,** counted by request size. One full update at 21 resorts is about 1,100–1,500.
+- **Open-Meteo's free tier is 10,000 calls a day,** counted by request size. One full update at 41 resorts is about 2,450–2,800, so the push-run guard allows about one full push a day. Check with `npm run om-budget -- logs/openmeteo.csv`.
   - A push touching `pipeline/`, `analysis/`, `shared/`, `resorts.json`, `scripts/calibrate.ts` or `update.yml` triggers a full update. Other pushes reuse the live data.
   - Every local `pipeline` or `record-fixtures` run also counts against the daily limit.
 - **The AI prompts stay static so they cache.** Anything that changes per run goes in the user message. Every number in a write-up must come from the brief.
@@ -50,8 +50,8 @@ Mikey's personal OpenSnow replacement: an installable, always-dark PWA covering 
 - **Charts follow the dataviz skill's validated palette.** One y-axis per chart.
 
 ## Gotchas
-- **Resorts with no MtnPowder feed** (13, including every Vail resort) get their status from `local.openingDate`. Keep opening dates current each season.
+- **Resorts with no MtnPowder feed** (28 of 41, including every Vail resort) get their status from `local.openingDate`. Keep opening dates current each season.
 - **Some NWS forecast-grid points sit well below the summit,** e.g. the Dodge Ridge and Palisades summit points. Read `nwsGridFt`.
 - **Some Tahoe resorts belong to the Sacramento office (STO), not Reno (REV).** `nws.afdOffice` is optional and defaults to the office covering the base.
 - **Caltrans and Open-Meteo occasionally drop connections.** One source going stale on a run is normal.
-- **Next up:** Phase 3 (Utah, Colorado, Pacific NW, Whistler) needs its own spec first. Whistler has no NWS coverage or CPC outlooks.
+- **Whistler has no NWS coverage or CPC outlooks.** Its alerts come from Environment Canada (ECCC).

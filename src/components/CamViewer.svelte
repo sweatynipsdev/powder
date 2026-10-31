@@ -27,6 +27,8 @@
 
   let mode = $derived<'video' | 'player' | 'still'>(cam.video && nativeHls && !deadVideo.includes(cam.video) ? 'video' : cam.player ? 'player' : 'still');
   let still = $derived(plainStill.includes(cam.url) ? cam.url : fresh(cam.url, now));
+  // YouTube's embedded player sometimes asks for a sign-in. The watch page opens the YouTube app, which is signed in.
+  let youtubeId = $derived(cam.player?.match(/youtube(?:-nocookie)?\.com\/embed\/([\w-]+)/)?.[1]);
 
   /** The still's URL with a query that changes each refresh, so the browser can't reuse an old frame. */
   function fresh(url: string, t: number): string {
@@ -104,6 +106,9 @@
       Live video · full screen from the player's controls
     {:else if mode === 'player'}
       Live from the camera's own player · full screen from its controls
+      {#if youtubeId}
+        <a class="pill app" href="https://www.youtube.com/watch?v={youtubeId}" target="_blank" rel="noopener">Asked to sign in? Open in YouTube</a>
+      {/if}
     {:else}
       Still image · reloads every minute
     {/if}
@@ -192,5 +197,12 @@
   }
   footer {
     padding: 10px 16px 14px;
+  }
+  .app {
+    display: block;
+    margin-top: 10px;
+    padding: 12px 16px;
+    text-align: center;
+    text-decoration: none;
   }
 </style>
