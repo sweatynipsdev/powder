@@ -1,5 +1,44 @@
 {
-  "generatedAt": "2026-10-31T15:21:07.801Z",
+  "generatedAt": "2026-11-01T06:17:29.551Z",
   "minEvents": 6,
-  "resorts": {}
+  "resorts": {
+    "baker": {
+      "gfs": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "ecmwf": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "icon": {
+        "factor": 0.71,
+        "events": 6
+      },
+      "gem": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "aifs": {
+        "factor": 0.68,
+        "events": 6
+      },
+      "hrrr": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nam": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nbm": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nws": {
+        "factor": 1.11,
+        "events": 6
+      }
+    }
+  }
 }
