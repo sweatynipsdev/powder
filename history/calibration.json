@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-01T16:02:47.496Z",
+  "generatedAt": "2026-11-02T06:19:20.856Z",
   "minEvents": 6,
   "resorts": {
     "baker": {
@@ -37,6 +37,44 @@
       },
       "nws": {
         "factor": 1.11,
+        "events": 6
+      }
+    },
+    "kirkwood": {
+      "gfs": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "ecmwf": {
+        "factor": 1,
+        "events": 6
+      },
+      "icon": {
+        "factor": 1.25,
+        "events": 6
+      },
+      "gem": {
+        "factor": 0.79,
+        "events": 6
+      },
+      "aifs": {
+        "factor": 1.3,
+        "events": 6
+      },
+      "hrrr": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nam": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nbm": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nws": {
+        "factor": 0.95,
         "events": 6
       }
     }
