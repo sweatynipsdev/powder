@@ -106,6 +106,7 @@ When a source fails, the last good value is carried forward and marked stale, an
   - The changes are counted from the commit the live data was built from (`builtFrom` in `data.json`), not just the latest push, so a data-side change from a cancelled or failed run is never skipped.
   - It falls back to a full run if that data is incomplete or `builtFrom` is missing.
 - Scheduled runs, manual runs, and pushes touching `pipeline/`, `analysis/`, `shared/`, `resorts.json`, `scripts/calibrate.ts` or the update workflow always do a full update.
+- Each scheduled slot has a backup cron, because GitHub sometimes drops a scheduled run. A scheduled run skips itself when a full update already ran since the slot's time (`npm run slot-check`, reading `logs/openmeteo.csv`), so a slot still costs one update.
 
 ## How the snow numbers are made
 

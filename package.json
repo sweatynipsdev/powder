@@ -18,6 +18,7 @@
     "analyze:sample": "tsx analysis/run.ts --sample",
     "calibrate": "tsx scripts/calibrate.ts",
     "om-budget": "tsx scripts/omBudget.ts",
+    "slot-check": "tsx scripts/slotCheck.ts",
     "reuse-data": "tsx scripts/reuse-data.ts",
     "strip-private": "tsx scripts/strip-private.ts",
     "dev": "vite --host",

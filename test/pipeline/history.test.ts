@@ -16,7 +16,7 @@ import {
   writeCalibration,
 } from '../../pipeline/history';
 import { addDays } from '../../pipeline/clock';
-import { refreshCaption, UPDATE_TIMES_UTC } from '../../shared/schedule';
+import { lastSlot, refreshCaption, slotAlreadyUpdated, UPDATE_TIMES_UTC } from '../../shared/schedule';
 import { resortOpenStatus, stationNewSnow, stationTimeIso } from '../../shared/status';
 import type { ReportData, SnowpackData } from '../../shared/types';
 
@@ -166,8 +166,33 @@ describe('update times', () => {
     expect(stationTimeIso('2026-12-02T15:00:00Z', 'America/Denver')).toBe('2026-12-02T15:00:00Z');
   });
 
-  it('matches the cron lines in the update workflow', () => {
+  it('matches the cron lines in the update workflow, each with a backup 1-4 hours later', () => {
     const yml = readFileSync(new URL('../../.github/workflows/update.yml', import.meta.url), 'utf8');
-    for (const { h, m } of UPDATE_TIMES_UTC) expect(yml).toContain(`cron: '${m} ${h} * * *'`);
+    const crons = [...yml.matchAll(/cron: '(\d+) (\d+) \* \* \*'/g)].map(([, m, h]) => Number(h) * 60 + Number(m));
+    expect(crons).toHaveLength(UPDATE_TIMES_UTC.length * 2);
+    for (const { h, m } of UPDATE_TIMES_UTC) {
+      expect(yml).toContain(`cron: '${m} ${h} * * *'`);
+      expect(crons.some((c) => c - (h * 60 + m) >= 60 && c - (h * 60 + m) <= 240)).toBe(true);
+    }
+  });
+
+  it('finds the latest slot, across midnight UTC', () => {
+    expect(lastSlot(new Date('2026-11-02T18:57:00Z')).toISOString()).toBe('2026-11-02T09:20:00.000Z');
+    expect(lastSlot(new Date('2026-11-02T06:18:00Z')).toISOString()).toBe('2026-11-02T00:20:00.000Z');
+    expect(lastSlot(new Date('2026-11-02T00:10:00Z')).toISOString()).toBe('2026-11-01T09:20:00.000Z');
+    expect(lastSlot(new Date('2026-11-02T09:20:00Z')).toISOString()).toBe('2026-11-02T09:20:00.000Z');
+  });
+
+  it('skips a scheduled run only when a full update already ran since its slot', () => {
+    const at = (iso: string) => new Date(iso);
+    // 2026-11-02: GitHub dropped the 09:20 run, so a backup at 18:00 must update.
+    expect(slotAlreadyUpdated(at('2026-11-02T18:00:00Z'), at('2026-11-02T06:19:21Z'))).toBe(false);
+    // The backup that comes after the slot's own (late) run.
+    expect(slotAlreadyUpdated(at('2026-11-02T17:45:00Z'), at('2026-11-02T15:30:00Z'))).toBe(true);
+    // The slot's run when GitHub started the backup first.
+    expect(slotAlreadyUpdated(at('2026-11-02T15:30:00Z'), at('2026-11-02T11:40:00Z'))).toBe(true);
+    // The evening run after the morning one.
+    expect(slotAlreadyUpdated(at('2026-11-03T06:00:00Z'), at('2026-11-02T15:30:00Z'))).toBe(false);
+    expect(slotAlreadyUpdated(at('2026-11-03T06:00:00Z'), null)).toBe(false);
   });
 });

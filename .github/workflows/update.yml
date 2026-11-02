@@ -6,9 +6,13 @@ on:
   schedule:
     # GitHub cron is UTC and ignores daylight saving: 1:20am / 4:20pm PST (2:20am / 5:20pm PDT),
     # off the top of the hour, when GitHub's scheduler is busiest. GitHub has been starting
-    # these 3-4.5 hours late (Oct 2026), so the morning run is set early to land by about 5-6am.
+    # these 5-7 hours late (Oct 2026), so the morning run is set early to land by about 8am.
     - cron: '20 9 * * *'
     - cron: '20 0 * * *'
+    # Backups, because GitHub sometimes drops a scheduled run (the 09:20 run on 2026-11-02). The
+    # `slot` job skips whichever comes second once a full update has run since the slot's time.
+    - cron: '35 11 * * *'
+    - cron: '35 2 * * *'
   push:
     branches: [main]
   workflow_dispatch:
@@ -28,7 +32,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Scheduled runs only: skip the update if a full update already ran since this slot's time,
+  # so a slot's run and its backup never both spend one. Reads main's log as it is now: a run
+  # that finished while this one waited in the queue has committed its row since.
+  slot:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      skip: ${{ steps.check.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - id: check
+        run: |
+          if ! { git fetch --quiet --depth=1 origin main && git show FETCH_HEAD:logs/openmeteo.csv > "$RUNNER_TEMP/openmeteo.csv"; }; then
+            cp logs/openmeteo.csv "$RUNNER_TEMP/openmeteo.csv"
+          fi
+          npm run --silent slot-check -- "$RUNNER_TEMP/openmeteo.csv"
+
   update:
+    needs: slot
+    # Pushes and manual runs skip `slot`. If the check itself fails, the update still runs.
+    if: ${{ !cancelled() && needs.slot.outputs.skip != 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment:
