@@ -32,9 +32,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Scheduled runs only: skip the update if a full update already ran since this slot's time,
-  # so a slot's run and its backup never both spend one. Reads main's log as it is now: a run
-  # that finished while this one waited in the queue has committed its row since.
+  # Scheduled runs only: skip the update if a full update already ran since this run's slot (the
+  # cron that fired says which) last came round, so a slot's run and its backup never both spend
+  # one. Reads main's log as it is now: a run that finished while this one waited in the queue
+  # has committed its row since.
   slot:
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
@@ -49,6 +50,8 @@ jobs:
           cache: npm
       - run: npm ci
       - id: check
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
         run: |
           if ! { git fetch --quiet --depth=1 origin main && git show FETCH_HEAD:logs/openmeteo.csv > "$RUNNER_TEMP/openmeteo.csv"; }; then
             cp logs/openmeteo.csv "$RUNNER_TEMP/openmeteo.csv"
