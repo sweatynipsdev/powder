@@ -1,7 +1,7 @@
 // Derived facts shared by the pipeline summary, the written brief and the app, so all three
 // say the same thing about whether a resort is open and how much snow just fell.
 
-import type { Last24, ReportData, ResortStatus, SnowpackData } from './types';
+import type { DaySnow, Last24, ReportData, ResortStatus, SnowpackData } from './types';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const shortDate = (iso: string) => {
@@ -77,6 +77,55 @@ export function last24(report: ReportData | null | undefined, snowpack: Snowpack
 export function stationNewSnow(snowpack: SnowpackData, span: 'h24' | 'd7'): number | null {
   const v = snowpack.newSnow?.[span] ?? snowpack.change[span].depthIn ?? snowpack.change[span].sweIn;
   return v === null ? null : Math.max(0, v);
+}
+
+/** A day's new snow and where it came from, for the days before today. */
+export interface PrevDay {
+  date: string;
+  inches: number | null;
+  source: Last24['source'];
+}
+
+/** Calendar arithmetic on "YYYY-MM-DD" strings. */
+export function addDays(ymd: string, days: number): string {
+  const [y, m, d] = ymd.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
+}
+
+/**
+ * New snow on each of the `days` days before `today`, oldest first, each the 24h ending that
+ * morning, as "Last 24 Hours" is for today: the resort's own report when there is one, else the
+ * station's estimate, else nothing.
+ */
+export function prevDaysSnow(reported: DaySnow[] | undefined, snowpack: SnowpackData | null | undefined, today: string, days = 5): PrevDay[] {
+  const report = new Map((reported ?? []).map((d) => [d.date, d.inches]));
+  const station = stationMorningSnow(snowpack);
+  return Array.from({ length: days }, (_, i) => {
+    const date = addDays(today, i - days);
+    const r = report.get(date);
+    if (r !== undefined) return { date, inches: r, source: 'reported' };
+    const s = station.get(date);
+    return s === undefined || s === null ? { date, inches: null, source: null } : { date, inches: s, source: 'estimated' };
+  });
+}
+
+/**
+ * A station's new snow for the 24h ending each morning. CoCoRaHS observers measure each morning,
+ * so their days already end then. An hourly station uses the gain in its ~7am depth; without one
+ * (data built before 2026-11-04, or no reading near 7am), the previous calendar day's gain.
+ */
+function stationMorningSnow(snowpack: SnowpackData | null | undefined): Map<string, number | null> {
+  const daily = stationDailySnow(snowpack);
+  if (!snowpack || snowpack.station.network === 'CoCoRaHS') return new Map(daily.map((d) => [d.date, d.inches]));
+  const calendar = new Map(daily.map((d) => [d.date, d.inches]));
+  const morning = new Map(snowpack.series.map((d) => [d.date, d.morningDepthIn ?? null]));
+  return new Map(
+    snowpack.series.map((d) => {
+      const now = morning.get(d.date) ?? null;
+      const before = morning.get(addDays(d.date, -1)) ?? null;
+      return [d.date, now !== null && before !== null ? Math.max(0, now - before) : (calendar.get(addDays(d.date, -1)) ?? null)];
+    }),
+  );
 }
 
 /** New snow by day from a station: measured by an observer, or estimated from depth gains. */

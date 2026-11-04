@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { last24 as last24Of, resortOpenStatus, stationDailySnow } from '../../shared/status';
+  import { last24 as last24Of, localDate, prevDaysSnow, resortOpenStatus } from '../../shared/status';
   import type { ResortData, ResortSummary } from '../../shared/types';
   import AlertsBanner from '../components/AlertsBanner.svelte';
   import AvalanchePanel from '../components/AvalanchePanel.svelte';
@@ -36,8 +36,8 @@
   let e = $derived(prefs.elevation);
   let status = $derived(summary?.status ?? resortOpenStatus(r.report?.data, new Date(), { openingDate: r.openingDate, tz: r.tz, hasFeed: !!r.report }));
   let last24 = $derived(summary?.last24 ?? last24Of(r.report?.data, r.snowpack?.data));
-  // Days before today; today's partial day is "Last 24 Hours".
-  let observed = $derived(stationDailySnow(r.snowpack?.data).slice(0, -1));
+  // The days before the one the data was built on, which "Last 24 Hours" covers.
+  let observed = $derived(prevDaysSnow(r.reportedSnow, r.snowpack?.data, localDate(new Date(r.generatedAt), r.tz)));
   let expert = $derived(r.expert?.data ?? null);
   let expertInitials = $derived(
     expert

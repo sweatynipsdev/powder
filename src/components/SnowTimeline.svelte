@@ -1,7 +1,7 @@
 <script lang="ts">
   // The snow summary strip: what fell, the last 24 hours, then the next 16 days in
   // groups, scrolled so "Last 24 Hours" leads. Tap a day for its details.
-  import { stationTimeIso } from '../../shared/status';
+  import { type PrevDay, stationTimeIso } from '../../shared/status';
   import type { Elev, ForecastData, Last24, SnowAmount, SnowQuality } from '../../shared/types';
   import {
     BIG_DAY_IN,
@@ -19,7 +19,7 @@
   interface Props {
     forecast: ForecastData;
     elevation: Elev;
-    observed: { date: string; inches: number | null }[];
+    observed: PrevDay[];
     last24: Last24;
     tz: string;
   }
@@ -34,6 +34,8 @@
     amount?: SnowAmount;
     quality?: SnowQuality | null;
     index?: number;
+    /** Past days: reported by the resort, or estimated from a station. */
+    source?: PrevDay['source'];
   }
 
   function qualityOfDay(i: number): SnowQuality | null {
@@ -99,7 +101,7 @@
     class:sel={c.index !== undefined && selected === c.index}
     disabled={c.index === undefined}
     onclick={() => (selected = selected === c.index ? null : (c.index ?? null))}
-    aria-label={`${fmtDay(c.date)}: ${fmtSnow(c.inches)} inches${c.amount?.range ? `, likely ${fmtSnowRange(c.amount.range)}` : ''}`}
+    aria-label={`${fmtDay(c.date)}: ${fmtSnow(c.inches)} inches${c.amount?.range ? `, likely ${fmtSnowRange(c.amount.range)}` : ''}${c.source ? `, ${c.source}` : ''}`}
   >
     <div class="bararea" style:height="{BAR_H}px">
       {#if c.amount?.range && c.amount.range.hi - c.amount.range.lo >= 1}

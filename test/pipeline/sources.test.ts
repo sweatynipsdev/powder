@@ -105,6 +105,18 @@ describe('snowpack', () => {
     expect(sp.series.every((d) => d.depthIn === null || d.depthIn >= 0)).toBe(true);
   });
 
+  it("keeps each day's 7am depth beside its last one, and none when the sensor had nothing near 7am", () => {
+    const row = (date: string, value: number) => ({ SENSOR_NUM: 18, date, value });
+    const sp = parseCdec(resort('mammoth').snowpack!, [
+      row('2026-11-1 5:00', 3), row('2026-11-1 7:00', 4), row('2026-11-1 23:00', 12),
+      row('2026-11-2 0:00', 12), row('2026-11-2 7:00', -217), row('2026-11-2 22:00', 11),
+    ]);
+    expect(sp.series).toEqual([
+      { date: '2026-11-01', depthIn: 12, sweIn: null, morningDepthIn: 4 },
+      { date: '2026-11-02', depthIn: 11, sweIn: null, morningDepthIn: null },
+    ]);
+  });
+
   it('parses CoCoRaHS via ACIS, including traces and missing days', () => {
     const today = recordedAt.toISOString().slice(0, 10);
     const sp = parseAcis(resort('bigbear').snowpack!, fixtureJson('data.rcc-acis.org'), today);

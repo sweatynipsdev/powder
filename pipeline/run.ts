@@ -11,9 +11,9 @@ import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { DataIndex, ForecastData, ModelCalibration, ModelId, ResortData, Sourced } from '../shared/types';
-import { localIso, now } from './clock';
+import { addDays, localDate, localIso, now } from './clock';
 import { type Config, loadConfig, type ResortConfig } from './config';
-import { appendHistory, type Calibration, loadCalibration } from './history';
+import { appendHistory, type Calibration, loadCalibration, loadObservations, type Observation, observation, reportedSnowByDay } from './history';
 import { clearFixtures, httpMode, initClockForMode, writeRecordingMeta } from './http';
 import { EMPTY_PREVIOUS, loadPrevious, type Previous } from './previous';
 import { buildForecast } from './process/forecast';
@@ -142,8 +142,18 @@ export async function runPipeline(
   previous: Previous,
   at: Date = now(),
   calibration: Calibration = {},
+  history: Observation[] = [],
 ): Promise<PipelineResult> {
   const resorts = await Promise.all(config.resorts.map((r) => buildResort(r, at, previous.resorts.get(r.id), calibration[r.id])));
+  // The resort's own reports from earlier runs, plus this run's.
+  const byResort = new Map<string, Observation[]>();
+  for (const o of history) {
+    const list = byResort.get(o.resort);
+    if (list) list.push(o);
+    else byResort.set(o.resort, [o]);
+  }
+  for (const r of resorts)
+    if (r.report) r.reportedSnow = reportedSnowByDay([...(byResort.get(r.id) ?? []), observation(r, at)], r.tz, localDate(at, r.tz));
   return { index: buildIndex(resorts, at, previous.index), resorts };
 }
 
@@ -165,14 +175,16 @@ async function main(): Promise<void> {
       ? EMPTY_PREVIOUS
       : await loadPrevious(ids, process.env.PREVIOUS_DATA_URL ? { url: process.env.PREVIOUS_DATA_URL } : { dir: outDir });
 
-  // Live runs apply the local model's learned corrections. Only the scheduled runs
-  // (POWDER_RECORD_HISTORY=1 in the workflow) add to the history it learns from, so local
-  // test runs never pollute it.
+  // Live runs apply the local model's learned corrections and read the resorts' earlier
+  // reports from the same history. Only the scheduled runs (POWDER_RECORD_HISTORY=1 in the
+  // workflow) add to it, so local test runs never pollute it.
   const live = httpMode() !== 'replay';
   const historyDir = process.env.POWDER_HISTORY_DIR || DEFAULT_HISTORY_DIR;
   const calibration = live ? loadCalibration(join(historyDir, 'calibration.json')) : {};
+  // This month's and last month's logs cover the week the reported snow needs.
+  const history = live ? loadObservations(historyDir, addDays(localDate(at, 'UTC'), -31).slice(0, 7)) : [];
 
-  const result = await runPipeline(config, previous, at, calibration);
+  const result = await runPipeline(config, previous, at, calibration, history);
   result.index.builtFrom = process.env.GITHUB_SHA ?? null;
   writeOutput(outDir, result);
   if (live && process.env.POWDER_RECORD_HISTORY === '1') appendHistory(historyDir, result.resorts, at);

@@ -1,11 +1,12 @@
 // The "local model": every run logs what each model forecast and what was observed, and
 // calibration learns each mountain's per-model bias from those logs. With enough snow
-// events, a model that runs 30% low at Mammoth gets scaled up at Mammoth only.
+// events, a model that runs 30% low at Mammoth gets scaled up at Mammoth only. The same
+// log gives the app each resort's own reported snow for the days before today.
 
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type { ModelCalibration, ModelId, ResortData } from '../shared/types';
-import { addDays, localIso } from './clock';
+import type { DaySnow, ModelCalibration, ModelId, ResortData } from '../shared/types';
+import { addDays, localDate, localIso } from './clock';
 
 export const HISTORY_DAYS = 7;
 /** Snow events needed before a model's correction is trusted. */
@@ -29,6 +30,8 @@ export interface Observation {
   resort: string;
   /** Resort-reported new snow, last 24h, only when the report is current. */
   reportH24: number | null;
+  /** When the resort updated that report. Missing from rows logged before 2026-11-04. */
+  reportAt?: string | null;
   /** Volunteer-observed new snow (CoCoRaHS), last 24h. */
   stationNew24: number | null;
   /** Snow-depth change at the station, last 24h (settles, so it undercounts). */
@@ -54,6 +57,7 @@ export function observation(r: ResortData, at: Date): Observation {
     local: localIso(at, r.tz),
     resort: r.id,
     reportH24: rep?.fresh ? rep.h24 : null,
+    reportAt: rep?.fresh ? rep.updatedAt : null,
     stationNew24: sp?.newSnow?.h24 ?? null,
     depthChange24: sp?.change.h24.depthIn ?? null,
   };
@@ -68,10 +72,11 @@ export function appendHistory(dir: string, resorts: ResortData[], at: Date): voi
   appendFileSync(join(dir, `observed-${month(at)}.jsonl`), resorts.map((r) => JSON.stringify(observation(r, at))).join('\n') + '\n');
 }
 
-function readJsonl<T>(dir: string, prefix: string): T[] {
+/** Every `<prefix>YYYY-MM.jsonl` file, or only those from `fromMonth` on. */
+function readJsonl<T>(dir: string, prefix: string, fromMonth?: string): T[] {
   if (!existsSync(dir)) return [];
   return readdirSync(dir)
-    .filter((f) => f.startsWith(prefix) && f.endsWith('.jsonl'))
+    .filter((f) => f.startsWith(prefix) && f.endsWith('.jsonl') && (!fromMonth || f >= `${prefix}${fromMonth}`))
     .sort()
     .flatMap((f) =>
       readFileSync(join(dir, f), 'utf8')
@@ -82,15 +87,35 @@ function readJsonl<T>(dir: string, prefix: string): T[] {
 }
 
 export const loadSnapshots = (dir: string) => readJsonl<ForecastSnapshot>(dir, 'forecasts-');
-export const loadObservations = (dir: string) => readJsonl<Observation>(dir, 'observed-');
+export const loadObservations = (dir: string, fromMonth?: string) => readJsonl<Observation>(dir, 'observed-', fromMonth);
 
-const isMorning = (local: string) => Number(local.slice(11, 13)) < 12;
+const localHour = (local: string) => Number(local.slice(11, 13));
+const isMorning = (local: string) => localHour(local) < 12;
 
 /** Best available truth for the 24h ending the morning of an observation. */
 export function observedSnow(o: Observation): number | null {
   if (o.reportH24 !== null) return o.reportH24;
   if (o.stationNew24 !== null) return o.stationNew24;
   return o.depthChange24 !== null ? Math.max(0, o.depthChange24) : null;
+}
+
+/**
+ * The resort's own reported new snow on each of the `days` days before `today`, dated by the
+ * morning it was reported: the 24h ending then, like "Last 24 Hours", which today's report fills.
+ * The report's own time dates it. Rows logged before `reportAt` existed use the run's time,
+ * where a run before 5am still holds the previous morning's report. When several runs saw a
+ * report for the same day, the latest run wins.
+ */
+export function reportedSnowByDay(obs: Observation[], tz: string, today: string, days = HISTORY_DAYS): DaySnow[] {
+  const byDay = new Map<string, number>();
+  for (const o of [...obs].sort((a, b) => a.at.localeCompare(b.at))) {
+    if (o.reportH24 === null) continue;
+    let day: string;
+    if (o.reportAt) day = localDate(new Date(o.reportAt), tz);
+    else day = localHour(o.local) < 5 ? addDays(o.local.slice(0, 10), -1) : o.local.slice(0, 10);
+    if (day >= addDays(today, -days) && day < today) byDay.set(day, o.reportH24);
+  }
+  return [...byDay.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([date, inches]) => ({ date, inches }));
 }
 
 export type Calibration = Record<string, Partial<Record<ModelId, ModelCalibration>>>;

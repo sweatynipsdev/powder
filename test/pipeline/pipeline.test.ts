@@ -2,8 +2,9 @@
 
 import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { setNow } from '../../pipeline/clock';
+import { localDate, setNow } from '../../pipeline/clock';
 import { loadConfig, parseConfig } from '../../pipeline/config';
+import type { Observation } from '../../pipeline/history';
 import { configureHttp } from '../../pipeline/http';
 import { EMPTY_PREVIOUS } from '../../pipeline/previous';
 import { buildResort, runPipeline, type PipelineResult } from '../../pipeline/run';
@@ -112,6 +113,24 @@ describe('pipeline replay', () => {
       expect(f.days[0].snow.summit.models.nws).toBeDefined();
     }
     expect(result.resorts.find((r) => r.id === 'mammoth')!.expert!.status.ok).toBe(true);
+  });
+
+  it("gives each resort with a report feed its own reported snow from earlier runs, and no list to one without", async () => {
+    const tz = 'America/Los_Angeles';
+    const twoDaysAgo = localDate(recordedAt, tz, -2);
+    const earlier: Observation = {
+      at: new Date(recordedAt.getTime() - 2 * 86_400_000).toISOString(),
+      local: `${twoDaysAgo}T08:00`,
+      resort: 'mammoth',
+      reportH24: 7,
+      reportAt: `${twoDaysAgo}T07:30:00-08:00`,
+      stationNew24: null,
+      depthChange24: null,
+    };
+    const out = await runPipeline(config, EMPTY_PREVIOUS, recordedAt, {}, [earlier]);
+    const mammoth = out.resorts.find((r) => r.id === 'mammoth')!;
+    expect(mammoth.reportedSnow).toContainEqual({ date: twoDaysAgo, inches: 7 });
+    expect(out.resorts.find((r) => r.id === 'kirkwood')!.reportedSnow).toBeUndefined();
   });
 
   it("scales a model by the mountain's learned bias", async () => {

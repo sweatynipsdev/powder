@@ -1,5 +1,7 @@
 // Single source of "now" so fixture replays are deterministic.
 
+import { addDays } from '../shared/status';
+
 let frozen: Date | null = process.env.POWDER_NOW ? new Date(process.env.POWDER_NOW) : null;
 
 export function setNow(date: Date | null): void {
@@ -48,12 +50,8 @@ export function zonedTime(y: number, mo: number, d: number, h: number, mi: numbe
   return new Date(guess - (shown - guess));
 }
 
-/** Calendar arithmetic on "YYYY-MM-DD" strings. */
-export function addDays(ymd: string, days: number): string {
-  const [y, m, d] = ymd.split('-').map(Number);
-  const t = new Date(Date.UTC(y, m - 1, d + days));
-  return t.toISOString().slice(0, 10);
-}
+// Shared with the app, which counts days the same way.
+export { addDays };
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 

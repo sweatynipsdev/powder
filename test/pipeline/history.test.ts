@@ -13,11 +13,12 @@ import {
   MIN_EVENTS,
   type Observation,
   observedSnow,
+  reportedSnowByDay,
   writeCalibration,
 } from '../../pipeline/history';
 import { addDays } from '../../pipeline/clock';
 import { lastSlot, refreshCaption, slotAlreadyUpdated, slotOf, UPDATE_TIMES_UTC } from '../../shared/schedule';
-import { resortOpenStatus, stationNewSnow, stationTimeIso } from '../../shared/status';
+import { prevDaysSnow, resortOpenStatus, stationNewSnow, stationTimeIso } from '../../shared/status';
 import type { ReportData, SnowpackData } from '../../shared/types';
 
 /** A morning run on `date` forecasting `snow` for each model for the day before it observes. */
@@ -91,6 +92,84 @@ describe('local model calibration', () => {
     writeCalibration(path, { mammoth: { gfs: { factor: 1.2, events: 7 } } }, new Date());
     expect(loadCalibration(path)).toEqual({ mammoth: { gfs: { factor: 1.2, events: 7 } } });
     expect(loadCalibration(join(dir, 'missing.json'))).toEqual({});
+  });
+});
+
+describe('the days before today', () => {
+  const tz = 'America/Los_Angeles';
+  const row = (at: string, local: string, reportH24: number | null, reportAt?: string): Observation => ({
+    at, local, resort: 'mammoth', reportH24, ...(reportAt ? { reportAt } : {}), stationNew24: null, depthChange24: null,
+  });
+  // Mammoth as logged 2026-10-31 to 11-04 (before reportAt existed), then a run with it.
+  const mammoth = [
+    row('2026-11-01T06:17:30Z', '2026-10-31T23:17', null),
+    row('2026-11-01T16:02:48Z', '2026-11-01T08:02', 15),
+    row('2026-11-02T06:19:21Z', '2026-11-01T22:19', 15),
+    row('2026-11-02T19:14:18Z', '2026-11-02T11:14', 0),
+    row('2026-11-03T06:55:46Z', '2026-11-02T22:55', 0),
+    row('2026-11-03T10:00:01Z', '2026-11-03T02:00', 0),
+    row('2026-11-04T00:28:06Z', '2026-11-03T16:28', 0),
+    row('2026-11-04T17:16:19Z', '2026-11-04T09:16', 0, '2026-11-04T08:09:28-08:00'),
+  ];
+  /** A station's days as [date, last depth of the day, depth at ~7am]. */
+  const days = (series: [string, number | null, (number | null)?][]): SnowpackData => ({
+    station: { id: 'x', name: 'x', network: 'CDEC', elevFt: 9400, url: 'https://example.com' },
+    observedAt: null, depthIn: null, sweIn: null, tempF: null, newSnow: null, note: null,
+    change: { h24: { depthIn: null, sweIn: null }, h48: { depthIn: null, sweIn: null }, d7: { depthIn: null, sweIn: null } },
+    series: series.map(([date, depthIn, morningDepthIn]) => ({ date, depthIn, sweIn: null, ...(morningDepthIn !== undefined ? { morningDepthIn } : {}) })),
+  });
+  // Kirkwood's Oct 31 storm: 9" by the morning of Nov 1.
+  const kirkwood: [string, number, number][] = [
+    ['2026-10-29', 0, 0], ['2026-10-30', 1, 0], ['2026-10-31', 10, 1], ['2026-11-01', 11, 10], ['2026-11-02', 9, 11], ['2026-11-03', 10, 9], ['2026-11-04', 9, 10],
+  ];
+
+  it("dates Mammoth's 15\" by the morning it reported it, and leaves today's report to Last 24 Hours", () => {
+    expect(reportedSnowByDay(mammoth, tz, '2026-11-04')).toEqual([
+      { date: '2026-11-01', inches: 15 },
+      { date: '2026-11-02', inches: 0 },
+      { date: '2026-11-03', inches: 0 },
+    ]);
+  });
+
+  it("dates a report by its own time, and an old 2am row by the previous morning's report", () => {
+    // A 6:55am run still showing yesterday's 8am report.
+    expect(reportedSnowByDay([row('2026-11-03T14:55:00Z', '2026-11-03T06:55', 5, '2026-11-02T08:00:00-08:00')], tz, '2026-11-04')).toEqual([{ date: '2026-11-02', inches: 5 }]);
+    expect(reportedSnowByDay([row('2026-11-03T10:00:00Z', '2026-11-03T02:00', 5)], tz, '2026-11-04')).toEqual([{ date: '2026-11-02', inches: 5 }]);
+  });
+
+  it('keeps the latest run for a day, and only the week before today', () => {
+    // The resort revised its Nov 1 report in the afternoon; a run after that sees 18".
+    const revised = row('2026-11-02T07:00:00Z', '2026-11-01T23:00', 18, '2026-11-01T15:30:00-07:00');
+    expect(reportedSnowByDay([...mammoth, revised], tz, '2026-11-04')[0]).toEqual({ date: '2026-11-01', inches: 18 });
+    expect(reportedSnowByDay(mammoth, tz, '2026-11-09').map((d) => d.date)).toEqual(['2026-11-02', '2026-11-03', '2026-11-04']);
+    expect(reportedSnowByDay(mammoth, tz, '2026-11-02').map((d) => d.date)).toEqual(['2026-11-01']);
+  });
+
+  it("fills Mammoth's row from its reports when its station has no depth", () => {
+    const broken = days([['2026-10-30', null, null], ['2026-10-31', null, null], ['2026-11-01', 17, null], ['2026-11-02', null, null], ['2026-11-03', null, null], ['2026-11-04', null, null]]);
+    expect(prevDaysSnow(reportedSnowByDay(mammoth, tz, '2026-11-04'), broken, '2026-11-04')).toEqual([
+      { date: '2026-10-30', inches: null, source: null },
+      { date: '2026-10-31', inches: null, source: null },
+      { date: '2026-11-01', inches: 15, source: 'reported' },
+      { date: '2026-11-02', inches: 0, source: 'reported' },
+      { date: '2026-11-03', inches: 0, source: 'reported' },
+    ]);
+  });
+
+  it("gives a station day the gain in its morning depth, so a storm lands on the morning it was measured, like a report", () => {
+    const filled = prevDaysSnow([{ date: '2026-11-02', inches: 3 }], days(kirkwood), '2026-11-04');
+    expect(filled.map((d) => [d.date.slice(5), d.inches, d.source])).toEqual([
+      ['10-30', 0, 'estimated'], ['10-31', 1, 'estimated'], ['11-01', 9, 'estimated'], ['11-02', 3, 'reported'], ['11-03', 0, 'estimated'],
+    ]);
+  });
+
+  it("uses the day before's calendar gain without morning depths, and an observer's own mornings as they are", () => {
+    const old = days(kirkwood.map(([date, depth]) => [date, depth]));
+    expect(prevDaysSnow(undefined, old, '2026-11-04').map((d) => d.inches)).toEqual([null, 1, 9, 1, 0]);
+    const observer: SnowpackData = { ...days([]), station: { ...days([]).station, network: 'CoCoRaHS' } };
+    observer.series = ['2026-10-30', '2026-10-31', '2026-11-01', '2026-11-02', '2026-11-03'].map((date, i) => ({ date, depthIn: null, sweIn: null, newIn: [0, 0, 6, 2, 0][i] }));
+    expect(prevDaysSnow(undefined, observer, '2026-11-04').map((d) => d.inches)).toEqual([0, 0, 6, 2, 0]);
+    expect(prevDaysSnow(undefined, null, '2026-11-04').every((d) => d.inches === null && d.source === null)).toBe(true);
   });
 });
 

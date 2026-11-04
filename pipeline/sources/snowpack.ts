@@ -10,6 +10,8 @@ type SnowpackConfig = NonNullable<ResortConfig['snowpack']>;
 
 /** Days of history to pull: enough for the 7-day change and a month-long sparkline. */
 const HISTORY_DAYS = 30;
+/** When a day's morning depth is read, in the station's local standard time: when observers and resorts measure. */
+const MORNING = '07:00';
 
 interface HourlyObs {
   /** Local "YYYY-MM-DD HH:MM". */
@@ -71,7 +73,7 @@ export function summarizeHourly(cfg: SnowpackConfig, network: SnowpackData['stat
     tempF: [...obs].reverse().find((o) => o.tempF !== null)?.tempF ?? null,
     change: { h24: change(obs, latest.t, 24), h48: change(obs, latest.t, 48), d7: change(obs, latest.t, 168) },
     newSnow: null,
-    series: [...byDate.entries()].map(([date, v]) => ({ date, ...v })),
+    series: [...byDate.entries()].map(([date, v]) => ({ date, ...v, morningDepthIn: valueAt(obs, `${date} ${MORNING}`, 'depthIn') })),
     note: null,
   };
 }

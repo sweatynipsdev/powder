@@ -205,8 +205,13 @@ export interface SnowpackData {
   change: { h24: SnowpackChange; h48: SnowpackChange; d7: SnowpackChange };
   /** Observer-reported new snow (CoCoRaHS only). */
   newSnow: { h24: number | null; h48: number | null; d7: number | null } | null;
-  /** Daily values, oldest first, ~30 days. `newIn` is observer-measured new snow (CoCoRaHS only). */
-  series: { date: string; depthIn: number | null; sweIn: number | null; newIn?: number | null }[];
+  /**
+   * Daily values, oldest first, ~30 days: `depthIn` and `sweIn` are the day's last readings.
+   * `newIn` is observer-measured new snow for the 24h ending that morning (CoCoRaHS only).
+   * `morningDepthIn` is the depth at about 7am local standard time (hourly stations; missing
+   * from data built before 2026-11-04).
+   */
+  series: { date: string; depthIn: number | null; sweIn: number | null; newIn?: number | null; morningDepthIn?: number | null }[];
   note: string | null;
 }
 
@@ -313,6 +318,12 @@ export interface ReportArea {
   d7: number | null;
 }
 
+/** New snow on one day, YYYY-MM-DD in the resort's time zone. */
+export interface DaySnow {
+  date: string;
+  inches: number;
+}
+
 export interface ReportData {
   name: string;
   updatedAt: string | null;
@@ -400,6 +411,13 @@ export interface ResortData {
   avalanche: Sourced<AvalancheData> | null;
   roads: Sourced<RoadsData> | null;
   report: Sourced<ReportData> | null;
+  /**
+   * The resort's own reported new snow on each of the 7 days before today, dated by the morning
+   * it was reported (the 24h ending then), from the update job's history. Today's report is
+   * "Last 24 Hours". Days with no current report are left out. Missing from data built before
+   * 2026-11-04.
+   */
+  reportedSnow?: DaySnow[];
   /** A local human forecaster's latest post, for resorts that have one configured. */
   expert?: Sourced<ExpertPost> | null;
   /** Hand-written local knowledge for this mountain (from resorts.json). */

@@ -12,6 +12,9 @@ import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium, devices, type Page, webkit } from 'playwright';
 import { preview } from 'vite';
+import { fmtSnow } from '../shared/format';
+import { localDate, prevDaysSnow } from '../shared/status';
+import type { ResortData } from '../shared/types';
 
 const PORT = 4174;
 const URL = process.env.E2E_URL ?? `http://localhost:${PORT}/`;
@@ -78,6 +81,19 @@ try {
   // Timeline: tap a forecast day, as on the phone, and its details open.
   await page.goto(URL + '#/r/mammoth');
   await page.waitForSelector(SUMMARY);
+
+  // "Prev 1–5 Days" shows what the data holds: Mammoth's own reports first (its station has no
+  // working depth sensor), then the station.
+  const mammothData = (await (await page.request.get(URL + 'data/resorts/mammoth.json')).json()) as ResortData;
+  const prev = prevDaysSnow(mammothData.reportedSnow, mammothData.snowpack?.data, localDate(new Date(mammothData.generatedAt), mammothData.tz));
+  const prevSeg = page.locator(`${SUMMARY} .seg`).first();
+  const labels = await prevSeg.locator('button.col').evaluateAll((els) => els.map((e) => e.getAttribute('aria-label') ?? ''));
+  const shownTotal = (await prevSeg.locator('.bracket strong').innerText()).trim();
+  const total = prev.some((d) => d.inches !== null) ? `${fmtSnow(prev.reduce((s, d) => s + (d.inches ?? 0), 0))}"` : '—';
+  check(
+    labels.length === 5 && shownTotal === total && prev.every((d, i) => labels[i].includes(`: ${fmtSnow(d.inches)} inches`) && labels[i].endsWith(d.source ? `, ${d.source}` : 'inches')),
+    `Mammoth's previous 5 days match the data, reports first (${prev.map((d) => d.inches ?? '·').join(' ')}, total ${total})`,
+  );
   const day = page.locator(`${SUMMARY} button.col:not([disabled])`).nth(2);
   await day.tap();
   await page.waitForTimeout(200);
