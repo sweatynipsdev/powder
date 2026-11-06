@@ -1,7 +1,41 @@
 {
-  "generatedAt": "2026-11-05T17:26:34.320Z",
+  "generatedAt": "2026-11-06T06:56:33.220Z",
   "minEvents": 6,
   "resorts": {
+    "hoodmeadows": {
+      "gfs": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "ecmwf": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "icon": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "gem": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "aifs": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nam": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nbm": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nws": {
+        "factor": 0.6,
+        "events": 6
+      }
+    },
     "baker": {
       "gfs": {
         "factor": 0.6,
@@ -75,6 +109,142 @@
       },
       "nws": {
         "factor": 0.92,
+        "events": 7
+      }
+    },
+    "dodgeridge": {
+      "gfs": {
+        "factor": 0.87,
+        "events": 6
+      },
+      "ecmwf": {
+        "factor": 1.49,
+        "events": 6
+      },
+      "icon": {
+        "factor": 1.6,
+        "events": 6
+      },
+      "gem": {
+        "factor": 1.6,
+        "events": 6
+      },
+      "aifs": {
+        "factor": 1.34,
+        "events": 6
+      },
+      "nam": {
+        "factor": 1.19,
+        "events": 6
+      },
+      "nbm": {
+        "factor": 1.6,
+        "events": 6
+      }
+    },
+    "alta": {
+      "gfs": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "ecmwf": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "icon": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "gem": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "aifs": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "hrrr": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nam": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nbm": {
+        "factor": 0.6,
+        "events": 6
+      }
+    },
+    "brighton": {
+      "gfs": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "ecmwf": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "icon": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "gem": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "aifs": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "hrrr": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nam": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nbm": {
+        "factor": 0.6,
+        "events": 6
+      }
+    },
+    "solitude": {
+      "gfs": {
+        "factor": 0.6,
+        "events": 7
+      },
+      "ecmwf": {
+        "factor": 0.6,
+        "events": 7
+      },
+      "icon": {
+        "factor": 0.88,
+        "events": 7
+      },
+      "gem": {
+        "factor": 0.6,
+        "events": 7
+      },
+      "aifs": {
+        "factor": 0.6,
+        "events": 7
+      },
+      "hrrr": {
+        "factor": 0.6,
+        "events": 7
+      },
+      "nam": {
+        "factor": 0.6,
+        "events": 7
+      },
+      "nbm": {
+        "factor": 0.69,
+        "events": 7
+      },
+      "nws": {
+        "factor": 1.6,
         "events": 7
       }
     }
