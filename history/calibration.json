@@ -1,7 +1,41 @@
 {
-  "generatedAt": "2026-11-10T17:04:15.402Z",
+  "generatedAt": "2026-11-11T06:37:24.036Z",
   "minEvents": 6,
   "resorts": {
+    "bachelor": {
+      "gfs": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "ecmwf": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "icon": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "gem": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "aifs": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "hrrr": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nbm": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nws": {
+        "factor": 0.6,
+        "events": 6
+      }
+    },
     "hoodmeadows": {
       "gfs": {
         "factor": 0.6,
@@ -39,27 +73,27 @@
     "baker": {
       "gfs": {
         "factor": 0.6,
-        "events": 9
+        "events": 10
       },
       "ecmwf": {
         "factor": 0.6,
-        "events": 9
+        "events": 10
       },
       "icon": {
         "factor": 0.6,
-        "events": 9
+        "events": 10
       },
       "gem": {
         "factor": 0.6,
-        "events": 9
+        "events": 10
       },
       "aifs": {
         "factor": 0.6,
-        "events": 9
+        "events": 10
       },
       "hrrr": {
         "factor": 0.6,
-        "events": 9
+        "events": 10
       },
       "nam": {
         "factor": 0.6,
@@ -67,11 +101,11 @@
       },
       "nbm": {
         "factor": 0.6,
-        "events": 9
+        "events": 10
       },
       "nws": {
-        "factor": 0.85,
-        "events": 9
+        "factor": 0.8,
+        "events": 10
       }
     },
     "kirkwood": {
