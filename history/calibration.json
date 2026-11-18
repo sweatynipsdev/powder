@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-17T18:36:03.414Z",
+  "generatedAt": "2026-11-18T07:38:41.948Z",
   "minEvents": 6,
   "resorts": {
     "breckenridge": {
@@ -220,19 +220,19 @@
         "events": 11
       },
       "ecmwf": {
-        "factor": 0.72,
+        "factor": 0.6,
         "events": 11
       },
       "icon": {
-        "factor": 0.65,
+        "factor": 0.6,
         "events": 11
       },
       "gem": {
-        "factor": 0.8,
+        "factor": 0.61,
         "events": 11
       },
       "aifs": {
-        "factor": 0.9,
+        "factor": 0.68,
         "events": 11
       },
       "hrrr": {
@@ -248,13 +248,13 @@
         "events": 11
       },
       "nws": {
-        "factor": 0.83,
+        "factor": 0.63,
         "events": 11
       }
     },
     "palisades": {
       "gfs": {
-        "factor": 1.01,
+        "factor": 0.93,
         "events": 12
       },
       "ecmwf": {
@@ -270,15 +270,15 @@
         "events": 12
       },
       "aifs": {
-        "factor": 1.6,
+        "factor": 1.53,
         "events": 12
       },
       "hrrr": {
-        "factor": 1.02,
+        "factor": 0.93,
         "events": 12
       },
       "nbm": {
-        "factor": 1.24,
+        "factor": 1.13,
         "events": 12
       },
       "nws": {
@@ -288,35 +288,35 @@
     },
     "alpine": {
       "gfs": {
-        "factor": 0.89,
+        "factor": 0.8,
         "events": 11
       },
       "ecmwf": {
-        "factor": 1.6,
+        "factor": 1.44,
         "events": 11
       },
       "icon": {
-        "factor": 1.22,
+        "factor": 1.09,
         "events": 11
       },
       "gem": {
-        "factor": 1.6,
+        "factor": 1.54,
         "events": 11
       },
       "aifs": {
-        "factor": 1.52,
+        "factor": 1.36,
         "events": 11
       },
       "hrrr": {
-        "factor": 0.9,
+        "factor": 0.8,
         "events": 11
       },
       "nbm": {
-        "factor": 1.14,
+        "factor": 1.02,
         "events": 11
       },
       "nws": {
-        "factor": 1.6,
+        "factor": 1.54,
         "events": 11
       }
     },
@@ -326,19 +326,19 @@
         "events": 7
       },
       "ecmwf": {
-        "factor": 1.16,
+        "factor": 0.61,
         "events": 7
       },
       "icon": {
-        "factor": 1.08,
+        "factor": 0.6,
         "events": 7
       },
       "gem": {
-        "factor": 1.6,
+        "factor": 0.86,
         "events": 7
       },
       "aifs": {
-        "factor": 1.49,
+        "factor": 0.79,
         "events": 7
       },
       "hrrr": {
@@ -346,17 +346,17 @@
         "events": 7
       },
       "nbm": {
-        "factor": 0.82,
+        "factor": 0.6,
         "events": 7
       },
       "nws": {
-        "factor": 1.6,
+        "factor": 1.55,
         "events": 7
       }
     },
     "heavenly": {
       "gfs": {
-        "factor": 0.67,
+        "factor": 0.63,
         "events": 7
       },
       "ecmwf": {
@@ -364,7 +364,7 @@
         "events": 7
       },
       "icon": {
-        "factor": 1.11,
+        "factor": 1.04,
         "events": 7
       },
       "gem": {
@@ -372,19 +372,19 @@
         "events": 7
       },
       "aifs": {
-        "factor": 0.61,
+        "factor": 0.6,
         "events": 7
       },
       "hrrr": {
-        "factor": 0.68,
+        "factor": 0.64,
         "events": 7
       },
       "nbm": {
-        "factor": 0.69,
+        "factor": 0.65,
         "events": 7
       },
       "nws": {
-        "factor": 1.3,
+        "factor": 1.21,
         "events": 7
       }
     },
@@ -394,19 +394,19 @@
         "events": 7
       },
       "ecmwf": {
-        "factor": 0.63,
+        "factor": 0.66,
         "events": 7
       },
       "icon": {
-        "factor": 0.68,
+        "factor": 0.71,
         "events": 7
       },
       "gem": {
-        "factor": 1.4,
+        "factor": 1.48,
         "events": 7
       },
       "aifs": {
-        "factor": 1.06,
+        "factor": 1.11,
         "events": 7
       },
       "hrrr": {
@@ -418,17 +418,17 @@
         "events": 7
       },
       "nws": {
-        "factor": 0.99,
+        "factor": 1.04,
         "events": 7
       }
     },
     "mtrose": {
       "gfs": {
-        "factor": 0.64,
+        "factor": 0.6,
         "events": 8
       },
       "ecmwf": {
-        "factor": 1.22,
+        "factor": 1.06,
         "events": 8
       },
       "icon": {
@@ -436,23 +436,23 @@
         "events": 8
       },
       "gem": {
-        "factor": 1.35,
+        "factor": 1.18,
         "events": 8
       },
       "aifs": {
-        "factor": 1.22,
+        "factor": 1.06,
         "events": 8
       },
       "hrrr": {
-        "factor": 0.65,
+        "factor": 0.6,
         "events": 8
       },
       "nbm": {
-        "factor": 0.91,
+        "factor": 0.79,
         "events": 8
       },
       "nws": {
-        "factor": 1.6,
+        "factor": 1.57,
         "events": 8
       }
     },
@@ -462,7 +462,7 @@
         "events": 7
       },
       "ecmwf": {
-        "factor": 1.15,
+        "factor": 1.07,
         "events": 7
       },
       "icon": {
@@ -470,11 +470,11 @@
         "events": 7
       },
       "gem": {
-        "factor": 0.93,
+        "factor": 0.87,
         "events": 7
       },
       "aifs": {
-        "factor": 1.6,
+        "factor": 1.54,
         "events": 7
       },
       "hrrr": {
@@ -482,37 +482,37 @@
         "events": 7
       },
       "nbm": {
-        "factor": 0.91,
+        "factor": 0.85,
         "events": 7
       },
       "nws": {
-        "factor": 1.6,
+        "factor": 1.54,
         "events": 7
       }
     },
     "dodgeridge": {
       "gfs": {
-        "factor": 0.86,
+        "factor": 0.81,
         "events": 12
       },
       "ecmwf": {
-        "factor": 0.92,
+        "factor": 0.87,
         "events": 12
       },
       "icon": {
-        "factor": 0.91,
+        "factor": 0.86,
         "events": 12
       },
       "gem": {
-        "factor": 1.05,
+        "factor": 0.99,
         "events": 12
       },
       "aifs": {
-        "factor": 1.08,
+        "factor": 1.02,
         "events": 12
       },
       "hrrr": {
-        "factor": 0.8,
+        "factor": 0.75,
         "events": 11
       },
       "nam": {
@@ -520,7 +520,7 @@
         "events": 6
       },
       "nbm": {
-        "factor": 0.87,
+        "factor": 0.82,
         "events": 12
       },
       "nws": {
@@ -758,7 +758,7 @@
         "events": 6
       },
       "aifs": {
-        "factor": 0.64,
+        "factor": 0.74,
         "events": 6
       },
       "hrrr": {
@@ -770,41 +770,41 @@
         "events": 6
       },
       "nws": {
-        "factor": 1.03,
+        "factor": 1.21,
         "events": 6
       }
     },
     "boreal": {
       "gfs": {
-        "factor": 0.76,
+        "factor": 0.6,
         "events": 6
       },
       "ecmwf": {
-        "factor": 1.36,
+        "factor": 0.71,
         "events": 6
       },
       "icon": {
-        "factor": 1.29,
+        "factor": 0.67,
         "events": 6
       },
       "gem": {
-        "factor": 1.6,
+        "factor": 1.18,
         "events": 6
       },
       "aifs": {
-        "factor": 1.6,
+        "factor": 1.12,
         "events": 6
       },
       "hrrr": {
-        "factor": 0.76,
+        "factor": 0.6,
         "events": 6
       },
       "nbm": {
-        "factor": 0.96,
+        "factor": 0.6,
         "events": 6
       },
       "nws": {
-        "factor": 1.6,
+        "factor": 0.95,
         "events": 6
       }
     },
@@ -814,19 +814,19 @@
         "events": 6
       },
       "ecmwf": {
-        "factor": 1.28,
+        "factor": 0.91,
         "events": 6
       },
       "icon": {
-        "factor": 1.32,
+        "factor": 0.93,
         "events": 6
       },
       "gem": {
-        "factor": 1.6,
+        "factor": 1.31,
         "events": 6
       },
       "aifs": {
-        "factor": 1.1,
+        "factor": 0.78,
         "events": 6
       },
       "hrrr": {
@@ -834,25 +834,25 @@
         "events": 6
       },
       "nbm": {
-        "factor": 0.69,
+        "factor": 0.6,
         "events": 6
       },
       "nws": {
-        "factor": 0.89,
+        "factor": 0.63,
         "events": 6
       }
     },
     "mammoth": {
       "gfs": {
-        "factor": 0.6,
+        "factor": 0.73,
         "events": 6
       },
       "ecmwf": {
-        "factor": 0.9,
+        "factor": 1.15,
         "events": 6
       },
       "icon": {
-        "factor": 1.06,
+        "factor": 1.36,
         "events": 6
       },
       "gem": {
@@ -864,29 +864,29 @@
         "events": 6
       },
       "hrrr": {
-        "factor": 0.6,
+        "factor": 0.75,
         "events": 6
       },
       "nbm": {
-        "factor": 0.76,
+        "factor": 0.98,
         "events": 6
       },
       "nws": {
-        "factor": 1.59,
+        "factor": 1.6,
         "events": 6
       }
     },
     "june": {
       "gfs": {
-        "factor": 0.61,
+        "factor": 0.6,
         "events": 6
       },
       "ecmwf": {
-        "factor": 0.78,
+        "factor": 0.7,
         "events": 6
       },
       "icon": {
-        "factor": 1.6,
+        "factor": 1.48,
         "events": 6
       },
       "gem": {
@@ -894,19 +894,19 @@
         "events": 6
       },
       "aifs": {
-        "factor": 1.34,
+        "factor": 1.2,
         "events": 6
       },
       "hrrr": {
-        "factor": 0.63,
+        "factor": 0.6,
         "events": 6
       },
       "nbm": {
-        "factor": 1.6,
+        "factor": 1.49,
         "events": 6
       },
       "nws": {
-        "factor": 1.23,
+        "factor": 1.1,
         "events": 6
       }
     },
