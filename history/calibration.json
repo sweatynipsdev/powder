@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-19T07:34:24.641Z",
+  "generatedAt": "2026-11-19T18:18:16.522Z",
   "minEvents": 6,
   "resorts": {
     "breckenridge": {
@@ -606,40 +606,40 @@
     },
     "solitude": {
       "gfs": {
-        "factor": 0.94,
-        "events": 12
+        "factor": 1.57,
+        "events": 14
       },
       "ecmwf": {
-        "factor": 1.07,
-        "events": 12
+        "factor": 1.6,
+        "events": 14
       },
       "icon": {
-        "factor": 1.09,
-        "events": 12
+        "factor": 1.6,
+        "events": 14
       },
       "gem": {
-        "factor": 1,
-        "events": 12
+        "factor": 1.6,
+        "events": 14
       },
       "aifs": {
-        "factor": 1.17,
-        "events": 12
+        "factor": 1.6,
+        "events": 14
       },
       "hrrr": {
-        "factor": 0.92,
-        "events": 12
+        "factor": 1.55,
+        "events": 14
       },
       "nam": {
         "factor": 0.6,
         "events": 7
       },
       "nbm": {
-        "factor": 1.08,
-        "events": 12
+        "factor": 1.6,
+        "events": 14
       },
       "nws": {
-        "factor": 1.18,
-        "events": 12
+        "factor": 1.6,
+        "events": 14
       }
     },
     "parkcity": {
