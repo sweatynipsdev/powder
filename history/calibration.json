@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-20T07:26:00.120Z",
+  "generatedAt": "2026-11-20T17:49:47.924Z",
   "minEvents": 6,
   "resorts": {
     "breckenridge": {
@@ -531,217 +531,217 @@
     "alta": {
       "gfs": {
         "factor": 0.6,
-        "events": 11
+        "events": 13
       },
       "ecmwf": {
-        "factor": 0.62,
-        "events": 11
+        "factor": 0.6,
+        "events": 13
       },
       "icon": {
-        "factor": 0.76,
-        "events": 11
+        "factor": 0.6,
+        "events": 13
       },
       "gem": {
         "factor": 0.6,
-        "events": 11
+        "events": 13
       },
       "aifs": {
-        "factor": 0.97,
-        "events": 11
+        "factor": 0.81,
+        "events": 13
       },
       "hrrr": {
         "factor": 0.6,
-        "events": 11
+        "events": 13
       },
       "nam": {
         "factor": 0.6,
         "events": 6
       },
       "nbm": {
-        "factor": 0.88,
-        "events": 11
+        "factor": 0.63,
+        "events": 13
       },
       "nws": {
-        "factor": 0.86,
-        "events": 11
+        "factor": 0.67,
+        "events": 13
       }
     },
     "brighton": {
       "gfs": {
         "factor": 0.6,
-        "events": 10
+        "events": 12
       },
       "ecmwf": {
-        "factor": 0.6,
-        "events": 10
+        "factor": 0.62,
+        "events": 12
       },
       "icon": {
-        "factor": 0.77,
-        "events": 10
+        "factor": 0.6,
+        "events": 12
       },
       "gem": {
         "factor": 0.6,
-        "events": 10
+        "events": 12
       },
       "aifs": {
-        "factor": 0.66,
-        "events": 10
+        "factor": 0.7,
+        "events": 12
       },
       "hrrr": {
         "factor": 0.6,
-        "events": 10
+        "events": 12
       },
       "nam": {
         "factor": 0.6,
         "events": 6
       },
       "nbm": {
-        "factor": 0.7,
-        "events": 10
+        "factor": 0.63,
+        "events": 12
       },
       "nws": {
-        "factor": 0.98,
-        "events": 10
+        "factor": 0.75,
+        "events": 12
       }
     },
     "solitude": {
       "gfs": {
-        "factor": 0.94,
-        "events": 12
+        "factor": 0.6,
+        "events": 14
       },
       "ecmwf": {
-        "factor": 1.07,
-        "events": 12
+        "factor": 0.68,
+        "events": 14
       },
       "icon": {
-        "factor": 1.09,
-        "events": 12
+        "factor": 0.61,
+        "events": 14
       },
       "gem": {
-        "factor": 1,
-        "events": 12
+        "factor": 0.6,
+        "events": 14
       },
       "aifs": {
-        "factor": 1.17,
-        "events": 12
+        "factor": 0.77,
+        "events": 14
       },
       "hrrr": {
-        "factor": 0.92,
-        "events": 12
+        "factor": 0.6,
+        "events": 14
       },
       "nam": {
         "factor": 0.6,
         "events": 7
       },
       "nbm": {
-        "factor": 1.08,
-        "events": 12
+        "factor": 0.61,
+        "events": 14
       },
       "nws": {
-        "factor": 1.18,
-        "events": 12
+        "factor": 0.75,
+        "events": 14
       }
     },
     "parkcity": {
       "gfs": {
         "factor": 0.6,
-        "events": 9
+        "events": 11
       },
       "ecmwf": {
-        "factor": 0.6,
-        "events": 9
+        "factor": 0.76,
+        "events": 11
       },
       "icon": {
-        "factor": 0.77,
-        "events": 9
+        "factor": 0.89,
+        "events": 11
       },
       "gem": {
-        "factor": 0.67,
-        "events": 9
+        "factor": 0.92,
+        "events": 11
       },
       "aifs": {
-        "factor": 0.72,
-        "events": 9
+        "factor": 1.01,
+        "events": 11
       },
       "hrrr": {
         "factor": 0.6,
-        "events": 9
+        "events": 11
       },
       "nbm": {
-        "factor": 0.8,
-        "events": 9
+        "factor": 0.85,
+        "events": 11
       },
       "nws": {
-        "factor": 0.85,
-        "events": 9
+        "factor": 1.03,
+        "events": 11
       }
     },
     "snowbird": {
       "gfs": {
-        "factor": 0.65,
-        "events": 10
+        "factor": 0.6,
+        "events": 12
       },
       "ecmwf": {
-        "factor": 0.93,
-        "events": 10
+        "factor": 0.75,
+        "events": 12
       },
       "icon": {
-        "factor": 1.01,
-        "events": 10
+        "factor": 0.67,
+        "events": 12
       },
       "gem": {
-        "factor": 0.8,
-        "events": 10
+        "factor": 0.6,
+        "events": 12
       },
       "aifs": {
-        "factor": 1.23,
-        "events": 10
+        "factor": 0.97,
+        "events": 12
       },
       "hrrr": {
-        "factor": 0.63,
-        "events": 10
+        "factor": 0.6,
+        "events": 12
       },
       "nbm": {
-        "factor": 1.03,
-        "events": 10
+        "factor": 0.75,
+        "events": 12
       },
       "nws": {
-        "factor": 1.09,
-        "events": 10
+        "factor": 0.82,
+        "events": 12
       }
     },
     "deervalley": {
       "gfs": {
         "factor": 0.6,
-        "events": 8
+        "events": 10
       },
       "ecmwf": {
-        "factor": 0.63,
-        "events": 8
+        "factor": 0.7,
+        "events": 10
       },
       "icon": {
         "factor": 0.73,
-        "events": 8
+        "events": 10
       },
       "gem": {
-        "factor": 0.75,
-        "events": 8
+        "factor": 0.8,
+        "events": 10
       },
       "aifs": {
-        "factor": 0.8,
-        "events": 8
+        "factor": 0.88,
+        "events": 10
       },
       "hrrr": {
         "factor": 0.6,
-        "events": 8
+        "events": 10
       },
       "nbm": {
-        "factor": 1.08,
-        "events": 8
+        "factor": 0.75,
+        "events": 10
       },
       "nws": {
-        "factor": 0.97,
-        "events": 8
+        "factor": 0.87,
+        "events": 10
       }
     },
     "northstar": {
