@@ -159,6 +159,22 @@ jobs:
         uses: actions/upload-pages-artifact@v5
         with:
           path: dist
+      # GitHub's artifact list can lag the upload, and deploy-pages looks the artifact up straight
+      # away. On 2026-11-20 two runs in a row found none ("No artifacts named github-pages") and
+      # the site kept the morning's data (actions/deploy-pages#451). Wait until the list shows it,
+      # using the same lookup deploy-pages makes. Don't use "Re-run failed jobs" to recover: the
+      # re-run uploads a second github-pages artifact and the lookup fails on the duplicate.
+      - name: Wait for the artifact to be listed
+        if: steps.budget.outputs.defer != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for i in $(seq 0 17); do
+            n=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?name=github-pages" --jq .total_count) || n=0
+            if [ "$n" -ge 1 ]; then echo "github-pages listed after $((i * 10))s"; exit 0; fi
+            sleep 10
+          done
+          echo "::warning::github-pages still isn't listed after 3 minutes; deploying anyway"
       - id: deploy
         if: steps.budget.outputs.defer != 'true'
         uses: actions/deploy-pages@v5
