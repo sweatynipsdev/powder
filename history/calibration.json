@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T07:49:59.856Z",
+  "generatedAt": "2026-11-23T21:27:20.294Z",
   "minEvents": 6,
   "resorts": {
     "breckenridge": {
@@ -712,36 +712,36 @@
     },
     "deervalley": {
       "gfs": {
-        "factor": 0.88,
-        "events": 14
+        "factor": 0.95,
+        "events": 16
       },
       "ecmwf": {
-        "factor": 1.15,
-        "events": 14
+        "factor": 1.24,
+        "events": 16
       },
       "icon": {
-        "factor": 1.18,
-        "events": 14
+        "factor": 1.27,
+        "events": 16
       },
       "gem": {
-        "factor": 1.47,
-        "events": 14
+        "factor": 1.58,
+        "events": 16
       },
       "aifs": {
-        "factor": 1.3,
-        "events": 14
+        "factor": 1.4,
+        "events": 16
       },
       "hrrr": {
-        "factor": 0.88,
-        "events": 14
+        "factor": 0.94,
+        "events": 16
       },
       "nbm": {
-        "factor": 1.2,
-        "events": 14
+        "factor": 1.29,
+        "events": 16
       },
       "nws": {
-        "factor": 1.35,
-        "events": 14
+        "factor": 1.45,
+        "events": 16
       }
     },
     "northstar": {
@@ -950,36 +950,36 @@
     },
     "abasin": {
       "gfs": {
-        "factor": 0.71,
-        "events": 8
+        "factor": 1.01,
+        "events": 10
       },
       "ecmwf": {
-        "factor": 1.49,
-        "events": 8
+        "factor": 1.6,
+        "events": 10
       },
       "icon": {
-        "factor": 1.57,
-        "events": 8
+        "factor": 1.6,
+        "events": 10
       },
       "gem": {
-        "factor": 1.09,
-        "events": 8
+        "factor": 1.55,
+        "events": 10
       },
       "aifs": {
-        "factor": 1.23,
-        "events": 8
+        "factor": 1.6,
+        "events": 10
       },
       "hrrr": {
-        "factor": 0.69,
-        "events": 8
+        "factor": 0.99,
+        "events": 10
       },
       "nbm": {
-        "factor": 0.81,
-        "events": 8
+        "factor": 1.16,
+        "events": 10
       },
       "nws": {
-        "factor": 1.1,
-        "events": 8
+        "factor": 1.57,
+        "events": 10
       }
     },
     "copper": {
@@ -1018,28 +1018,28 @@
     },
     "winterpark": {
       "gfs": {
-        "factor": 0.79,
-        "events": 6
+        "factor": 1.09,
+        "events": 8
       },
       "ecmwf": {
         "factor": 1.6,
-        "events": 6
+        "events": 8
       },
       "aifs": {
         "factor": 1.6,
-        "events": 6
+        "events": 8
       },
       "hrrr": {
-        "factor": 0.78,
-        "events": 6
+        "factor": 1.08,
+        "events": 8
       },
       "nbm": {
         "factor": 1.6,
-        "events": 6
+        "events": 8
       },
       "nws": {
         "factor": 1.6,
-        "events": 6
+        "events": 8
       }
     }
   }
