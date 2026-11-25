@@ -1,73 +1,73 @@
 {
-  "generatedAt": "2026-11-24T10:01:07.846Z",
+  "generatedAt": "2026-11-25T08:45:37.297Z",
   "minEvents": 6,
   "resorts": {
     "breckenridge": {
       "gfs": {
         "factor": 0.6,
-        "events": 8
+        "events": 9
       },
       "ecmwf": {
-        "factor": 0.76,
-        "events": 8
+        "factor": 0.62,
+        "events": 9
       },
       "icon": {
-        "factor": 0.97,
-        "events": 8
+        "factor": 0.92,
+        "events": 9
       },
       "gem": {
         "factor": 0.6,
-        "events": 8
+        "events": 9
       },
       "aifs": {
-        "factor": 0.86,
-        "events": 8
+        "factor": 0.81,
+        "events": 9
       },
       "hrrr": {
         "factor": 0.6,
-        "events": 8
+        "events": 9
       },
       "nbm": {
         "factor": 0.6,
-        "events": 8
+        "events": 9
       },
       "nws": {
-        "factor": 0.63,
-        "events": 8
+        "factor": 0.6,
+        "events": 9
       }
     },
     "snowmass": {
       "gfs": {
-        "factor": 1.03,
-        "events": 9
+        "factor": 0.89,
+        "events": 11
       },
       "ecmwf": {
-        "factor": 1.29,
-        "events": 9
+        "factor": 1.24,
+        "events": 11
       },
       "icon": {
-        "factor": 1.05,
-        "events": 9
+        "factor": 0.94,
+        "events": 11
       },
       "gem": {
-        "factor": 0.87,
-        "events": 9
+        "factor": 0.86,
+        "events": 11
       },
       "aifs": {
-        "factor": 1.26,
-        "events": 9
+        "factor": 1.24,
+        "events": 11
       },
       "hrrr": {
-        "factor": 1.02,
-        "events": 9
+        "factor": 0.89,
+        "events": 11
       },
       "nbm": {
-        "factor": 1.23,
-        "events": 9
+        "factor": 1.15,
+        "events": 11
       },
       "nws": {
-        "factor": 1.56,
-        "events": 9
+        "factor": 1.6,
+        "events": 11
       }
     },
     "bachelor": {
@@ -179,27 +179,27 @@
     "baker": {
       "gfs": {
         "factor": 0.6,
-        "events": 12
+        "events": 13
       },
       "ecmwf": {
         "factor": 0.6,
-        "events": 12
+        "events": 13
       },
       "icon": {
         "factor": 0.6,
-        "events": 12
+        "events": 13
       },
       "gem": {
         "factor": 0.6,
-        "events": 12
+        "events": 13
       },
       "aifs": {
         "factor": 0.6,
-        "events": 12
+        "events": 13
       },
       "hrrr": {
         "factor": 0.6,
-        "events": 12
+        "events": 13
       },
       "nam": {
         "factor": 0.6,
@@ -207,11 +207,11 @@
       },
       "nbm": {
         "factor": 0.6,
-        "events": 12
+        "events": 13
       },
       "nws": {
-        "factor": 0.8,
-        "events": 12
+        "factor": 0.84,
+        "events": 13
       }
     },
     "kirkwood": {
@@ -948,6 +948,40 @@
         "events": 10
       }
     },
+    "keystone": {
+      "gfs": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "ecmwf": {
+        "factor": 0.76,
+        "events": 6
+      },
+      "icon": {
+        "factor": 1.03,
+        "events": 6
+      },
+      "gem": {
+        "factor": 0.64,
+        "events": 6
+      },
+      "aifs": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "hrrr": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nbm": {
+        "factor": 0.6,
+        "events": 6
+      },
+      "nws": {
+        "factor": 0.61,
+        "events": 6
+      }
+    },
     "abasin": {
       "gfs": {
         "factor": 1.01,
@@ -1018,28 +1052,36 @@
     },
     "winterpark": {
       "gfs": {
-        "factor": 1.09,
-        "events": 8
+        "factor": 0.98,
+        "events": 9
       },
       "ecmwf": {
         "factor": 1.6,
-        "events": 8
+        "events": 9
+      },
+      "icon": {
+        "factor": 1.6,
+        "events": 9
+      },
+      "gem": {
+        "factor": 1.6,
+        "events": 9
       },
       "aifs": {
         "factor": 1.6,
-        "events": 8
+        "events": 9
       },
       "hrrr": {
-        "factor": 1.08,
-        "events": 8
+        "factor": 0.97,
+        "events": 9
       },
       "nbm": {
-        "factor": 1.6,
-        "events": 8
+        "factor": 1.52,
+        "events": 9
       },
       "nws": {
         "factor": 1.6,
-        "events": 8
+        "events": 9
       }
     }
   }
