@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T08:45:37.297Z",
+  "generatedAt": "2026-11-25T19:18:00.491Z",
   "minEvents": 6,
   "resorts": {
     "breckenridge": {
@@ -179,27 +179,27 @@
     "baker": {
       "gfs": {
         "factor": 0.6,
-        "events": 13
+        "events": 14
       },
       "ecmwf": {
         "factor": 0.6,
-        "events": 13
+        "events": 14
       },
       "icon": {
         "factor": 0.6,
-        "events": 13
+        "events": 14
       },
       "gem": {
         "factor": 0.6,
-        "events": 13
+        "events": 14
       },
       "aifs": {
         "factor": 0.6,
-        "events": 13
+        "events": 14
       },
       "hrrr": {
         "factor": 0.6,
-        "events": 13
+        "events": 14
       },
       "nam": {
         "factor": 0.6,
@@ -207,11 +207,11 @@
       },
       "nbm": {
         "factor": 0.6,
-        "events": 13
+        "events": 14
       },
       "nws": {
-        "factor": 0.84,
-        "events": 13
+        "factor": 0.77,
+        "events": 14
       }
     },
     "kirkwood": {
@@ -1052,36 +1052,36 @@
     },
     "winterpark": {
       "gfs": {
-        "factor": 0.98,
-        "events": 9
+        "factor": 1.16,
+        "events": 11
       },
       "ecmwf": {
         "factor": 1.6,
-        "events": 9
+        "events": 11
       },
       "icon": {
         "factor": 1.6,
-        "events": 9
+        "events": 11
       },
       "gem": {
         "factor": 1.6,
-        "events": 9
+        "events": 11
       },
       "aifs": {
         "factor": 1.6,
-        "events": 9
+        "events": 11
       },
       "hrrr": {
-        "factor": 0.97,
-        "events": 9
+        "factor": 1.06,
+        "events": 10
       },
       "nbm": {
-        "factor": 1.52,
-        "events": 9
+        "factor": 1.6,
+        "events": 11
       },
       "nws": {
         "factor": 1.6,
-        "events": 9
+        "events": 11
       }
     }
   }
