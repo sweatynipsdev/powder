@@ -66,7 +66,7 @@ jobs:
     timeout-minutes: 30
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ steps.deploy.outputs.page_url || steps.deploy_retry.outputs.page_url || steps.deploy_last.outputs.page_url }}
     env:
       # The live site is the previous run's state: stale fallbacks, change detection, and
       # the data an app-only push reuses.
@@ -159,25 +159,39 @@ jobs:
         uses: actions/upload-pages-artifact@v5
         with:
           path: dist
-      # GitHub's artifact list can lag the upload, and deploy-pages looks the artifact up straight
-      # away. On 2026-11-20 two runs in a row found none ("No artifacts named github-pages") and
-      # the site kept the morning's data (actions/deploy-pages#451). Wait until the list shows it,
-      # using the same lookup deploy-pages makes. Don't use "Re-run failed jobs" to recover: the
-      # re-run uploads a second github-pages artifact and the lookup fails on the duplicate.
-      - name: Wait for the artifact to be listed
-        if: steps.budget.outputs.defer != 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          for i in $(seq 0 17); do
-            n=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?name=github-pages" --jq .total_count) || n=0
-            if [ "$n" -ge 1 ]; then echo "github-pages listed after $((i * 10))s"; exit 0; fi
-            sleep 10
-          done
-          echo "::warning::github-pages still isn't listed after 3 minutes; deploying anyway"
+      # deploy-pages looks the artifact up in the Actions results service, which can lag the
+      # upload by seconds (once ~46s). On 2026-11-20 and 2026-11-25 it found none ("No artifacts
+      # named github-pages") under a second after the upload, and the site kept older data
+      # (actions/deploy-pages#451). Polling the REST artifacts API first doesn't help: it's a
+      # different backend, and on 2026-11-25 it listed the artifact 0.4s before deploy-pages
+      # found none. A failed lookup creates no deployment, so retry the deploy itself, after 30s
+      # and then 90s. deploy-pages sets page_url once the deployment exists, so an empty one
+      # means nothing was deployed; a deployment that was created and then failed isn't retried.
+      # Don't use "Re-run failed jobs" to recover: the re-run uploads a second github-pages
+      # artifact and the lookup fails on the duplicate.
       - id: deploy
         if: steps.budget.outputs.defer != 'true'
+        continue-on-error: true
         uses: actions/deploy-pages@v5
+      - name: Wait before retrying the deploy
+        if: steps.deploy.outcome == 'failure' && steps.deploy.outputs.page_url == ''
+        run: sleep 30
+      - id: deploy_retry
+        if: steps.deploy.outcome == 'failure' && steps.deploy.outputs.page_url == ''
+        continue-on-error: true
+        uses: actions/deploy-pages@v5
+      - name: Wait before the last deploy attempt
+        if: steps.deploy_retry.outcome == 'failure' && steps.deploy_retry.outputs.page_url == ''
+        run: sleep 90
+      - id: deploy_last
+        if: steps.deploy_retry.outcome == 'failure' && steps.deploy_retry.outputs.page_url == ''
+        continue-on-error: true
+        uses: actions/deploy-pages@v5
+      - name: Fail the job if no deploy attempt succeeded
+        if: steps.deploy.outcome == 'failure' && steps.deploy_retry.outcome != 'success' && steps.deploy_last.outcome != 'success'
+        run: |
+          echo "::error::GitHub Pages deploy failed on every attempt; the site still has the previous run's data"
+          exit 1
 
       # One line per run: a cost history plus the forecast/observation log the local model
       # learns from. The commit also keeps GitHub from switching off this schedule (it does
