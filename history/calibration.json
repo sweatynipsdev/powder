@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-26T19:01:01.243Z",
+  "generatedAt": "2026-11-27T08:44:45.113Z",
   "minEvents": 6,
   "resorts": {
     "breckenridge": {
@@ -168,11 +168,11 @@
         "events": 11
       },
       "nbm": {
-        "factor": 0.6,
+        "factor": 0.73,
         "events": 12
       },
       "nws": {
-        "factor": 1.09,
+        "factor": 1.6,
         "events": 12
       }
     },
@@ -240,7 +240,7 @@
         "events": 6
       },
       "nws": {
-        "factor": 0.6,
+        "factor": 1,
         "events": 6
       }
     },
